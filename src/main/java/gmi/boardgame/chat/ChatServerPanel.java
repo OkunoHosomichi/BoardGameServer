@@ -12,6 +12,10 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 @SuppressWarnings("serial")
 public class ChatServerPanel extends JPanel implements Observer {
   /**
@@ -26,8 +30,12 @@ public class ChatServerPanel extends JPanel implements Observer {
    * 各クライアントに送るメッセージを入力するフィールド。
    */
   private final JTextField fServerMessageField = new JTextField();
+  private final ChatModel fModel;
 
   public ChatServerPanel() {
+    Injector injector = Guice.createInjector(new ChatServerModule());
+    fModel = injector.getInstance(ChatModel.class);
+    fModel.addObserver(this);
 
     initializeComponents();
     layoutComponents();
@@ -75,5 +83,13 @@ public class ChatServerPanel extends JPanel implements Observer {
 
   @Override
   public void update(Observable o, Object arg) {
+  }
+
+  private class ChatServerModule extends AbstractModule {
+
+    @Override
+    protected void configure() {
+      bind(ChatModel.class).to(ChatServerModel.class).asEagerSingleton();
+    }
   }
 }
