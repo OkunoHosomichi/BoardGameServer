@@ -14,9 +14,18 @@ import javax.swing.border.BevelBorder;
 
 @SuppressWarnings("serial")
 public class ChatServerPanel extends JPanel implements Observer {
-  private final JTextField fTextField = new JTextField();
-  private final JTextArea fTextArea = new JTextArea();
-  private final JList<String> fList = new JList<>();
+  /**
+   * 接続したクライアント名を一覧表示するリスト。
+   */
+  private final JList<String> fClientNameList = new JList<>();
+  /**
+   * サーバの情報を表示するためのテキストエリア。
+   */
+  private final JTextArea fServerInformation = new JTextArea();
+  /**
+   * 各クライアントに送るメッセージを入力するフィールド。
+   */
+  private final JTextField fServerMessageField = new JTextField();
 
   public ChatServerPanel() {
 
@@ -28,8 +37,8 @@ public class ChatServerPanel extends JPanel implements Observer {
    * コンポーネントを初期設定する。
    */
   private void initializeComponents() {
-    fTextField.setColumns(10);
-    fList.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+    fServerMessageField.setColumns(10);
+    fClientNameList.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
   }
 
   /**
@@ -37,7 +46,7 @@ public class ChatServerPanel extends JPanel implements Observer {
    * コードはWindowBuilderで自動生成した。
    */
   private void layoutComponents() {
-    JScrollPane scrollpane = new JScrollPane(fTextArea);
+    JScrollPane scrollpane = new JScrollPane(fServerInformation);
     scrollpane.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 
     GroupLayout groupLayout = new GroupLayout(this);
@@ -47,20 +56,19 @@ public class ChatServerPanel extends JPanel implements Observer {
         .addGroup(
             groupLayout.createSequentialGroup()
                 .addComponent(scrollpane, GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE).addGap(1)
-                .addComponent(fList, GroupLayout.PREFERRED_SIZE, 142, GroupLayout.PREFERRED_SIZE))
-        .addComponent(fTextField, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE));
+                .addComponent(fClientNameList, GroupLayout.PREFERRED_SIZE, 142, GroupLayout.PREFERRED_SIZE))
+        .addComponent(fServerMessageField, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE));
 
-    groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-        .addGroup(
-            groupLayout
-                .createSequentialGroup()
-                .addGroup(
-                    groupLayout.createParallelGroup(Alignment.TRAILING)
-                        .addComponent(fList, GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
-                        .addComponent(scrollpane, GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE))
-                .addGap(1)
-                .addComponent(fTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-                    GroupLayout.PREFERRED_SIZE)));
+    groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
+        groupLayout
+            .createSequentialGroup()
+            .addGroup(
+                groupLayout.createParallelGroup(Alignment.TRAILING)
+                    .addComponent(fClientNameList, GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+                    .addComponent(scrollpane, GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE))
+            .addGap(1)
+            .addComponent(fServerMessageField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                GroupLayout.PREFERRED_SIZE)));
 
     setLayout(groupLayout);
   }
