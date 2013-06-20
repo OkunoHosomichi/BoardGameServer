@@ -21,7 +21,22 @@ public class ChatServerPanel extends JPanel implements Observer {
   public ChatServerPanel() {
 
     initializeComponents();
+    layoutComponents();
+  }
 
+  /**
+   * コンポーネントを初期設定する。
+   */
+  private void initializeComponents() {
+    fTextField.setColumns(10);
+    fList.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+  }
+
+  /**
+   * GroupLayoutを使ってコンポーネントを配置する。<br>
+   * コードはWindowBuilderで自動生成した。
+   */
+  private void layoutComponents() {
     JScrollPane scrollpane = new JScrollPane(fTextArea);
     scrollpane.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 
@@ -48,14 +63,6 @@ public class ChatServerPanel extends JPanel implements Observer {
                     GroupLayout.PREFERRED_SIZE)));
 
     setLayout(groupLayout);
-  }
-
-  /**
-   * コンポーネントを初期設定する。
-   */
-  private void initializeComponents() {
-    fTextField.setColumns(10);
-    fList.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
   }
 
   @Override
