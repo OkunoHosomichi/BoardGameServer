@@ -7,33 +7,47 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.BevelBorder;
 
 @SuppressWarnings("serial")
 public class ChatServerPanel extends JPanel implements Observer {
   private final JTextField fTextField = new JTextField();
   private final JTextArea fTextArea = new JTextArea();
   private final JList<String> fList = new JList<>();
-  private final JSplitPane fSplitPane = new JSplitPane();
 
   public ChatServerPanel() {
 
     fTextField.setColumns(10);
-    GroupLayout groupLayout = new GroupLayout(this);
-    groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-        .addComponent(fSplitPane, GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
-        .addComponent(fTextField, GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE));
-    groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
-        Alignment.TRAILING,
-        groupLayout.createSequentialGroup().addComponent(fSplitPane, GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
-            .addPreferredGap(ComponentPlacement.RELATED)
-            .addComponent(fTextField, GroupLayout.PREFERRED_SIZE, 19, GroupLayout.PREFERRED_SIZE)));
+    fList.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 
-    fSplitPane.setLeftComponent(fTextArea);
-    fSplitPane.setRightComponent(fList);
+    JScrollPane scrollpane = new JScrollPane(fTextArea);
+    scrollpane.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+
+    GroupLayout groupLayout = new GroupLayout(this);
+
+    groupLayout.setHorizontalGroup(groupLayout
+        .createParallelGroup(Alignment.LEADING)
+        .addGroup(
+            groupLayout.createSequentialGroup()
+                .addComponent(scrollpane, GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE).addGap(1)
+                .addComponent(fList, GroupLayout.PREFERRED_SIZE, 142, GroupLayout.PREFERRED_SIZE))
+        .addComponent(fTextField, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE));
+
+    groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+        .addGroup(
+            groupLayout
+                .createSequentialGroup()
+                .addGroup(
+                    groupLayout.createParallelGroup(Alignment.TRAILING)
+                        .addComponent(fList, GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+                        .addComponent(scrollpane, GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE))
+                .addGap(1)
+                .addComponent(fTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                    GroupLayout.PREFERRED_SIZE)));
+
     setLayout(groupLayout);
   }
 
