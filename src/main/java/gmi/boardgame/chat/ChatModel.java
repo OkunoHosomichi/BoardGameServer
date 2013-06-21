@@ -6,7 +6,20 @@ import java.util.Observer;
 public interface ChatModel {
   void addObserver(Observer o);
 
+  /**
+   * チャットに参加しているクライアントのニックネーム一覧を返します。
+   * 
+   * @return チャットに参加しているクライアントのニックネーム一覧。
+   */
   List<String> getClientList();
 
-  void joinClient(Client client);
+  /**
+   * 指定されたクライアントをチャット参加者一覧に登録します。
+   * 
+   * @param client
+   *          一覧に登録するクライアント。nullを指定できません。
+   * @throws NullPointerException
+   *           clientがnullの場合。
+   */
+  void joinClient(Client client) throws NullPointerException;
 }

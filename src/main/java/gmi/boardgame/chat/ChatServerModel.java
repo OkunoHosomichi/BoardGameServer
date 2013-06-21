@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Observable;
 
 public class ChatServerModel extends Observable implements ChatModel {
+  /**
+   * チャットに参加しているクライアントの一覧。
+   */
   private final List<Client> fClientList = new LinkedList<>();
 
   @Override
@@ -20,7 +23,7 @@ public class ChatServerModel extends Observable implements ChatModel {
   }
 
   @Override
-  public void joinClient(Client client) {
+  public void joinClient(Client client) throws NullPointerException {
     if (client == null) throw new NullArgumentException("client");
 
     fClientList.add(client);
