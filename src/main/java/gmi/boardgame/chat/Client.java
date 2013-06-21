@@ -32,6 +32,26 @@ public final class Client {
     fNickName = nickName;
   }
 
+  /*
+   * (非 Javadoc) eclipseにより自動生成したメソッドです。
+   * 
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
+    Client other = (Client) obj;
+    if (fChannelID == null) {
+      if (other.fChannelID != null) return false;
+    } else if (!fChannelID.equals(other.fChannelID)) return false;
+    if (fNickName == null) {
+      if (other.fNickName != null) return false;
+    } else if (!fNickName.equals(other.fNickName)) return false;
+    return true;
+  }
+
   /**
    * チャンネルIDを返します。
    * 
@@ -53,5 +73,19 @@ public final class Client {
     assert !fNickName.isEmpty();
 
     return fNickName;
+  }
+
+  /*
+   * (非 Javadoc) eclipseにより自動生成したメソッドです。
+   * 
+   * @see java.lang.Object#hashCode()
+   */
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((fChannelID == null) ? 0 : fChannelID.hashCode());
+    result = prime * result + ((fNickName == null) ? 0 : fNickName.hashCode());
+    return result;
   }
 }

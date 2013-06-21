@@ -33,5 +33,5 @@ public interface ChatModel {
    * @throws RuntimeException
    *           一覧に指定されたクライアントが存在しない場合。
    */
-  void leaveClient(Client client) throws NullPointerException;
+  void leaveClient(Client client) throws NullPointerException, RuntimeException;
 }
