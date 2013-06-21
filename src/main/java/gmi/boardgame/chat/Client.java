@@ -15,9 +15,9 @@ public final class Client {
    * 指定されたチャンネルIDとニックネームからインスタンスを構築します。
    * 
    * @param channelID
-   *          チャンネルID値。null値を指定できません。
+   *          チャンネルID値。nullを指定できません。
    * @param nickName
-   *          クライアントのニックネーム。null値や空文字列を指定できません。
+   *          クライアントのニックネーム。nullや空文字列を指定できません。
    * @throws NullPointerException
    *           channelIDもしくはnickNameがnullの場合。
    * @throws IllegalArgumentException
