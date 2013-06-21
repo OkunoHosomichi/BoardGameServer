@@ -23,6 +23,10 @@ public class ChatServerPanel extends JPanel implements Observer {
    */
   private final JList<String> fClientNameList = new JList<>();
   /**
+   * モデルクラス。
+   */
+  private final ChatModel fModel;
+  /**
    * サーバの情報を表示するためのテキストエリア。
    */
   private final JTextArea fServerInformation = new JTextArea();
@@ -30,7 +34,6 @@ public class ChatServerPanel extends JPanel implements Observer {
    * 各クライアントに送るメッセージを入力するフィールド。
    */
   private final JTextField fServerMessageField = new JTextField();
-  private final ChatModel fModel;
 
   public ChatServerPanel() {
     Injector injector = Guice.createInjector(new ChatServerModule());
@@ -39,6 +42,10 @@ public class ChatServerPanel extends JPanel implements Observer {
 
     initializeComponents();
     layoutComponents();
+  }
+
+  @Override
+  public void update(Observable o, Object arg) {
   }
 
   /**
@@ -79,10 +86,6 @@ public class ChatServerPanel extends JPanel implements Observer {
                 GroupLayout.PREFERRED_SIZE)));
 
     setLayout(groupLayout);
-  }
-
-  @Override
-  public void update(Observable o, Object arg) {
   }
 
   private class ChatServerModule extends AbstractModule {
