@@ -17,7 +17,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 @SuppressWarnings("serial")
-public class ChatServerPanel extends JPanel implements Observer {
+public class ChatServerPanel extends JPanel implements ChatView, Observer {
   /**
    * 接続したクライアント名を一覧表示するリスト。
    */
