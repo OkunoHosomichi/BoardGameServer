@@ -31,4 +31,10 @@ public class ChatServerModel extends Observable implements ChatModel {
     setChanged();
     notifyObservers("clientList");
   }
+
+  @Override
+  public void leaveClient(Client client) throws NullPointerException {
+    // TODO 自動生成されたメソッド・スタブ
+
+  }
 }

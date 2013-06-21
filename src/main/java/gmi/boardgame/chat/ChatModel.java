@@ -22,4 +22,14 @@ public interface ChatModel {
    *           clientがnullの場合。
    */
   void joinClient(Client client) throws NullPointerException;
+
+  /**
+   * 指定されたクライアントをチャット参加者一覧から削除します。
+   * 
+   * @param client
+   *          一覧から削除するクライアント。nullを指定できません。
+   * @throws NullPointerException
+   *           clientがnullの場合。
+   */
+  void leaveClient(Client client) throws NullPointerException;
 }
