@@ -30,6 +30,8 @@ public interface ChatModel {
    *          一覧から削除するクライアント。nullを指定できません。
    * @throws NullPointerException
    *           clientがnullの場合。
+   * @throws RuntimeException
+   *           一覧に指定されたクライアントが存在しない場合。
    */
   void leaveClient(Client client) throws NullPointerException;
 }
