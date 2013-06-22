@@ -18,21 +18,21 @@ public class ChatServerModelTest {
   @Mocked
   private ChatServerPanel fChatPanel;
   @Mocked
-  private ChannelGroup group;
+  private ChannelGroup fGroup;
   @Mocked
-  private Channel testChannel01;
+  private Channel fTestChannel01;
   @Mocked
-  private Channel testChannel02;
+  private Channel fTestChannel02;
 
   @Test(expectedExceptions = { NullPointerException.class })
   public void joinClientの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
-    final ChatServerModel model = new ChatServerModel();
+    final ChatServerModel model = new ChatServerModel(fGroup);
     model.joinClient(null);
   }
 
   @Test
   public void joinClientを呼び出されたらクライアント一覧を更新してビューに通知するよ() {
-    final ChatServerModel model = new ChatServerModel();
+    final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
 
     new Expectations() {
@@ -56,13 +56,13 @@ public class ChatServerModelTest {
 
   @Test(expectedExceptions = { NullPointerException.class })
   public void leaveClientの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
-    final ChatServerModel model = new ChatServerModel();
+    final ChatServerModel model = new ChatServerModel(fGroup);
     model.leaveClient(null);
   }
 
   @Test(expectedExceptions = { RuntimeException.class })
   public void leaveClientを呼び出されたけど指定されたクライアントが一覧になかったらRuntimeExceptionを投げるよ() {
-    final ChatServerModel model = new ChatServerModel();
+    final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
     model.joinClient(new Client(new Integer(0), "test01"));
     model.joinClient(new Client(new Integer(1), "test02"));
@@ -73,7 +73,7 @@ public class ChatServerModelTest {
 
   @Test
   public void leaveClientを呼び出されたらクライアント一覧から削除してビューに通知するよ() {
-    final ChatServerModel model = new ChatServerModel();
+    final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
     model.joinClient(new Client(new Integer(0), "test01"));
     model.joinClient(new Client(new Integer(1), "test02"));
@@ -96,13 +96,13 @@ public class ChatServerModelTest {
 
   @Test(expectedExceptions = { NullPointerException.class })
   public void messageの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
-    final ChatServerModel model = new ChatServerModel();
+    final ChatServerModel model = new ChatServerModel(fGroup);
     model.message(null);
   }
 
   @Test
   public void messageの引数に空文字列が指定されても何もしないよ() {
-    final ChatServerModel model = new ChatServerModel();
+    final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
 
     new Expectations() {
@@ -119,7 +119,7 @@ public class ChatServerModelTest {
 
   @Test
   public void messageを呼び出されたらビューに通知するよ() {
-    final ChatServerModel model = new ChatServerModel();
+    final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
 
     new Expectations() {
@@ -138,26 +138,26 @@ public class ChatServerModelTest {
 
   @Test(expectedExceptions = { NullPointerException.class })
   public void sendServerMessageの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
-    final ChatServerModel model = new ChatServerModel();
+    final ChatServerModel model = new ChatServerModel(fGroup);
     model.sendServerMessage(null);
   }
 
   @Test
   public void sendServerMessageの引数に空文字が指定されても何もしないよ() {
-    final ChatServerModel model = new ChatServerModel();
+    final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
     model.joinClient(new Client(Integer.valueOf(0), "aaa"));
     model.joinClient(new Client(Integer.valueOf(1), "bbb"));
 
     new Expectations() {
       {
-        group.find(Integer.valueOf(0));
+        fGroup.find(anyInt);
         times = 0;
 
-        testChannel01.write(anyString);
+        fTestChannel01.write(anyString);
         times = 0;
 
-        testChannel02.write(anyString);
+        fTestChannel02.write(anyString);
         times = 0;
 
         fChatPanel.update(model, "message");
@@ -172,22 +172,22 @@ public class ChatServerModelTest {
 
   @Test
   public void sendServerMessageを呼び出されたら全クライアントにメッセージを送ってビューに通知するよ() {
-    final ChatServerModel model = new ChatServerModel();
+    final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
     model.joinClient(new Client(Integer.valueOf(0), "aaa"));
     model.joinClient(new Client(Integer.valueOf(1), "bbb"));
 
     new Expectations() {
       {
-        group.find(Integer.valueOf(0));
-        result = testChannel01;
+        fGroup.find(Integer.valueOf(0));
+        result = fTestChannel01;
 
-        testChannel01.write("test\n");
+        fTestChannel01.write("<Server>:test\n");
 
-        group.find(Integer.valueOf(1));
-        result = testChannel02;
+        fGroup.find(Integer.valueOf(1));
+        result = fTestChannel02;
 
-        testChannel02.write("test\n");
+        fTestChannel02.write("<Server>:test\n");
 
         fChatPanel.update(model, "message");
       }
