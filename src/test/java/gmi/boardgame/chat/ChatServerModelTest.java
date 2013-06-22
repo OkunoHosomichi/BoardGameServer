@@ -42,9 +42,9 @@ public class ChatServerModelTest {
       }
     };
 
-    model.joinClient(new Client(new Integer(0), "test01"));
-    model.joinClient(new Client(new Integer(1), "test03"));
-    model.joinClient(new Client(new Integer(2), "test02"));
+    model.joinClient(new Client(Integer.valueOf(0), "test01"));
+    model.joinClient(new Client(Integer.valueOf(1), "test03"));
+    model.joinClient(new Client(Integer.valueOf(2), "test02"));
 
     final List<String> expected = new ArrayList<>();
     expected.add("test01");
@@ -64,20 +64,20 @@ public class ChatServerModelTest {
   public void leaveClientを呼び出されたけど指定されたクライアントが一覧になかったらRuntimeExceptionを投げるよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
-    model.joinClient(new Client(new Integer(0), "test01"));
-    model.joinClient(new Client(new Integer(1), "test02"));
-    model.joinClient(new Client(new Integer(2), "test03"));
+    model.joinClient(new Client(Integer.valueOf(0), "test01"));
+    model.joinClient(new Client(Integer.valueOf(1), "test02"));
+    model.joinClient(new Client(Integer.valueOf(2), "test03"));
 
-    model.leaveClient(new Client(new Integer(1), "test"));
+    model.leaveClient(new Client(Integer.valueOf(1), "test"));
   }
 
   @Test
   public void leaveClientを呼び出されたらクライアント一覧から削除してビューに通知するよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
-    model.joinClient(new Client(new Integer(0), "test01"));
-    model.joinClient(new Client(new Integer(1), "test02"));
-    model.joinClient(new Client(new Integer(2), "test03"));
+    model.joinClient(new Client(Integer.valueOf(0), "test01"));
+    model.joinClient(new Client(Integer.valueOf(1), "test02"));
+    model.joinClient(new Client(Integer.valueOf(2), "test03"));
 
     new Expectations() {
       {
@@ -85,7 +85,7 @@ public class ChatServerModelTest {
       }
     };
 
-    model.leaveClient(new Client(new Integer(1), "test02"));
+    model.leaveClient(new Client(Integer.valueOf(1), "test02"));
 
     final List<String> expected = new ArrayList<>();
     expected.add("test01");
