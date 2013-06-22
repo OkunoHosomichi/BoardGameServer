@@ -25,6 +25,18 @@ public class ChatServerModelTest {
   private Channel fTestChannel02;
 
   @Test(expectedExceptions = { NullPointerException.class })
+  public void コンストラクタの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
+    new ChatServerModel(null);
+  }
+
+  @Test
+  public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {
+    final ChatModel model = new ChatServerModel(fGroup);
+    assertTrue(model.getMessage().isEmpty());
+    assertEquals(model.getClientList().size(), 0);
+  }
+
+  @Test(expectedExceptions = { NullPointerException.class })
   public void joinClientの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
     model.joinClient(null);
