@@ -35,12 +35,15 @@ public final class ChatServerModel extends Observable implements ChatModel {
    *           groupがnullの場合。
    */
   public ChatServerModel(ChannelGroup group) {
+    if (group == null) throw new NullArgumentException("group");
+
     fGroup = group;
   }
 
   @Override
   public List<String> getClientList() {
     final List<String> result = new LinkedList<>();
+
     for (final Client i : fClientList) {
       result.add(i.getNickName());
     }
