@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import mockit.Expectations;
@@ -34,6 +35,31 @@ public class ChatServerModelTest {
     final ChatModel model = new ChatServerModel(fGroup);
     assertTrue(model.getMessage().isEmpty());
     assertEquals(model.getClientList().size(), 0);
+  }
+
+  @Test
+  public void getClientListを呼ばれたらクライアントのリストを返すよ() {
+    final ChatModel model = new ChatServerModel(fGroup);
+    model.joinClient(new Client(Integer.valueOf(0), "aaa"));
+    model.joinClient(new Client(Integer.valueOf(1), "bbb"));
+    model.joinClient(new Client(Integer.valueOf(2), "ccc"));
+    model.joinClient(new Client(Integer.valueOf(3), "ddd"));
+
+    final List<String> expected = Arrays.asList("aaa", "bbb", "ccc", "ddd");
+
+    assertEquals(model.getClientList().size(), 4);
+    assertEquals(model.getClientList(), expected);
+  }
+
+  @Test(expectedExceptions = { UnsupportedOperationException.class })
+  public void getClientListが返すリストは変更不能だよ() {
+    final ChatModel model = new ChatServerModel(fGroup);
+    model.joinClient(new Client(Integer.valueOf(0), "aaa"));
+    model.joinClient(new Client(Integer.valueOf(1), "bbb"));
+    model.joinClient(new Client(Integer.valueOf(2), "ccc"));
+    model.joinClient(new Client(Integer.valueOf(3), "ddd"));
+
+    model.getClientList().add("eee");
   }
 
   @Test(expectedExceptions = { NullPointerException.class })
