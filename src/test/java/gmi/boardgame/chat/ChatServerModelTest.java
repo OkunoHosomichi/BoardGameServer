@@ -16,7 +16,7 @@ public class ChatServerModelTest {
 
   @Test(expectedExceptions = { NullPointerException.class })
   public void joinClientの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
-    ChatServerModel model = new ChatServerModel();
+    final ChatServerModel model = new ChatServerModel();
     model.joinClient(null);
   }
 
@@ -37,7 +37,7 @@ public class ChatServerModelTest {
     model.joinClient(new Client(new Integer(1), "test03"));
     model.joinClient(new Client(new Integer(2), "test02"));
 
-    List<String> expected = new ArrayList<>();
+    final List<String> expected = new ArrayList<>();
     expected.add("test01");
     expected.add("test03");
     expected.add("test02");
@@ -47,7 +47,7 @@ public class ChatServerModelTest {
 
   @Test(expectedExceptions = { NullPointerException.class })
   public void leaveClientの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
-    ChatServerModel model = new ChatServerModel();
+    final ChatServerModel model = new ChatServerModel();
     model.leaveClient(null);
   }
 
@@ -78,10 +78,53 @@ public class ChatServerModelTest {
 
     model.leaveClient(new Client(new Integer(1), "test02"));
 
-    List<String> expected = new ArrayList<>();
+    final List<String> expected = new ArrayList<>();
     expected.add("test01");
     expected.add("test03");
 
     assertEquals(model.getClientList(), expected);
+  }
+
+  @Test(expectedExceptions = { NullPointerException.class })
+  public void messageの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
+    final ChatServerModel model = new ChatServerModel();
+    model.message(null);
+  }
+
+  @Test
+  public void messageの引数に空文字列が指定されても何もしないよ() {
+    final ChatServerModel model = new ChatServerModel();
+
+    new Expectations() {
+      {
+        fChatPanel.update(model, "message");
+        maxTimes = 0;
+      }
+    };
+
+    model.message("");
+
+    assertTrue(model.getMessage().isEmpty());
+  }
+
+  @Test
+  public void messageを呼び出されたらビューに通知するよ() {
+    final ChatServerModel model = new ChatServerModel();
+    model.addObserver(fChatPanel);
+
+    new Expectations() {
+      {
+        fChatPanel.update(model, "message");
+        minTimes = 3;
+        maxTimes = 3;
+      }
+    };
+
+    model.message("test01");
+    model.message("test02");
+    model.message("test03");
+
+    assertEquals(model.getMessage(), "test01\ntest02\ntest03\n");
+
   }
 }

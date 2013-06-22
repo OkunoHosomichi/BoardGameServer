@@ -14,6 +14,13 @@ public interface ChatModel {
   List<String> getClientList();
 
   /**
+   * ユーザーに通知するメッセージを返します。
+   * 
+   * @return 通知するメッセージ。nullではありません。
+   */
+  String getMessage();
+
+  /**
    * 指定されたクライアントをチャット参加者一覧に登録します。
    * 
    * @param client
@@ -34,4 +41,14 @@ public interface ChatModel {
    *           一覧に指定されたクライアントが存在しない場合。
    */
   void leaveClient(Client client) throws NullPointerException, RuntimeException;
+
+  /**
+   * ユーザに指定されたメッセージを通知します。空文字列が指定された場合は何もしません。
+   * 
+   * @param message
+   *          通知するメッセージ。nullを指定できません。
+   * @throws NullPointerException
+   *           messageがnullの場合。
+   */
+  void message(String message) throws NullPointerException;
 }

@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
-public class ChatServerModel extends Observable implements ChatModel {
+public final class ChatServerModel extends Observable implements ChatModel {
   /**
    * チャットに参加しているクライアントの一覧。
    */
@@ -14,12 +14,18 @@ public class ChatServerModel extends Observable implements ChatModel {
 
   @Override
   public List<String> getClientList() {
-    List<String> result = new LinkedList<>();
-    for (Client i : fClientList) {
+    final List<String> result = new LinkedList<>();
+    for (final Client i : fClientList) {
       result.add(i.getNickName());
     }
 
     return result;
+  }
+
+  @Override
+  public String getMessage() {
+    // TODO 自動生成されたメソッド・スタブ
+    return null;
   }
 
   @Override
@@ -40,5 +46,11 @@ public class ChatServerModel extends Observable implements ChatModel {
 
     setChanged();
     notifyObservers("clientList");
+  }
+
+  @Override
+  public void message(String message) throws NullPointerException {
+    // TODO 自動生成されたメソッド・スタブ
+
   }
 }
