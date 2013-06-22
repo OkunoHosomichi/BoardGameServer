@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
 public class ChatServerModelTest {
+  private static final String LINE_SEPARATOR = System.getProperty("line.separator");
   @Mocked
   private ChatServerPanel fChatPanel;
 
@@ -28,8 +29,7 @@ public class ChatServerModelTest {
     new Expectations() {
       {
         fChatPanel.update(model, "clientList");
-        fChatPanel.update(model, "clientList");
-        fChatPanel.update(model, "clientList");
+        times = 3;
       }
     };
 
@@ -94,11 +94,12 @@ public class ChatServerModelTest {
   @Test
   public void messageの引数に空文字列が指定されても何もしないよ() {
     final ChatServerModel model = new ChatServerModel();
+    model.addObserver(fChatPanel);
 
     new Expectations() {
       {
         fChatPanel.update(model, "message");
-        maxTimes = 0;
+        times = 0;
       }
     };
 
@@ -115,8 +116,7 @@ public class ChatServerModelTest {
     new Expectations() {
       {
         fChatPanel.update(model, "message");
-        minTimes = 3;
-        maxTimes = 3;
+        times = 3;
       }
     };
 
@@ -124,7 +124,6 @@ public class ChatServerModelTest {
     model.message("test02");
     model.message("test03");
 
-    assertEquals(model.getMessage(), "test01\ntest02\ntest03\n");
-
+    assertEquals(model.getMessage(), "test01" + LINE_SEPARATOR + "test02" + LINE_SEPARATOR + "test03" + LINE_SEPARATOR);
   }
 }
