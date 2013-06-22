@@ -83,10 +83,7 @@ public final class ChatServerModel extends Observable implements ChatModel {
     if (message == null) throw new NullArgumentException("message");
     if (message.isEmpty()) return;
 
-    fMessage.append(message).append(LINE_SEPARATOR);
-
-    setChanged();
-    notifyObservers("message");
+    appendMessage(message);
   }
 
   @Override
@@ -98,7 +95,20 @@ public final class ChatServerModel extends Observable implements ChatModel {
       fGroup.find(i.getChannelID()).write("<Server>:" + message + "\n");
     }
 
-    fMessage.append("全クライアントに\"").append(message).append("\"と送信しました。").append(LINE_SEPARATOR);
+    appendMessage("全クライアントに\"" + message + "\"と送信しました。");
+  }
+
+  /**
+   * ユーザに通知するメッセージに指定された文字列を追加し、変更をビューに通知します。messageにnullを指定した場合、
+   * assertによりエラーが発生します。
+   * 
+   * @param message
+   *          追加する文字列。nullを指定できません。
+   */
+  private void appendMessage(String message) {
+    assert message != null;
+
+    fMessage.append(message).append(LINE_SEPARATOR);
 
     setChanged();
     notifyObservers("message");
