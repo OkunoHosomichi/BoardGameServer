@@ -51,4 +51,14 @@ public interface ChatModel {
    *           messageがnullの場合。
    */
   void message(String message) throws NullPointerException;
+
+  /**
+   * 全クライアントにサーバからのメッセージを送信します。 指定されたメッセージが空文字の場合は送信しません。
+   * 
+   * @param message
+   *          送信するメッセージ。nullを指定できません。
+   * @throws NullPointerException
+   *           messageがnullの場合。
+   */
+  void sendServerMessage(String message) throws NullPointerException;
 }

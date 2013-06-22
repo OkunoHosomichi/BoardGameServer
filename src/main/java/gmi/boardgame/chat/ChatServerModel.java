@@ -64,4 +64,10 @@ public final class ChatServerModel extends Observable implements ChatModel {
     setChanged();
     notifyObservers("message");
   }
+
+  @Override
+  public void sendServerMessage(String message) throws NullPointerException {
+    // TODO 自動生成されたメソッド・スタブ
+
+  }
 }
