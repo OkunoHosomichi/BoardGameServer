@@ -1,5 +1,7 @@
 package gmi.boardgame.chat;
 
-public interface ChatView {
+import java.util.Observer;
+
+public interface ChatView extends Observer {
 
 }

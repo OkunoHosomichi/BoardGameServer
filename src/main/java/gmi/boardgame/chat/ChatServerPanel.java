@@ -1,7 +1,6 @@
 package gmi.boardgame.chat;
 
 import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -17,7 +16,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 @SuppressWarnings("serial")
-public class ChatServerPanel extends JPanel implements ChatView, Observer {
+public class ChatServerPanel extends JPanel implements ChatView {
   /**
    * 接続したクライアント名を一覧表示するリスト。
    */
@@ -36,9 +35,9 @@ public class ChatServerPanel extends JPanel implements ChatView, Observer {
   private final JTextField fServerMessageField = new JTextField();
 
   public ChatServerPanel() {
-    Injector injector = Guice.createInjector(new ChatServerModule());
+    final Injector injector = Guice.createInjector(new ChatServerModule());
     fModel = injector.getInstance(ChatModel.class);
-    fModel.addObserver(this);
+    fModel.addChatView(this);
 
     initializeComponents();
     layoutComponents();
@@ -61,10 +60,10 @@ public class ChatServerPanel extends JPanel implements ChatView, Observer {
    * コードはWindowBuilderで自動生成した。
    */
   private void layoutComponents() {
-    JScrollPane scrollpane = new JScrollPane(fServerInformation);
+    final JScrollPane scrollpane = new JScrollPane(fServerInformation);
     scrollpane.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 
-    GroupLayout groupLayout = new GroupLayout(this);
+    final GroupLayout groupLayout = new GroupLayout(this);
 
     groupLayout.setHorizontalGroup(groupLayout
         .createParallelGroup(Alignment.LEADING)
