@@ -3,6 +3,8 @@ package gmi.boardgame.chat;
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -156,7 +158,7 @@ public class ChatServerModelTest {
   }
 
   @Test
-  public void messageを呼び出されたらビューに通知するよ() {
+  public void messageを呼び出されたら通知文を更新してビューに通知するよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
 
@@ -234,5 +236,42 @@ public class ChatServerModelTest {
     model.sendServerMessage("test");
 
     assertEquals(model.getMessage(), "全クライアントに\"test\"と送信しました。" + LINE_SEPARATOR);
+  }
+
+  @Test
+  public void appendMessageの引数に空文字列が指定されたら何もしないよ() throws NoSuchMethodException, SecurityException,
+      IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    final ChatServerModel model = new ChatServerModel(fGroup);
+    model.addObserver(fChatPanel);
+    final Method appendMessage = ChatServerModel.class.getDeclaredMethod("appendMessage", String.class);
+    appendMessage.setAccessible(true);
+
+    new Expectations() {
+      {
+        fChatPanel.update(model, "message");
+        times = 0;
+      }
+    };
+
+    appendMessage.invoke(model, "");
+  }
+
+  @Test
+  public void appendMessageを呼び出されたら通知文を更新してビューに通知するよ() throws NoSuchMethodException, SecurityException,
+      IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    final ChatServerModel model = new ChatServerModel(fGroup);
+    model.addObserver(fChatPanel);
+    final Method appendMessage = ChatServerModel.class.getDeclaredMethod("appendMessage", String.class);
+    appendMessage.setAccessible(true);
+
+    new Expectations() {
+      {
+        fChatPanel.update(model, "message");
+      }
+    };
+
+    appendMessage.invoke(model, "aaa");
+
+    assertEquals(model.getMessage(), "aaa" + LINE_SEPARATOR);
   }
 }
