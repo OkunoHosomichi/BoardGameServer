@@ -81,7 +81,6 @@ public final class ChatServerModel extends Observable implements ChatModel {
   @Override
   public void message(String message) throws NullPointerException {
     if (message == null) throw new NullArgumentException("message");
-    if (message.isEmpty()) return;
 
     appendMessage(message);
   }
@@ -100,13 +99,14 @@ public final class ChatServerModel extends Observable implements ChatModel {
 
   /**
    * ユーザに通知するメッセージに指定された文字列を追加し、変更をビューに通知します。messageにnullを指定した場合、
-   * assertによりエラーが発生します。
+   * assertによりエラーが発生します。空文字列が指定された場合は何もしません。
    * 
    * @param message
    *          追加する文字列。nullを指定できません。
    */
   private void appendMessage(String message) {
     assert message != null;
+    if (message.isEmpty()) return;
 
     fMessage.append(message).append(LINE_SEPARATOR);
 
