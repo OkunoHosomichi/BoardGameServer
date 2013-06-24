@@ -4,7 +4,18 @@ import java.util.List;
 import java.util.Observer;
 
 interface ChatModel {
-  void addObserver(Observer o);
+  /**
+   * このオブジェクトの Observer のセットに Observer を追加します (セット内にすでにあるいくつかの Observer
+   * と同じでない場合)。複数の Observer に通知が配信される順序は未指定です。クラスのコメントを参照してください。
+   * モデルはビューに更新通知以外の操作をしてはならないので引数の型をObserverにしています。
+   * 
+   * @see java.util.Observable#addObserver(java.util.Observer)
+   * @param o
+   *          追加するObserver
+   * @throws NullPointerException
+   *           パラメータ o が null の場合。
+   */
+  void addObserver(Observer o) throws NullPointerException;
 
   /**
    * チャットに参加しているクライアントのニックネーム一覧を返します。 一覧は変更できません。
