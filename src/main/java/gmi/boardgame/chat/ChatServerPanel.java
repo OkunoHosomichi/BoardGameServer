@@ -23,7 +23,7 @@ final class ChatServerPanel extends JPanel implements ChatView {
   /**
    * モデルクラス。
    */
-  private final ChatModel fModel;
+  private final ChatPresenter fPresenter;
   /**
    * サーバの情報を表示するためのテキストエリア。
    */
@@ -42,11 +42,11 @@ final class ChatServerPanel extends JPanel implements ChatView {
    *           modelがnullの場合。
    */
   @Inject
-  public ChatServerPanel(ChatModel model) throws NullPointerException {
-    if (model == null) throw new NullArgumentException("model");
+  public ChatServerPanel(ChatPresenter presenter) throws NullPointerException {
+    if (presenter == null) throw new NullArgumentException("model");
 
-    fModel = model;
-    fModel.addChatView(this);
+    fPresenter = presenter;
+    fPresenter.addChatView(this);
 
     initializeComponents();
     layoutComponents();
