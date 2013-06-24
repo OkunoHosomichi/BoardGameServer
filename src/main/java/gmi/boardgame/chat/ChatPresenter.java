@@ -1,5 +1,5 @@
 package gmi.boardgame.chat;
 
-interface ChatPresenter {
+interface ChatPresenter extends ChatModel {
 
 }
