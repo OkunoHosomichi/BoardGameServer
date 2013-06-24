@@ -21,7 +21,7 @@ final class ChatServerPanel extends JPanel implements ChatView {
    */
   private final JList<String> fClientNameList = new JList<>();
   /**
-   * モデルクラス。
+   * プレゼンタクラス。
    */
   private final ChatPresenter fPresenter;
   /**
@@ -34,12 +34,12 @@ final class ChatServerPanel extends JPanel implements ChatView {
   private final JTextField fServerMessageField = new JTextField();
 
   /**
-   * モデルを指定してインスタンスを構築します。
+   * 指定されたプレゼンタからインスタンスを構築します。
    * 
-   * @param model
-   *          モデル。nullを指定できません。
+   * @param presenter
+   *          プレゼンタ。nullを指定できません。
    * @throws NullPointerException
-   *           modelがnullの場合。
+   *           presenterがnullの場合。
    */
   @Inject
   public ChatServerPanel(ChatPresenter presenter) throws NullPointerException {

@@ -10,7 +10,7 @@ import static org.testng.Assert.*;
 
 public class ChatServerPanelTest {
   @Mocked
-  ChatModel fModel;
+  ChatServerPresenter fPresenter;
 
   @Test(expectedExceptions = { NullPointerException.class })
   public void コンストラクタの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
@@ -19,14 +19,14 @@ public class ChatServerPanelTest {
 
   @Test
   public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {
-    final ChatView panel = new ChatServerPanel(fModel);
+    final ChatServerPanel panel = new ChatServerPanel(fPresenter);
 
     new Verifications() {
       {
-        fModel.addChatView(panel);
+        fPresenter.addChatView(panel);
       }
     };
 
-    assertTrue(Deencapsulation.getField(panel, "fModel") == fModel);
+    assertTrue(Deencapsulation.getField(panel, "fPresenter") == fPresenter);
   }
 }
