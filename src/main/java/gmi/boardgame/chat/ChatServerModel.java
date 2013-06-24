@@ -41,13 +41,6 @@ final class ChatServerModel extends Observable implements ChatModel {
   }
 
   @Override
-  public void addChatView(ChatView view) throws NullPointerException {
-    if (view == null) throw new NullArgumentException("view");
-
-    addObserver(view);
-  }
-
-  @Override
   public List<String> getClientList() {
     final List<String> result = new LinkedList<>();
 

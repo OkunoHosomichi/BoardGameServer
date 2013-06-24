@@ -73,7 +73,7 @@ public class ChatServerModelTest {
   @Test
   public void joinClientを呼び出されたらクライアント一覧を更新してビューに通知するよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
-    model.addChatView(fChatPanel);
+    model.addObserver(fChatPanel);
 
     new Expectations() {
       {
@@ -103,7 +103,7 @@ public class ChatServerModelTest {
   @Test(expectedExceptions = { RuntimeException.class })
   public void leaveClientを呼び出されたけど指定されたクライアントが一覧になかったらRuntimeExceptionを投げるよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
-    model.addChatView(fChatPanel);
+    model.addObserver(fChatPanel);
     model.joinClient(new Client(Integer.valueOf(0), "test01"));
     model.joinClient(new Client(Integer.valueOf(1), "test02"));
     model.joinClient(new Client(Integer.valueOf(2), "test03"));
@@ -114,7 +114,7 @@ public class ChatServerModelTest {
   @Test
   public void leaveClientを呼び出されたらクライアント一覧から削除してビューに通知するよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
-    model.addChatView(fChatPanel);
+    model.addObserver(fChatPanel);
     model.joinClient(new Client(Integer.valueOf(0), "test01"));
     model.joinClient(new Client(Integer.valueOf(1), "test02"));
     model.joinClient(new Client(Integer.valueOf(2), "test03"));
@@ -143,7 +143,7 @@ public class ChatServerModelTest {
   @Test
   public void messageの引数に空文字列が指定されても何もしないよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
-    model.addChatView(fChatPanel);
+    model.addObserver(fChatPanel);
 
     new Expectations() {
       {
@@ -160,7 +160,7 @@ public class ChatServerModelTest {
   @Test
   public void messageを呼び出されたら通知文を更新してビューに通知するよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
-    model.addChatView(fChatPanel);
+    model.addObserver(fChatPanel);
 
     new Expectations() {
       {
@@ -185,7 +185,7 @@ public class ChatServerModelTest {
   @Test
   public void sendServerMessageの引数に空文字が指定されても何もしないよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
-    model.addChatView(fChatPanel);
+    model.addObserver(fChatPanel);
     model.joinClient(new Client(Integer.valueOf(0), "aaa"));
     model.joinClient(new Client(Integer.valueOf(1), "bbb"));
 
@@ -213,7 +213,7 @@ public class ChatServerModelTest {
   @Test
   public void sendServerMessageを呼び出されたら全クライアントにメッセージを送ってビューに通知するよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
-    model.addChatView(fChatPanel);
+    model.addObserver(fChatPanel);
     model.joinClient(new Client(Integer.valueOf(0), "aaa"));
     model.joinClient(new Client(Integer.valueOf(1), "bbb"));
 
@@ -242,7 +242,7 @@ public class ChatServerModelTest {
   public void appendMessageの引数に空文字列が指定されたら何もしないよ() throws NoSuchMethodException, SecurityException,
       IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     final ChatServerModel model = new ChatServerModel(fGroup);
-    model.addChatView(fChatPanel);
+    model.addObserver(fChatPanel);
     final Method appendMessage = ChatServerModel.class.getDeclaredMethod("appendMessage", String.class);
     appendMessage.setAccessible(true);
 
@@ -260,7 +260,7 @@ public class ChatServerModelTest {
   public void appendMessageを呼び出されたら通知文を更新してビューに通知するよ() throws NoSuchMethodException, SecurityException,
       IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     final ChatServerModel model = new ChatServerModel(fGroup);
-    model.addChatView(fChatPanel);
+    model.addObserver(fChatPanel);
     final Method appendMessage = ChatServerModel.class.getDeclaredMethod("appendMessage", String.class);
     appendMessage.setAccessible(true);
 

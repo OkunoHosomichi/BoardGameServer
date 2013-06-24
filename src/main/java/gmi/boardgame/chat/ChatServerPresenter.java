@@ -28,7 +28,7 @@ final class ChatServerPresenter extends Observable implements ChatPresenter {
   @Override
   public void addChatView(ChatView view) throws NullPointerException {
     addObserver(view);
-    fModel.addChatView(view);
+    fModel.addObserver(view);
   }
 
   @Override

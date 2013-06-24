@@ -1,17 +1,10 @@
 package gmi.boardgame.chat;
 
 import java.util.List;
+import java.util.Observer;
 
 interface ChatModel {
-  /**
-   * ビューを追加します。
-   * 
-   * @param view
-   *          追加するビュー。nullを指定できません。
-   * @throws NullPointerException
-   *           viewがnullの場合。
-   */
-  void addChatView(ChatView view) throws NullPointerException;
+  void addObserver(Observer o);
 
   /**
    * チャットに参加しているクライアントのニックネーム一覧を返します。 一覧は変更できません。
