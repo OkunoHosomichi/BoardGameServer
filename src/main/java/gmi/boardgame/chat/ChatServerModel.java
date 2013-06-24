@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
-public final class ChatServerModel extends Observable implements ChatModel {
+final class ChatServerModel extends Observable implements ChatModel {
   /**
    * 行の区切り文字。
    */

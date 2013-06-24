@@ -2,7 +2,7 @@ package gmi.boardgame.chat;
 
 import java.util.List;
 
-public interface ChatModel {
+interface ChatModel {
   /**
    * ビューを追加します。
    * 

@@ -1,5 +1,5 @@
 package gmi.boardgame.chat;
 
-public class ChatServer implements ChatPresenter {
+final class ChatServer implements ChatPresenter {
 
 }

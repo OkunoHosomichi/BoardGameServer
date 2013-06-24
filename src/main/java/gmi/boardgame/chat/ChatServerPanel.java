@@ -16,7 +16,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 @SuppressWarnings("serial")
-public class ChatServerPanel extends JPanel implements ChatView {
+final class ChatServerPanel extends JPanel implements ChatView {
   /**
    * 接続したクライアント名を一覧表示するリスト。
    */
@@ -48,7 +48,7 @@ public class ChatServerPanel extends JPanel implements ChatView {
   }
 
   /**
-   * コンポーネントを初期設定する。
+   * コンポーネントを初期設定します。
    */
   private void initializeComponents() {
     fServerMessageField.setColumns(10);
@@ -56,8 +56,7 @@ public class ChatServerPanel extends JPanel implements ChatView {
   }
 
   /**
-   * GroupLayoutを使ってコンポーネントを配置する。<br>
-   * コードはWindowBuilderで自動生成した。
+   * GroupLayoutを使ってコンポーネントを配置します。 コードはWindowBuilderで自動生成ししました。
    */
   private void layoutComponents() {
     final JScrollPane scrollpane = new JScrollPane(fServerInformation);
