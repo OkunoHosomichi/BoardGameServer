@@ -27,43 +27,37 @@ final class ChatServerPresenter extends Observable implements ChatPresenter {
 
   @Override
   public void addChatView(ChatView view) throws NullPointerException {
-    // TODO 自動生成されたメソッド・スタブ
-
+    addObserver(view);
+    fModel.addChatView(view);
   }
 
   @Override
   public List<String> getClientList() {
-    // TODO 自動生成されたメソッド・スタブ
-    return null;
+    return fModel.getClientList();
   }
 
   @Override
   public String getMessage() {
-    // TODO 自動生成されたメソッド・スタブ
-    return null;
+    return fModel.getMessage();
   }
 
   @Override
   public void joinClient(Client client) throws NullPointerException {
-    // TODO 自動生成されたメソッド・スタブ
-
+    fModel.joinClient(client);
   }
 
   @Override
   public void leaveClient(Client client) throws NullPointerException, RuntimeException {
-    // TODO 自動生成されたメソッド・スタブ
-
+    fModel.leaveClient(client);
   }
 
   @Override
   public void message(String message) throws NullPointerException {
-    // TODO 自動生成されたメソッド・スタブ
-
+    fModel.message(message);
   }
 
   @Override
   public void sendServerMessage(String message) throws NullPointerException {
-    // TODO 自動生成されたメソッド・スタブ
-
+    fModel.sendServerMessage(message);
   }
 }
