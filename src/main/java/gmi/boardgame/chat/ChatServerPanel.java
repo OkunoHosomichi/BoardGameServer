@@ -1,7 +1,10 @@
 package gmi.boardgame.chat;
 
+import gmi.utils.exceptions.NullArgumentException;
+
 import java.util.Observable;
 
+import javax.inject.Inject;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JList;
@@ -10,10 +13,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 @SuppressWarnings("serial")
 final class ChatServerPanel extends JPanel implements ChatView {
@@ -34,9 +33,19 @@ final class ChatServerPanel extends JPanel implements ChatView {
    */
   private final JTextField fServerMessageField = new JTextField();
 
-  public ChatServerPanel() {
-    final Injector injector = Guice.createInjector(new ChatServerModule());
-    fModel = injector.getInstance(ChatModel.class);
+  /**
+   * モデルを指定してインスタンスを構築します。
+   * 
+   * @param model
+   *          モデル。nullを指定できません。
+   * @throws NullPointerException
+   *           modelがnullの場合。
+   */
+  @Inject
+  public ChatServerPanel(ChatModel model) throws NullPointerException {
+    if (model == null) throw new NullArgumentException("model");
+
+    fModel = model;
     fModel.addChatView(this);
 
     initializeComponents();
@@ -84,13 +93,5 @@ final class ChatServerPanel extends JPanel implements ChatView {
                 GroupLayout.PREFERRED_SIZE)));
 
     setLayout(groupLayout);
-  }
-
-  private class ChatServerModule extends AbstractModule {
-
-    @Override
-    protected void configure() {
-      bind(ChatModel.class).to(ChatServerModel.class).asEagerSingleton();
-    }
   }
 }
