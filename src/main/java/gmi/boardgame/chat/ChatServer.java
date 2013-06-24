@@ -28,6 +28,17 @@ public final class ChatServer {
   }
 
   /**
+   * チャット画面を返します。
+   * 
+   * @return チャット画面のパネル。nullではありません。
+   */
+  public JPanel getPanel() {
+    assert fPanel != null;
+
+    return fPanel;
+  }
+
+  /**
    * ビュー、モデル、プレゼンテーションモデルを切り替えたいときはこのクラスのconfigure()を変更します。
    * モデルだけはtoInstance()を使っていますが、これはコンストラクタにChannelGroupを渡すためです。
    * 
