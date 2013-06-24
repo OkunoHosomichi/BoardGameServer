@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
+import javax.inject.Inject;
+
 final class ChatServerModel extends Observable implements ChatModel {
   /**
    * 行の区切り文字。
@@ -34,6 +36,7 @@ final class ChatServerModel extends Observable implements ChatModel {
    * @throws NullPointerException
    *           groupがnullの場合。
    */
+  @Inject
   public ChatServerModel(ChannelGroup group) {
     if (group == null) throw new NullArgumentException("group");
 
