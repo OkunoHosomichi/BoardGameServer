@@ -12,12 +12,12 @@ public class ChatServerPanelTest {
   @Mocked
   ChatServerPresenter fPresenter;
 
-  @Test(expectedExceptions = { NullPointerException.class })
+  @Test(groups = { "LocalOnly" }, expectedExceptions = { NullPointerException.class })
   public void コンストラクタの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
     new ChatServerPanel(null);
   }
 
-  @Test
+  @Test(groups = { "LocalOnly" })
   public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {
     final ChatServerPanel panel = new ChatServerPanel(fPresenter);
 

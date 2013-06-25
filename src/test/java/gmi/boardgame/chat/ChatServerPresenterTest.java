@@ -14,24 +14,24 @@ public class ChatServerPresenterTest {
   @Mocked
   ChatView fView;
 
-  @Test(expectedExceptions = { NullPointerException.class })
+  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
   public void コンストラクタの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
     new ChatServerPresenter(null);
   }
 
-  @Test
+  @Test(groups = { "AllEnv" })
   public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {
     final ChatPresenter presenter = new ChatServerPresenter(fModel);
 
     assertTrue(Deencapsulation.getField(presenter, "fModel") == fModel);
   }
 
-  @Test(expectedExceptions = { NullPointerException.class })
+  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
   public void addChatViewの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
     new ChatServerPresenter(fModel).addChatView(null);
   }
 
-  @Test
+  @Test(groups = { "AllEnv" })
   public void addChatViewを呼び出されたらビューを登録するよ() {
     final ChatServerPresenter presenter = new ChatServerPresenter(fModel);
 

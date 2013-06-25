@@ -27,19 +27,19 @@ public class ChatServerModelTest {
   @Mocked
   private Channel fTestChannel02;
 
-  @Test(expectedExceptions = { NullPointerException.class })
+  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
   public void コンストラクタの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
     new ChatServerModel(null);
   }
 
-  @Test
+  @Test(groups = { "AllEnv" })
   public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {
     final ChatModel model = new ChatServerModel(fGroup);
     assertTrue(model.getMessage().isEmpty());
     assertEquals(model.getClientList().size(), 0);
   }
 
-  @Test
+  @Test(groups = { "AllEnv" })
   public void getClientListを呼ばれたらクライアントのリストを返すよ() {
     final ChatModel model = new ChatServerModel(fGroup);
     model.joinClient(new Client(Integer.valueOf(0), "aaa"));
@@ -53,7 +53,7 @@ public class ChatServerModelTest {
     assertEquals(model.getClientList(), expected);
   }
 
-  @Test(expectedExceptions = { UnsupportedOperationException.class })
+  @Test(groups = { "AllEnv" }, expectedExceptions = { UnsupportedOperationException.class })
   public void getClientListが返すリストは変更不能だよ() {
     final ChatModel model = new ChatServerModel(fGroup);
     model.joinClient(new Client(Integer.valueOf(0), "aaa"));
@@ -64,13 +64,13 @@ public class ChatServerModelTest {
     model.getClientList().add("eee");
   }
 
-  @Test(expectedExceptions = { NullPointerException.class })
+  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
   public void joinClientの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
     model.joinClient(null);
   }
 
-  @Test
+  @Test(groups = { "AllEnv" })
   public void joinClientを呼び出されたらクライアント一覧を更新してビューに通知するよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
@@ -94,13 +94,13 @@ public class ChatServerModelTest {
     assertEquals(model.getClientList(), expected);
   }
 
-  @Test(expectedExceptions = { NullPointerException.class })
+  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
   public void leaveClientの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
     model.leaveClient(null);
   }
 
-  @Test(expectedExceptions = { RuntimeException.class })
+  @Test(groups = { "AllEnv" }, expectedExceptions = { RuntimeException.class })
   public void leaveClientを呼び出されたけど指定されたクライアントが一覧になかったらRuntimeExceptionを投げるよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
@@ -111,7 +111,7 @@ public class ChatServerModelTest {
     model.leaveClient(new Client(Integer.valueOf(1), "test"));
   }
 
-  @Test
+  @Test(groups = { "AllEnv" })
   public void leaveClientを呼び出されたらクライアント一覧から削除してビューに通知するよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
@@ -134,13 +134,13 @@ public class ChatServerModelTest {
     assertEquals(model.getClientList(), expected);
   }
 
-  @Test(expectedExceptions = { NullPointerException.class })
+  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
   public void messageの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
     model.message(null);
   }
 
-  @Test
+  @Test(groups = { "AllEnv" })
   public void messageの引数に空文字列が指定されても何もしないよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
@@ -157,7 +157,7 @@ public class ChatServerModelTest {
     assertTrue(model.getMessage().isEmpty());
   }
 
-  @Test
+  @Test(groups = { "AllEnv" })
   public void messageを呼び出されたら通知文を更新してビューに通知するよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
@@ -176,13 +176,13 @@ public class ChatServerModelTest {
     assertEquals(model.getMessage(), "test01" + LINE_SEPARATOR + "test02" + LINE_SEPARATOR + "test03" + LINE_SEPARATOR);
   }
 
-  @Test(expectedExceptions = { NullPointerException.class })
+  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
   public void sendServerMessageの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
     model.sendServerMessage(null);
   }
 
-  @Test
+  @Test(groups = { "AllEnv" })
   public void sendServerMessageの引数に空文字が指定されても何もしないよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
@@ -210,7 +210,7 @@ public class ChatServerModelTest {
     assertTrue(model.getMessage().isEmpty());
   }
 
-  @Test
+  @Test(groups = { "AllEnv" })
   public void sendServerMessageを呼び出されたら全クライアントにメッセージを送ってビューに通知するよ() {
     final ChatServerModel model = new ChatServerModel(fGroup);
     model.addObserver(fChatPanel);
@@ -238,7 +238,7 @@ public class ChatServerModelTest {
     assertEquals(model.getMessage(), "全クライアントに\"test\"と送信しました。" + LINE_SEPARATOR);
   }
 
-  @Test
+  @Test(groups = { "AllEnv" })
   public void appendMessageの引数に空文字列が指定されたら何もしないよ() throws NoSuchMethodException, SecurityException,
       IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     final ChatServerModel model = new ChatServerModel(fGroup);
@@ -256,7 +256,7 @@ public class ChatServerModelTest {
     appendMessage.invoke(model, "");
   }
 
-  @Test
+  @Test(groups = { "AllEnv" })
   public void appendMessageを呼び出されたら通知文を更新してビューに通知するよ() throws NoSuchMethodException, SecurityException,
       IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     final ChatServerModel model = new ChatServerModel(fGroup);

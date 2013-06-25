@@ -6,23 +6,23 @@ import static org.testng.Assert.*;
 
 public class ClientTest {
 
-  @Test(expectedExceptions = { NullPointerException.class })
+  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
   public void IDがnullだとNullPointerExceptionを投げるよ() {
     new Client(null, "test");
   }
 
-  @Test(expectedExceptions = { NullPointerException.class })
+  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
   public void nickNameがnullだとNullPointerWxceptionを投げるよ() {
     new Client(Integer.valueOf(0), null);
   }
 
-  @Test(expectedExceptions = { IllegalArgumentException.class })
+  @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
   public void nickNameが空文字列だとIllegalArgumentExceptionを投げるよ() {
 
     new Client(Integer.valueOf(0), "");
   }
 
-  @Test
+  @Test(groups = { "AllEnv" })
   public void それ以外だとちゃんとクラスを作るよ() {
     final Client instance = new Client(Integer.valueOf(0), "test");
     assertEquals(instance.getChannelID(), Integer.valueOf(0));
