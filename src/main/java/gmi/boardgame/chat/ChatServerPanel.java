@@ -49,6 +49,7 @@ final class ChatServerPanel extends JPanel implements ChatView {
     fPresenter.addChatView(this);
 
     initializeComponents();
+    initializeEventListener();
     layoutComponents();
   }
 
@@ -56,11 +57,13 @@ final class ChatServerPanel extends JPanel implements ChatView {
   public void update(Observable o, Object arg) {
   }
 
+  private void initializeEventListener() {
+  }
+
   /**
    * コンポーネントを初期設定します。
    */
   private void initializeComponents() {
-    fServerMessageField.setColumns(10);
     fClientNameList.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
   }
 
