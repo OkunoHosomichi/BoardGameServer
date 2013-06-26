@@ -4,6 +4,7 @@ import gmi.utils.exceptions.NullArgumentException;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Observable;
 
 import javax.inject.Inject;
@@ -108,5 +109,16 @@ final class ChatServerPanel extends JPanel implements ChatView {
                 GroupLayout.PREFERRED_SIZE)));
 
     setLayout(groupLayout);
+  }
+
+  /**
+   * 接続したクライアントの一覧をfClientNameListに設定して表示させます。
+   * 
+   * @param clientList
+   *          接続しているクライアントの一覧。nullを指定できません。
+   * @throws NullPointerException
+   *           clientListがnullの場合。
+   */
+  private void setClientList(List<String> clientList) throws NullPointerException {
   }
 }
