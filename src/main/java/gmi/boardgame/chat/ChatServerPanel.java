@@ -119,10 +119,8 @@ final class ChatServerPanel extends JPanel implements ChatView {
    * 
    * @param clientList
    *          接続しているクライアントの一覧。nullを指定できません。
-   * @throws NullPointerException
-   *           clientListがnullの場合。
    */
-  private void setClientList(List<String> clientList) throws NullPointerException {
+  private void setClientList(List<String> clientList) {
     assert SwingUtilities.isEventDispatchThread();
     assert clientList != null;
 
@@ -133,5 +131,15 @@ final class ChatServerPanel extends JPanel implements ChatView {
     }
 
     fClientNameList.setModel(model);
+  }
+
+  /**
+   * サーバ情報をfServerInformationに設定して表示させます。
+   * このメソッドはイベントディスパッチスレッド内で呼び出されるることを想定してassert文によるチェックを行っています。
+   * 
+   * @param information
+   *          サーバの情報。nullを指定できません。
+   */
+  private void setServerInformation(String information) {
   }
 }
