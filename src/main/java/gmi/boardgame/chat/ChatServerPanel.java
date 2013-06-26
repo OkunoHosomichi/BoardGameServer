@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Observable;
 
 import javax.inject.Inject;
+import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JList;
@@ -15,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 @SuppressWarnings("serial")
@@ -113,6 +115,7 @@ final class ChatServerPanel extends JPanel implements ChatView {
 
   /**
    * 接続したクライアントの一覧をfClientNameListに設定して表示させます。
+   * このメソッドはイベントディスパッチスレッド内で呼び出されるることを想定してassert文によるチェックを行っています。
    * 
    * @param clientList
    *          接続しているクライアントの一覧。nullを指定できません。
@@ -120,5 +123,15 @@ final class ChatServerPanel extends JPanel implements ChatView {
    *           clientListがnullの場合。
    */
   private void setClientList(List<String> clientList) throws NullPointerException {
+    assert SwingUtilities.isEventDispatchThread();
+    assert clientList != null;
+
+    final DefaultListModel<String> model = new DefaultListModel<>();
+
+    for (final String nickName : clientList) {
+      model.addElement(nickName);
+    }
+
+    fClientNameList.setModel(model);
   }
 }
