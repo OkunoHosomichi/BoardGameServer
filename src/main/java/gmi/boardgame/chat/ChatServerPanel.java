@@ -141,5 +141,9 @@ final class ChatServerPanel extends JPanel implements ChatView {
    *          サーバの情報。nullを指定できません。
    */
   private void setServerInformation(String information) {
+    assert SwingUtilities.isEventDispatchThread();
+    assert information != null;
+
+    fServerInformation.setText(information);
   }
 }
