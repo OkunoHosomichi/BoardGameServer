@@ -58,8 +58,55 @@ final class ChatServerPanel extends JPanel implements ChatView {
     layoutComponents();
   }
 
+  /**
+   * モデル又はプレゼンテーションモデルからの更新通知を元にビューを更新します。 何が更新されたのかをargに指定された文字列で判断し
+   * 、対象をイベントディスパッチスレッドから更新します。これは良いやり方ではない気もしますがどうすれば良いのかわかりません。
+   * 現時点で更新通知で届く文字列は以下の通りです。<br>
+   * clientList - クライアント一覧が更新されたことを示します。<br>
+   * message - サーバ情報が更新されたことを示します。<br>
+   * このメソッドはイベントディスパッチスレッド以外のスレッドから呼び出されることを想定してassert文によるチェックを行っています。
+   * 
+   * @param o
+   *          更新通知を出したオブジェクト。nullを指定できません。
+   * @param arg
+   *          更新情報を知らせる文字列。nullを指定できません。
+   * @throws NullPointerException
+   *           o又はargがnullの場合。
+   * @throws IllegalArgumentException
+   *           argがString型でなかった場合。又はargで渡された文字列が正しい更新情報でなかった場合。
+   */
   @Override
-  public void update(Observable o, Object arg) {
+  public void update(Observable o, Object arg) throws NullPointerException, IllegalArgumentException {
+    // INFO: コメント参照。他に良いやり方を思いついたら直す。
+    assert !SwingUtilities.isEventDispatchThread();
+    if (o == null) throw new NullArgumentException("o");
+    if (arg == null) throw new NullArgumentException("arg");
+    if (!(arg instanceof String)) throw new IllegalArgumentException("argに文字列を渡すようにしてください。");
+
+    // INFO: モデルの通知情報が変更された場合にきちんと修正する。
+    switch ((String) arg) {
+    case "clientList":
+      SwingUtilities.invokeLater(new Runnable() {
+
+        @Override
+        public void run() {
+          setClientList(fPresenter.getClientList());
+        }
+      });
+      break;
+    case "message":
+      SwingUtilities.invokeLater(new Runnable() {
+
+        @Override
+        public void run() {
+          setServerInformation(fPresenter.getMessage());
+        }
+      });
+      break;
+
+    default:
+      throw new IllegalArgumentException("argに正しい更新情報を渡すようにしてください。");
+    }
   }
 
   /**
@@ -115,7 +162,7 @@ final class ChatServerPanel extends JPanel implements ChatView {
 
   /**
    * 接続したクライアントの一覧をfClientNameListに設定して表示させます。
-   * このメソッドはイベントディスパッチスレッド内で呼び出されるることを想定してassert文によるチェックを行っています。
+   * このメソッドはイベントディスパッチスレッド内で呼び出されることを想定してassert文によるチェックを行っています。
    * 
    * @param clientList
    *          接続しているクライアントの一覧。nullを指定できません。
@@ -135,7 +182,7 @@ final class ChatServerPanel extends JPanel implements ChatView {
 
   /**
    * サーバ情報をfServerInformationに設定して表示させます。
-   * このメソッドはイベントディスパッチスレッド内で呼び出されるることを想定してassert文によるチェックを行っています。
+   * このメソッドはイベントディスパッチスレッド内で呼び出されることを想定してassert文によるチェックを行っています。
    * 
    * @param information
    *          サーバの情報。nullを指定できません。
