@@ -2,6 +2,8 @@ package gmi.boardgame.chat;
 
 import gmi.utils.exceptions.NullArgumentException;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Observable;
 
 import javax.inject.Inject;
@@ -57,14 +59,24 @@ final class ChatServerPanel extends JPanel implements ChatView {
   public void update(Observable o, Object arg) {
   }
 
-  private void initializeEventListener() {
-  }
-
   /**
    * コンポーネントを初期設定します。
    */
   private void initializeComponents() {
     fClientNameList.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+  }
+
+  /**
+   * イベントリスナを設定します。
+   */
+  private void initializeEventListener() {
+    fServerMessageField.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        fPresenter.sendServerMessage(fServerMessageField.getText());
+      }
+    });
   }
 
   /**
