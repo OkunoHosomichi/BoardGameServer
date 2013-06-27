@@ -55,7 +55,7 @@ public final class ChatServer {
     protected void configure() {
       bind(JPanel.class).to(ChatServerPanel.class).asEagerSingleton();
       bind(ChatPresenter.class).to(ChatServerPresenter.class).asEagerSingleton();
-      bind(ChatModel.class).toInstance(new ChatServerModel(fGroup));
+      bind(ChatModel.class).toInstance(new ChatServerModel(fGroup, fPipeline));
     }
   }
 }

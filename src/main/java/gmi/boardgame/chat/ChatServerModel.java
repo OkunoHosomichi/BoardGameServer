@@ -43,8 +43,10 @@ final class ChatServerModel extends Observable implements ChatModel {
   @Inject
   public ChatServerModel(ChannelGroup group, ChannelPipeline pipeline) {
     if (group == null) throw new NullArgumentException("group");
+    if (pipeline == null) throw new NullArgumentException("pipeline");
 
     fGroup = group;
+    pipeline.addLast(this);
   }
 
   @Override
