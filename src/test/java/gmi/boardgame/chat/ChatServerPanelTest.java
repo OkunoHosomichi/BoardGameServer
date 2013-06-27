@@ -38,7 +38,7 @@ public class ChatServerPanelTest {
       }
     };
 
-    assertTrue(Deencapsulation.getField(panel, "fPresenter") == fPresenter);
+    assertSame(Deencapsulation.getField(panel, "fPresenter"), fPresenter);
   }
 
   @Test(groups = { "LocalOnly" })

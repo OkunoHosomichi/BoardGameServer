@@ -23,7 +23,7 @@ public class ChatServerPresenterTest {
   public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {
     final ChatPresenter presenter = new ChatServerPresenter(fModel);
 
-    assertTrue(Deencapsulation.getField(presenter, "fModel") == fModel);
+    assertSame(Deencapsulation.getField(presenter, "fModel"), fModel);
   }
 
   @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
