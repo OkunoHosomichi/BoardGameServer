@@ -1,6 +1,7 @@
 package gmi.boardgame.chat;
 
 import gmi.utils.exceptions.NullArgumentException;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.group.ChannelGroup;
 
 import java.util.Collections;
@@ -115,5 +116,23 @@ final class ChatServerModel extends Observable implements ChatModel {
 
     setChanged();
     notifyObservers("message");
+  }
+
+  @Override
+  public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+    // TODO 自動生成されたメソッド・スタブ
+
+  }
+
+  @Override
+  public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+    // TODO 自動生成されたメソッド・スタブ
+
+  }
+
+  @Override
+  public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    // TODO 自動生成されたメソッド・スタブ
+
   }
 }
