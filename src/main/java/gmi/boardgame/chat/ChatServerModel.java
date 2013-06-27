@@ -1,9 +1,10 @@
 package gmi.boardgame.chat;
 
 import gmi.utils.exceptions.NullArgumentException;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelPipeline;
+import io.netty.channel.MessageList;
 import io.netty.channel.group.ChannelGroup;
 
 import java.util.Collections;
@@ -13,7 +14,7 @@ import java.util.Observable;
 
 import javax.inject.Inject;
 
-final class ChatServerModel extends Observable implements ChatModel, ChannelHandler {
+final class ChatServerModel extends Observable implements ChatModel, ChannelInboundHandler {
   /**
    * 行の区切り文字。
    */
@@ -138,6 +139,54 @@ final class ChatServerModel extends Observable implements ChatModel, ChannelHand
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    // TODO 自動生成されたメソッド・スタブ
+
+  }
+
+  @Override
+  public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+    // TODO 自動生成されたメソッド・スタブ
+
+  }
+
+  @Override
+  public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+    // TODO 自動生成されたメソッド・スタブ
+
+  }
+
+  @Override
+  public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    // TODO 自動生成されたメソッド・スタブ
+
+  }
+
+  @Override
+  public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    // TODO 自動生成されたメソッド・スタブ
+
+  }
+
+  @Override
+  public void channelReadSuspended(ChannelHandlerContext ctx) throws Exception {
+    // TODO 自動生成されたメソッド・スタブ
+
+  }
+
+  @Override
+  public void messageReceived(ChannelHandlerContext ctx, MessageList<Object> msgs) throws Exception {
+    // TODO 自動生成されたメソッド・スタブ
+
+  }
+
+  @Override
+  public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+    // TODO 自動生成されたメソッド・スタブ
+
+  }
+
+  @Override
+  public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
     // TODO 自動生成されたメソッド・スタブ
 
   }
