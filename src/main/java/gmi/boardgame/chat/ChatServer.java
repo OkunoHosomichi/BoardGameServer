@@ -1,6 +1,7 @@
 package gmi.boardgame.chat;
 
 import gmi.utils.exceptions.NullArgumentException;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.group.ChannelGroup;
 
 import javax.swing.JPanel;
@@ -13,14 +14,16 @@ public final class ChatServer {
   private final JPanel fPanel;
 
   /**
-   * 指定されたチャンネルグループからインスタンスを作成します。
+   * 指定されたチャンネルグループとパイプラインからインスタンスを作成します。
    * 
    * @param group
    *          チャンネルグループ。nullを指定できません。
+   * @param pipeline
+   *          パイプライン。nullを指定できません。
    * @throws NullPointerException
-   *           groupがnullの場合。
+   *           group又はpipelineがnullの場合。
    */
-  public ChatServer(ChannelGroup group) throws NullPointerException {
+  public ChatServer(ChannelGroup group, ChannelPipeline pipeline) throws NullPointerException {
     if (group == null) throw new NullArgumentException("group");
 
     fGroup = group;
