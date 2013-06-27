@@ -44,7 +44,7 @@ public class ChatServerModelTest {
 
   @Test(groups = { "AllEnv" })
   public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {
-    final ChatModel model = new ChatServerModel(fGroup, fPipeline);
+    final ChatServerModel model = new ChatServerModel(fGroup, fPipeline);
 
     new Verifications() {
       {

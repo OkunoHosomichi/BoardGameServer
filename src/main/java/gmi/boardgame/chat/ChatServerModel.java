@@ -1,6 +1,7 @@
 package gmi.boardgame.chat;
 
 import gmi.utils.exceptions.NullArgumentException;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.group.ChannelGroup;
@@ -12,7 +13,7 @@ import java.util.Observable;
 
 import javax.inject.Inject;
 
-final class ChatServerModel extends Observable implements ChatModel {
+final class ChatServerModel extends Observable implements ChatModel, ChannelHandler {
   /**
    * 行の区切り文字。
    */

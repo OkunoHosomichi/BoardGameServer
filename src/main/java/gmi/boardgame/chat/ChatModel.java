@@ -1,11 +1,9 @@
 package gmi.boardgame.chat;
 
-import io.netty.channel.ChannelHandler;
-
 import java.util.List;
 import java.util.Observer;
 
-interface ChatModel extends ChannelHandler {
+interface ChatModel {
   /**
    * このオブジェクトの Observer のセットに Observer を追加します (セット内にすでにあるいくつかの Observer
    * と同じでない場合)。複数の Observer に通知が配信される順序は未指定です。クラスのコメントを参照してください。
