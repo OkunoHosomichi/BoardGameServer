@@ -29,9 +29,7 @@ public class ChatServerTest {
   public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {
     final ChatServer server = new ChatServer(fGroup, fPipeline);
 
-    assertTrue(Deencapsulation.getField(server, "fGroup") == fGroup);
     assertNotNull(Deencapsulation.getField(server, "fPanel"));
     assertTrue(Deencapsulation.getField(server, "fPanel") instanceof ChatView);
-    assertTrue(Deencapsulation.getField(server, "fPipeline") == fPipeline);
   }
 }

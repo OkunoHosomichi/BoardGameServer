@@ -10,9 +10,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 
 public final class ChatServer {
-  private final ChannelGroup fGroup;
   private final JPanel fPanel;
-  private final ChannelPipeline fPipeline;
 
   /**
    * 指定されたチャンネルグループとパイプラインからインスタンスを作成します。
@@ -28,9 +26,7 @@ public final class ChatServer {
     if (group == null) throw new NullArgumentException("group");
     if (pipeline == null) throw new NullArgumentException("pipeline");
 
-    fGroup = group;
-    fPipeline = pipeline;
-    fPanel = Guice.createInjector(new ChatServerModule()).getInstance(JPanel.class);
+    fPanel = Guice.createInjector(new ChatServerModule(group, pipeline)).getInstance(JPanel.class);
   }
 
   /**
@@ -51,6 +47,17 @@ public final class ChatServer {
    * @author おくのほそみち
    */
   private final class ChatServerModule extends AbstractModule {
+    private final ChannelGroup fGroup;
+    private final ChannelPipeline fPipeline;
+
+    private ChatServerModule(ChannelGroup group, ChannelPipeline pipeline) {
+      assert group != null;
+      assert pipeline != null;
+
+      fGroup = group;
+      fPipeline = pipeline;
+    }
+
     @Override
     protected void configure() {
       bind(JPanel.class).to(ChatServerPanel.class).asEagerSingleton();
