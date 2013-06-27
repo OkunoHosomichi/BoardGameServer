@@ -1,6 +1,7 @@
 package gmi.boardgame.chat;
 
 import gmi.utils.exceptions.NullArgumentException;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelPipeline;
@@ -52,6 +53,34 @@ final class ChatServerModel extends Observable implements ChatModel, ChannelInbo
   }
 
   @Override
+  public void channelActive(ChannelHandlerContext ctx) throws Exception {
+  }
+
+  @Override
+  public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+  }
+
+  @Override
+  public void channelReadSuspended(ChannelHandlerContext ctx) throws Exception {
+  }
+
+  @Override
+  public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+  }
+
+  @Override
+  public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+  }
+
+  @Override
+  public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
+  }
+
+  @Override
+  public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+  }
+
+  @Override
   public List<String> getClientList() {
     final List<String> result = new LinkedList<>();
 
@@ -67,6 +96,14 @@ final class ChatServerModel extends Observable implements ChatModel, ChannelInbo
     assert fMessage.toString() != null;
 
     return fMessage.toString();
+  }
+
+  @Override
+  public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+  }
+
+  @Override
+  public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
   }
 
   @Override
@@ -97,6 +134,29 @@ final class ChatServerModel extends Observable implements ChatModel, ChannelInbo
   }
 
   @Override
+  public void messageReceived(ChannelHandlerContext ctx, MessageList<Object> requests) throws Exception {
+    // TODO: とりあえず入力を返してるだけ。変更していく。
+    final MessageList<String> msgs = requests.cast();
+    for (int i = 0; i < msgs.size(); i++) {
+      final String msg = msgs.get(i);
+      // Send the received message to all channels but the current one.
+      for (final Channel c : fGroup) {
+        if (c != ctx.channel()) {
+          c.write("[" + ctx.channel().remoteAddress() + "] " + msg + '\n');
+        } else {
+          c.write("[you] " + msg + '\n');
+        }
+      }
+
+      // Close the connection if the client has sent 'bye'.
+      if ("bye".equals(msg.toLowerCase())) {
+        ctx.close();
+      }
+    }
+    msgs.releaseAllAndRecycle();
+  }
+
+  @Override
   public void sendServerMessage(String message) throws NullPointerException {
     if (message == null) throw new NullArgumentException("message");
     if (message.isEmpty()) return;
@@ -106,6 +166,10 @@ final class ChatServerModel extends Observable implements ChatModel, ChannelInbo
     }
 
     appendMessage("全クライアントに\"" + message + "\"と送信しました。");
+  }
+
+  @Override
+  public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
   }
 
   /**
@@ -123,71 +187,5 @@ final class ChatServerModel extends Observable implements ChatModel, ChannelInbo
 
     setChanged();
     notifyObservers("message");
-  }
-
-  @Override
-  public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-    // TODO 自動生成されたメソッド・スタブ
-
-  }
-
-  @Override
-  public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-    // TODO 自動生成されたメソッド・スタブ
-
-  }
-
-  @Override
-  public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-    // TODO 自動生成されたメソッド・スタブ
-
-  }
-
-  @Override
-  public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-    // TODO 自動生成されたメソッド・スタブ
-
-  }
-
-  @Override
-  public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-    // TODO 自動生成されたメソッド・スタブ
-
-  }
-
-  @Override
-  public void channelActive(ChannelHandlerContext ctx) throws Exception {
-    // TODO 自動生成されたメソッド・スタブ
-
-  }
-
-  @Override
-  public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-    // TODO 自動生成されたメソッド・スタブ
-
-  }
-
-  @Override
-  public void channelReadSuspended(ChannelHandlerContext ctx) throws Exception {
-    // TODO 自動生成されたメソッド・スタブ
-
-  }
-
-  @Override
-  public void messageReceived(ChannelHandlerContext ctx, MessageList<Object> msgs) throws Exception {
-    // TODO 自動生成されたメソッド・スタブ
-
-  }
-
-  @Override
-  public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-    // TODO 自動生成されたメソッド・スタブ
-
-  }
-
-  @Override
-  public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
-    // TODO 自動生成されたメソッド・スタブ
-
   }
 }
