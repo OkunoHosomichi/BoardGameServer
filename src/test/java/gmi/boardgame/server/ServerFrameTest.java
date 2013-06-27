@@ -9,7 +9,7 @@ import static org.testng.Assert.*;
 public class ServerFrameTest {
   private static final int DEFAULT_PORT_NUMBER = 60935;
 
-  @Test(groups = { "AllEnv" })
+  @Test(groups = { "LocalOnly" })
   public void コンストラクタの引数portNumberに範囲外の値を指定したらデフォルトの番号を設定するよ() {
     ServerFrame frame = new ServerFrame(49512);
     assertEquals(Deencapsulation.getField(frame, "fPortNumber"), Integer.valueOf(DEFAULT_PORT_NUMBER));
@@ -24,7 +24,7 @@ public class ServerFrameTest {
     assertEquals(Deencapsulation.getField(frame, "fPortNumber"), Integer.valueOf(DEFAULT_PORT_NUMBER));
   }
 
-  @Test(groups = { "AllEnv" })
+  @Test(groups = { "LocalOnly" })
   public void コンストラクタの引数を正しく指定したらポート番号に設定するよ() {
     ServerFrame frame = new ServerFrame(49513);
     assertEquals(Deencapsulation.getField(frame, "fPortNumber"), Integer.valueOf(49513));
