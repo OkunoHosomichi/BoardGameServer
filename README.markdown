@@ -37,3 +37,7 @@ Apache License 2.0
 
 ##Drone.ioについて
 Drone.ioを利用しているのは気分です。Bitbucketのリポジトリにpushするだけで実行してくれる上に公開リポジトリは無料でテストできるのでやってみました。
+
+##Hg-Gitについて
+メインはBitbucketですが、Hg-Gitを試そうとGithubにもPushしています。問題が出たらメモします。
+* Hg-Gitを使ってGithubにPushしようとすると変更点が無いと言われてPushできない時がある。そんな時は"hg bookmark -f master"と入力すると良い。
