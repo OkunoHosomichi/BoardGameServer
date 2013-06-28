@@ -1,5 +1,7 @@
 package gmi.boardgame.server;
 
+import gmi.utils.IntRange;
+
 import javax.swing.JFrame;
 
 @SuppressWarnings("serial")
@@ -8,6 +10,10 @@ public final class ServerFrame extends JFrame {
    * デフォルトのポート番号。ポート番号は49513～65535までの値を指定します。
    */
   private static final int DEFAULT_PORT_NUMBER = 60935;
+  /**
+   * ポート番号に使える値の範囲。49513～65535までの値です。
+   */
+  private static final IntRange PORT_RANGE = new IntRange(49513, 65535);
   private final int fPortNumber;
 
   /**
@@ -25,8 +31,8 @@ public final class ServerFrame extends JFrame {
    *          クライアントの接続を待つポート番号。
    */
   public ServerFrame(int portNumber) {
-    assert (DEFAULT_PORT_NUMBER > 49512) && (DEFAULT_PORT_NUMBER < 65536);
+    assert PORT_RANGE.Contains(DEFAULT_PORT_NUMBER);
 
-    fPortNumber = ((portNumber > 49512) && (portNumber < 65536)) ? portNumber : DEFAULT_PORT_NUMBER;
+    fPortNumber = PORT_RANGE.Contains(portNumber) ? portNumber : DEFAULT_PORT_NUMBER;
   }
 }
