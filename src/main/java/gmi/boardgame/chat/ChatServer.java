@@ -51,7 +51,6 @@ public final class ChatServer {
     @Override
     protected void configure() {
       bind(JPanel.class).to(ChatServerPanel.class).asEagerSingleton();
-      bind(ChatPresenter.class).to(ChatServerPresenter.class).asEagerSingleton();
       bind(ChatModel.class).to(ChatServerModel.class).asEagerSingleton();
     }
   }

@@ -1,9 +1,5 @@
 package gmi.boardgame.chat;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.group.ChannelGroup;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -18,14 +14,6 @@ public class ChatServerModelTest {
   private static final String LINE_SEPARATOR = System.getProperty("line.separator");
   @Mocked
   private ChatServerPanel fChatPanel;
-  @Mocked
-  private ChannelGroup fGroup;
-  @Mocked
-  private ChannelPipeline fPipeline;
-  @Mocked
-  private Channel fTestChannel01;
-  @Mocked
-  private Channel fTestChannel02;
 
   @Test(groups = { "AllEnv" })
   public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {

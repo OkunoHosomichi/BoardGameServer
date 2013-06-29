@@ -22,9 +22,9 @@ final class ChatServerPanel extends JPanel implements ChatView {
    */
   private final JList<String> fClientNameList = new JList<>();
   /**
-   * プレゼンタクラス。
+   * モデルクラス。
    */
-  private final ChatPresenter fPresenter;
+  private final ChatModel fModel;
   /**
    * サーバの情報を表示するためのテキストエリア。
    */
@@ -35,19 +35,19 @@ final class ChatServerPanel extends JPanel implements ChatView {
   private final JTextField fServerMessageField = new JTextField();
 
   /**
-   * 指定されたプレゼンタからインスタンスを構築します。
+   * 指定されたモデルからインスタンスを構築します。
    * 
-   * @param presenter
-   *          プレゼンタ。nullを指定できません。
+   * @param model
+   *          モデル。nullを指定できません。
    * @throws NullPointerException
-   *           presenterがnullの場合。
+   *           modelがnullの場合。
    */
   @Inject
-  public ChatServerPanel(ChatPresenter presenter) throws NullPointerException {
-    if (presenter == null) throw new NullArgumentException("model");
+  public ChatServerPanel(ChatModel model) throws NullPointerException {
+    if (model == null) throw new NullArgumentException("model");
 
-    fPresenter = presenter;
-    fPresenter.addChatView(this);
+    fModel = model;
+    fModel.addObserver(this);
 
     initializeComponents();
     initializeEventListener();
@@ -55,9 +55,9 @@ final class ChatServerPanel extends JPanel implements ChatView {
   }
 
   /**
-   * モデル又はプレゼンテーションモデルからの更新通知を元にビューを更新します。 何が更新されたのかをargに指定された文字列で判断し
-   * 、対象をイベントディスパッチスレッドから更新します。これは良いやり方ではない気もしますがどうすれば良いのかわかりません。
-   * 現時点で更新通知で届く文字列は以下の通りです。<br>
+   * モデルからの更新通知を元にビューを更新します。
+   * 何が更新されたのかをargに指定された文字列で判断し、対象をイベントディスパッチスレッドから更新します。
+   * これは良いやり方ではない気もしますがどうすれば良いのかわかりません。 現時点で更新通知で届く文字列は以下の通りです。<br>
    * message - サーバ情報が更新されたことを示します。<br>
    * このメソッドはイベントディスパッチスレッド以外のスレッドから呼び出されることを想定してassert文によるチェックを行っています。
    * 
@@ -85,7 +85,7 @@ final class ChatServerPanel extends JPanel implements ChatView {
 
         @Override
         public void run() {
-          setServerInformation(fPresenter.getMessage());
+          setServerInformation(fModel.getMessage());
         }
       });
       break;

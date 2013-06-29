@@ -18,7 +18,7 @@ public class ChatServerPanelTest {
   private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
   @Mocked
-  ChatServerPresenter fPresenter;
+  ChatServerModel fModel;
 
   @Test(groups = { "LocalOnly" }, expectedExceptions = { NullPointerException.class })
   public void コンストラクタの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
@@ -27,20 +27,20 @@ public class ChatServerPanelTest {
 
   @Test(groups = { "LocalOnly" })
   public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {
-    final ChatServerPanel panel = new ChatServerPanel(fPresenter);
+    final ChatServerPanel panel = new ChatServerPanel(fModel);
 
     new Verifications() {
       {
-        fPresenter.addChatView(panel);
+        fModel.addObserver(panel);
       }
     };
 
-    assertSame(Deencapsulation.getField(panel, "fPresenter"), fPresenter);
+    assertSame(Deencapsulation.getField(panel, "fModel"), fModel);
   }
 
   @Test(groups = { "LocalOnly" })
   public void setServerInformationを呼び出されたらテキストエリアに設定するよ() throws InvocationTargetException, InterruptedException {
-    final ChatServerPanel panel = new ChatServerPanel(fPresenter);
+    final ChatServerPanel panel = new ChatServerPanel(fModel);
     final JTextArea area = Deencapsulation.getField(panel, "fServerInformation");
 
     SwingUtilities.invokeAndWait(new Runnable() {
