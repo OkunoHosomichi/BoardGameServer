@@ -2,13 +2,9 @@ package gmi.boardgame.chat;
 
 import gmi.utils.exceptions.NullArgumentException;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.Observable;
 
 import javax.inject.Inject;
-import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JList;
@@ -62,7 +58,6 @@ final class ChatServerPanel extends JPanel implements ChatView {
    * モデル又はプレゼンテーションモデルからの更新通知を元にビューを更新します。 何が更新されたのかをargに指定された文字列で判断し
    * 、対象をイベントディスパッチスレッドから更新します。これは良いやり方ではない気もしますがどうすれば良いのかわかりません。
    * 現時点で更新通知で届く文字列は以下の通りです。<br>
-   * clientList - クライアント一覧が更新されたことを示します。<br>
    * message - サーバ情報が更新されたことを示します。<br>
    * このメソッドはイベントディスパッチスレッド以外のスレッドから呼び出されることを想定してassert文によるチェックを行っています。
    * 
@@ -85,15 +80,6 @@ final class ChatServerPanel extends JPanel implements ChatView {
 
     // INFO: モデルの通知情報が変更された場合にきちんと修正する。
     switch ((String) arg) {
-    case "clientList":
-      SwingUtilities.invokeLater(new Runnable() {
-
-        @Override
-        public void run() {
-          setClientList(fPresenter.getClientList());
-        }
-      });
-      break;
     case "message":
       SwingUtilities.invokeLater(new Runnable() {
 
@@ -120,13 +106,6 @@ final class ChatServerPanel extends JPanel implements ChatView {
    * イベントリスナを設定します。
    */
   private void initializeEventListener() {
-    fServerMessageField.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        fPresenter.sendServerMessage(fServerMessageField.getText());
-      }
-    });
   }
 
   /**
@@ -158,26 +137,6 @@ final class ChatServerPanel extends JPanel implements ChatView {
                 GroupLayout.PREFERRED_SIZE)));
 
     setLayout(groupLayout);
-  }
-
-  /**
-   * 接続したクライアントの一覧をfClientNameListに設定して表示させます。
-   * このメソッドはイベントディスパッチスレッド内で呼び出されることを想定してassert文によるチェックを行っています。
-   * 
-   * @param clientList
-   *          接続しているクライアントの一覧。nullを指定できません。
-   */
-  private void setClientList(List<String> clientList) {
-    assert SwingUtilities.isEventDispatchThread();
-    assert clientList != null;
-
-    final DefaultListModel<String> model = new DefaultListModel<>();
-
-    for (final String nickName : clientList) {
-      model.addElement(nickName);
-    }
-
-    fClientNameList.setModel(model);
   }
 
   /**
