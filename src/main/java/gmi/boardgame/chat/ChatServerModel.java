@@ -1,7 +1,6 @@
 package gmi.boardgame.chat;
 
 import gmi.utils.exceptions.NullArgumentException;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.group.ChannelGroup;
 
 import java.util.Collections;
@@ -30,22 +29,10 @@ final class ChatServerModel extends Observable implements ChatModel {
   private final StringBuilder fMessage = new StringBuilder();
 
   /**
-   * 指定されたチャンネルグループとパイプラインからインスタンスを構築します。
-   * 
-   * @param group
-   *          チャンネルグループ。nullを指定できません。
-   * @param pipeline
-   *          パイプライン。nullを指定できません。
-   * @throws NullPointerException
-   *           group又はpipelineがnullの場合。
+   * インスタンスを構築します。
    */
   @Inject
-  public ChatServerModel(ChannelGroup group, ChannelPipeline pipeline) {
-    if (group == null) throw new NullArgumentException("group");
-    if (pipeline == null) throw new NullArgumentException("pipeline");
-
-    fGroup = group;
-    pipeline.addLast(this);
+  public ChatServerModel() {
   }
 
   @Override
