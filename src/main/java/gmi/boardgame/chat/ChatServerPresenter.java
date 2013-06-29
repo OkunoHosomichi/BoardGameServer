@@ -2,7 +2,6 @@ package gmi.boardgame.chat;
 
 import gmi.utils.exceptions.NullArgumentException;
 
-import java.util.List;
 import java.util.Observable;
 
 import javax.inject.Inject;
@@ -34,32 +33,12 @@ final class ChatServerPresenter extends Observable implements ChatPresenter {
   }
 
   @Override
-  public List<String> getClientList() {
-    return fModel.getClientList();
-  }
-
-  @Override
   public String getMessage() {
     return fModel.getMessage();
   }
 
   @Override
-  public void joinClient(Client client) throws NullPointerException {
-    fModel.joinClient(client);
-  }
-
-  @Override
-  public void leaveClient(Client client) throws NullPointerException, RuntimeException {
-    fModel.leaveClient(client);
-  }
-
-  @Override
   public void message(String message) throws NullPointerException {
     fModel.message(message);
-  }
-
-  @Override
-  public void sendServerMessage(String message) throws NullPointerException {
-    fModel.sendServerMessage(message);
   }
 }
