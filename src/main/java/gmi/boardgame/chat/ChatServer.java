@@ -26,7 +26,7 @@ public final class ChatServer {
     if (group == null) throw new NullArgumentException("group");
     if (pipeline == null) throw new NullArgumentException("pipeline");
 
-    fPanel = Guice.createInjector(new ChatServerModule(group, pipeline)).getInstance(JPanel.class);
+    fPanel = Guice.createInjector(new ChatServerModule()).getInstance(JPanel.class);
   }
 
   /**
@@ -47,22 +47,12 @@ public final class ChatServer {
    * @author おくのほそみち
    */
   private final class ChatServerModule extends AbstractModule {
-    private final ChannelGroup fGroup;
-    private final ChannelPipeline fPipeline;
-
-    private ChatServerModule(ChannelGroup group, ChannelPipeline pipeline) {
-      assert group != null;
-      assert pipeline != null;
-
-      fGroup = group;
-      fPipeline = pipeline;
-    }
 
     @Override
     protected void configure() {
       bind(JPanel.class).to(ChatServerPanel.class).asEagerSingleton();
       bind(ChatPresenter.class).to(ChatServerPresenter.class).asEagerSingleton();
-      bind(ChatModel.class).toInstance(new ChatServerModel(fGroup, fPipeline));
+      bind(ChatModel.class).to(ChatServerModel.class).asEagerSingleton();
     }
   }
 }
