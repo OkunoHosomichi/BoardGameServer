@@ -8,6 +8,7 @@ import java.awt.Container;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 @SuppressWarnings("serial")
 public final class ServerFrame extends JFrame {
@@ -41,6 +42,7 @@ public final class ServerFrame extends JFrame {
 
     fPortNumber = PORT_RANGE.Contains(portNumber) ? portNumber : DEFAULT_PORT_NUMBER;
 
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     fChatPanel = ChatServer.getPanel();
     layoutComponents();
   }
@@ -52,5 +54,25 @@ public final class ServerFrame extends JFrame {
     final Container cp = getContentPane();
     cp.setLayout(new BorderLayout());
     cp.add(fChatPanel, BorderLayout.CENTER);
+  }
+
+  public static void main(String[] args) {
+    final int port;
+    if (args.length > 0) {
+      port = Integer.parseInt(args[0]);
+    } else {
+      port = DEFAULT_PORT_NUMBER;
+    }
+
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          new ServerFrame(port).setVisible(true);
+        } catch (final Exception ex) {
+          throw new RuntimeException(ex);
+        }
+      }
+    });
   }
 }
