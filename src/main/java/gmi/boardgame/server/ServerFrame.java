@@ -1,8 +1,13 @@
 package gmi.boardgame.server;
 
+import gmi.boardgame.chat.ChatServer;
 import gmi.utils.IntRange;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public final class ServerFrame extends JFrame {
@@ -14,6 +19,7 @@ public final class ServerFrame extends JFrame {
    * ポート番号に使える値の範囲。49513～65535までの値です。
    */
   private static final IntRange PORT_RANGE = new IntRange(49513, 65535);
+  private final JPanel fChatPanel;
   private final int fPortNumber;
 
   /**
@@ -34,5 +40,17 @@ public final class ServerFrame extends JFrame {
     assert PORT_RANGE.Contains(DEFAULT_PORT_NUMBER);
 
     fPortNumber = PORT_RANGE.Contains(portNumber) ? portNumber : DEFAULT_PORT_NUMBER;
+
+    fChatPanel = ChatServer.getPanel();
+    layoutComponents();
+  }
+
+  /**
+   * コンポーネントを配置します。
+   */
+  private void layoutComponents() {
+    final Container cp = getContentPane();
+    cp.setLayout(new BorderLayout());
+    cp.add(fChatPanel, BorderLayout.CENTER);
   }
 }
