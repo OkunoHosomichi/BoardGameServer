@@ -21,7 +21,6 @@ public final class ChatServer {
 
   /**
    * ビューやモデルを切り替えたいときはこのクラスのconfigure()を変更します。
-   * モデルだけはtoInstance()を使っていますが、これはコンストラクタにChannelGroupとChannelPipelineを渡すためです。
    * 
    * @author おくのほそみち
    */

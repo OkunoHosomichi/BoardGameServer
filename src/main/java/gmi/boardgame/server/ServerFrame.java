@@ -2,6 +2,19 @@ package gmi.boardgame.server;
 
 import gmi.boardgame.chat.ChatServer;
 import gmi.utils.IntRange;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.Delimiters;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -25,8 +38,10 @@ public final class ServerFrame extends JFrame {
    * ポート番号に使える値の範囲。49513～65535までの値です。
    */
   private static final IntRange PORT_RANGE = new IntRange(49513, 65535);
+  private final EventLoopGroup fBossGroup;
   private final JPanel fChatPanel;
   private final int fPortNumber;
+  private final EventLoopGroup fWorkerGroup;
 
   /**
    * デフォルトのポート番号を指定してインスタンスを構築します。デフォルト値は60935番です。
@@ -46,6 +61,8 @@ public final class ServerFrame extends JFrame {
     assert PORT_RANGE.Contains(DEFAULT_PORT_NUMBER);
 
     fPortNumber = PORT_RANGE.Contains(portNumber) ? portNumber : DEFAULT_PORT_NUMBER;
+    fBossGroup = new NioEventLoopGroup();
+    fWorkerGroup = new NioEventLoopGroup();
 
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     fChatPanel = ChatServer.getPanel();
@@ -59,6 +76,35 @@ public final class ServerFrame extends JFrame {
     final Container cp = getContentPane();
     cp.setLayout(new BorderLayout());
     cp.add(fChatPanel, BorderLayout.CENTER);
+  }
+
+  private ChannelFuture setup() {
+    final ServerBootstrap bootstrap = new ServerBootstrap();
+    bootstrap.group(fBossGroup, fWorkerGroup).channel(NioServerSocketChannel.class)
+        .option(ChannelOption.SO_BACKLOG, Integer.valueOf(10)).childHandler(new ChannelInitializer<SocketChannel>() {
+
+          @Override
+          protected void initChannel(SocketChannel ch) throws Exception {
+            final ChannelPipeline pipeline = ch.pipeline();
+
+            pipeline.addLast("framer", new DelimiterBasedFrameDecoder(2048, Delimiters.lineDelimiter()));
+            pipeline.addLast("decoder", new StringDecoder());
+            pipeline.addLast("encoder", new StringEncoder());
+
+            pipeline.addLast("handler", new ServerHandler());
+          }
+        });
+    return bootstrap.bind(fPortNumber);
+  }
+
+  private void start(ChannelFuture future) throws InterruptedException {
+    try {
+
+      future.sync().channel().closeFuture().sync();
+    } finally {
+      fBossGroup.shutdownGracefully();
+      fWorkerGroup.shutdownGracefully();
+    }
   }
 
   public static void main(String[] args) {
