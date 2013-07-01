@@ -5,6 +5,7 @@ import gmi.utils.IntRange;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -12,6 +13,10 @@ import javax.swing.SwingUtilities;
 
 @SuppressWarnings("serial")
 public final class ServerFrame extends JFrame {
+  /**
+   * convertNumberStringIntoPortNumber()で引数チェックに利用する正規表現。
+   */
+  private static final String CHECK_NUMBER_STRING_PATTERN = "^\\+?\\d+";
   /**
    * デフォルトのポート番号。ポート番号は49513～65535までの値を指定します。
    */
@@ -79,6 +84,10 @@ public final class ServerFrame extends JFrame {
    * @return ポート番号。
    */
   private static int convertNumberStringIntoPortNumber(String str) {
-    return 0;
+    if (str == null) return DEFAULT_PORT_NUMBER;
+    if (str.isEmpty()) return DEFAULT_PORT_NUMBER;
+    if (!Pattern.matches(CHECK_NUMBER_STRING_PATTERN, str)) return DEFAULT_PORT_NUMBER;
+
+    return Integer.parseInt(str);
   }
 }
