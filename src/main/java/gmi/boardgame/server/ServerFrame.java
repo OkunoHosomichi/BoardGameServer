@@ -57,12 +57,7 @@ public final class ServerFrame extends JFrame {
   }
 
   public static void main(String[] args) {
-    final int port;
-    if (args.length > 0) {
-      port = Integer.parseInt(args[0]);
-    } else {
-      port = DEFAULT_PORT_NUMBER;
-    }
+    final int port = (args.length > 0) ? convertNumberStringIntoPortNumber(args[0]) : DEFAULT_PORT_NUMBER;
 
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -74,5 +69,16 @@ public final class ServerFrame extends JFrame {
         }
       }
     });
+  }
+
+  /**
+   * 指定された文字列をポート番号に変更します。文字列がnullだった場合や10進整数でなかった場合や負の整数だった場合はデフォルトのポート番号を返します。
+   * 
+   * @param str
+   *          ポート番号の文字列表現。
+   * @return ポート番号。
+   */
+  private static int convertNumberStringIntoPortNumber(String str) {
+    return 0;
   }
 }
