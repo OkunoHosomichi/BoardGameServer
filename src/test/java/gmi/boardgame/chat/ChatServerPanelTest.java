@@ -22,12 +22,12 @@ public class ChatServerPanelTest {
 
   @Test(groups = { "LocalOnly" }, expectedExceptions = { NullPointerException.class })
   public void コンストラクタの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
-    new ChatServerPanel(null);
+    new ChatServerView(null);
   }
 
   @Test(groups = { "LocalOnly" })
   public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {
-    final ChatServerPanel panel = new ChatServerPanel(fModel);
+    final ChatServerView panel = new ChatServerView(fModel);
 
     new Verifications() {
       {
@@ -40,7 +40,7 @@ public class ChatServerPanelTest {
 
   @Test(groups = { "LocalOnly" })
   public void setServerInformationを呼び出されたらテキストエリアに設定するよ() throws InvocationTargetException, InterruptedException {
-    final ChatServerPanel panel = new ChatServerPanel(fModel);
+    final ChatServerView panel = new ChatServerView(fModel);
     final JTextArea area = Deencapsulation.getField(panel, "fServerInformation");
 
     SwingUtilities.invokeAndWait(new Runnable() {
@@ -55,9 +55,9 @@ public class ChatServerPanelTest {
         }
       }
 
-      private void invokeSetServerInformation(ChatServerPanel obj, String arg) throws NoSuchMethodException,
+      private void invokeSetServerInformation(ChatServerView obj, String arg) throws NoSuchMethodException,
           SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        final Method setClientList = ChatServerPanel.class.getDeclaredMethod("setServerInformation", String.class);
+        final Method setClientList = ChatServerView.class.getDeclaredMethod("setServerInformation", String.class);
         setClientList.setAccessible(true);
 
         setClientList.invoke(obj, arg);

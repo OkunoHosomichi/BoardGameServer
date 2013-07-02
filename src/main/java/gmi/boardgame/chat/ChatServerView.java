@@ -17,7 +17,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 @SuppressWarnings("serial")
-final class ChatServerPanel extends JPanel implements Observer {
+final class ChatServerView extends JPanel implements Observer {
   /**
    * 接続したクライアント名を一覧表示するリスト。
    */
@@ -44,7 +44,7 @@ final class ChatServerPanel extends JPanel implements Observer {
    *           modelがnullの場合。
    */
   @Inject
-  public ChatServerPanel(ChatModel model) throws NullPointerException {
+  public ChatServerView(ChatModel model) throws NullPointerException {
     if (model == null) throw new NullArgumentException("model");
 
     fModel = model;
