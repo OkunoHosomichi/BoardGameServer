@@ -19,10 +19,6 @@ public final class ChatServer {
     return fInjector.getInstance(ChannelInboundHandler.class);
   }
 
-  public void notifyServerInformation(String message) {
-    fInjector.getInstance(ChatModel.class).message(message);
-  }
-
   /**
    * チャット画面を返します。
    * 
@@ -30,6 +26,10 @@ public final class ChatServer {
    */
   public JPanel getPanel() {
     return fInjector.getInstance(JPanel.class);
+  }
+
+  public void notifyServerInformation(String message) {
+    fInjector.getInstance(ChatModel.class).message(message);
   }
 
   /**

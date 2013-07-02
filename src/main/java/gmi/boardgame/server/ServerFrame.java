@@ -4,6 +4,8 @@ import gmi.boardgame.chat.ChatServer;
 import gmi.utils.IntRange;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -18,6 +20,7 @@ import io.netty.handler.codec.string.StringEncoder;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.net.UnknownHostException;
 import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
@@ -63,7 +66,7 @@ public final class ServerFrame extends JFrame {
     fBossGroup = new NioEventLoopGroup();
     fWorkerGroup = new NioEventLoopGroup();
 
-    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(EXIT_ON_CLOSE);
     fChatServer = new ChatServer();
     layoutComponents();
   }
@@ -90,7 +93,16 @@ public final class ServerFrame extends JFrame {
             pipeline.addLast("decoder", new StringDecoder());
             pipeline.addLast("encoder", new StringEncoder());
 
-            pipeline.addLast("handler", new ServerHandler());
+            pipeline.addLast("handler", new ChannelInboundHandlerAdapter() {
+
+              @Override
+              public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+                System.err.println("Unexpected exception from downstream.");
+                ctx.close();
+              }
+            });
+
+            pipeline.addLast("chathandler", fChatServer.createHandler());
           }
         });
     return bootstrap.bind(fPortNumber);
@@ -106,19 +118,25 @@ public final class ServerFrame extends JFrame {
     }
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws InterruptedException, UnknownHostException {
     final int port = (args.length > 0) ? convertNumberStringIntoPortNumber(args[0]) : DEFAULT_PORT_NUMBER;
+
+    final ServerFrame frame = new ServerFrame(port);
 
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
         try {
-          new ServerFrame(port).setVisible(true);
+          frame.setVisible(true);
         } catch (final Exception ex) {
           throw new RuntimeException(ex);
         }
       }
     });
+
+    final ChannelFuture f = frame.setup();
+    frame.fChatServer.notifyServerInformation("ポート" + port + "で接続待ちを開始します。");
+    frame.start(f);
   }
 
   /**
