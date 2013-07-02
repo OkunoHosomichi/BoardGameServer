@@ -1,8 +1,6 @@
 package gmi.boardgame.chat;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.MessageList;
+import io.netty.channel.ChannelInboundHandler;
 
 import javax.swing.JPanel;
 
@@ -10,18 +8,15 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-public final class ChatServer extends ChannelInboundHandlerAdapter {
+public final class ChatServer {
   private final Injector fInjector;
-  private final ChatModel fModel;
 
   public ChatServer() {
     fInjector = Guice.createInjector(new ChatServerModule());
-    fModel = fInjector.getInstance(ChatModel.class);
   }
 
-  @Override
-  public void messageReceived(ChannelHandlerContext ctx, MessageList<Object> msgs) throws Exception {
-    super.messageReceived(ctx, msgs);
+  public ChannelInboundHandler createHandler() {
+    return fInjector.getInstance(ChannelInboundHandler.class);
   }
 
   /**
@@ -44,6 +39,7 @@ public final class ChatServer extends ChannelInboundHandlerAdapter {
     protected void configure() {
       bind(JPanel.class).to(ChatServerPanel.class).asEagerSingleton();
       bind(ChatModel.class).to(ChatServerModel.class).asEagerSingleton();
+      bind(ChannelInboundHandler.class).to(ChatServerHandler.class);
     }
   }
 }
