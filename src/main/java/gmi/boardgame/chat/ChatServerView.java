@@ -16,6 +16,12 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
+/**
+ * チャットサーバに必要なデータを表示し、ユーザからの入力をモデルに処理させます。MVCパターンでいうところのビューとコントローラ部分のつもりです。
+ * あくまでもチャットに必要な部分だけなので、ボードゲーム管理データを表示する部分は別のビューを作って使います。
+ * 
+ * @author おくのほそみち
+ */
 @SuppressWarnings("serial")
 final class ChatServerView extends JPanel implements Observer {
   /**

@@ -6,21 +6,29 @@ import java.util.Observable;
 
 import javax.inject.Inject;
 
+/**
+ * チャットサーバに必要な処理を行い、必要に応じてビューに更新を通知します。MVCパターンでいうところのモデル部分のつもりです。
+ * あくまでもチャットに必要な部分だけなので、ボードゲーム部分の処理は別のモデルを作って使います。
+ * 
+ * @author おくのほそみち
+ */
 final class ChatServerModel extends Observable implements ChatModel {
   /**
    * 行の区切り文字。
    */
   private static final String LINE_SEPARATOR = System.getProperty("line.separator");
   /**
-   * ユーザに通知するメッセージ。
+   * サーバ情報を保持します。サーバ情報とは接続待ち開始の通知、クライアント接続の通知、クライアントをキックしたことの通知、
+   * エラーが発生した事を示す警告など様々なものを想定しています。 想定しているだけで実際にそれらを通知するかはまだわかりません。
    */
-  private final StringBuilder fMessage = new StringBuilder();
+  private final StringBuilder fMessage;
 
   /**
    * インスタンスを構築します。
    */
   @Inject
   public ChatServerModel() {
+    fMessage = new StringBuilder();
   }
 
   @Override
@@ -38,11 +46,11 @@ final class ChatServerModel extends Observable implements ChatModel {
   }
 
   /**
-   * ユーザに通知するメッセージに指定された文字列を追加し、変更をビューに通知します。messageにnullを指定した場合、
-   * assertによりエラーが発生します。空文字列が指定された場合は何もしません。
+   * 指定されたサーバ情報を追加し、変更をビューに通知します。サーバ情報の末尾には自動で改行コードが追加されます。
+   * messageにnullを指定した場合はassertによりエラーが発生します。 空文字列が指定された場合は何もせず、ビューへの通知も行いません。
    * 
    * @param info
-   *          追加する文字列。nullを指定できません。
+   *          追加するサーバ情報。nullを指定できません。
    */
   private void appendInformation(String info) {
     assert info != null;
