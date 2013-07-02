@@ -2,9 +2,8 @@ package gmi.boardgame.server;
 
 import gmi.boardgame.chat.ChatServer;
 import gmi.utils.IntRange;
+import gmi.utils.netty.MyDelimiters;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -92,9 +91,7 @@ public final class ServerFrame extends JFrame {
           protected void initChannel(SocketChannel ch) throws Exception {
             final ChannelPipeline pipeline = ch.pipeline();
 
-            pipeline.addLast("framer",
-                new DelimiterBasedFrameDecoder(2048, new ByteBuf[] { Unpooled.wrappedBuffer("\r\n".getBytes(CHARSET)),
-                    Unpooled.wrappedBuffer("\n".getBytes(CHARSET)) }));
+            pipeline.addLast("framer", new DelimiterBasedFrameDecoder(2048, MyDelimiters.lineDelimiter(CHARSET)));
             pipeline.addLast("decoder", new StringDecoder(CHARSET));
             pipeline.addLast("encoder", new StringEncoder(CHARSET));
 
