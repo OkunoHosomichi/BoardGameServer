@@ -22,6 +22,29 @@ public class ChatServerTest {
     assertNotNull(Deencapsulation.getField(server, "fInjector"));
   }
 
+  @Test(groups = { "LocalOnly" }, expectedExceptions = { NullPointerException.class })
+  public void notifyServerInformationの引数にnullを指定されたらNullPointerExceptionを投げるよ() {
+    final ChatServer server = new ChatServer();
+    Deencapsulation.setField(server, "fInjector", Guice.createInjector(new TestModule()));
+
+    server.notifyServerInformation(null);
+  }
+
+  @Test(groups = { "LocalOnly" })
+  public void notifyServerInformationの引数に空文字列を指定されたら何もしないよ() {
+    final ChatServer server = new ChatServer();
+    Deencapsulation.setField(server, "fInjector", Guice.createInjector(new TestModule()));
+
+    new Expectations() {
+      {
+        fModel.updateInformation("");
+        times = 0;
+      }
+    };
+
+    server.notifyServerInformation("");
+  }
+
   @Test(groups = { "LocalOnly" })
   public void notifyServerInformationが呼び出されたらmodelに通知するよ() {
     final ChatServer server = new ChatServer();
