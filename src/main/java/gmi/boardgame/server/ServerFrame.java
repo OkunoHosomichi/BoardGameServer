@@ -3,6 +3,8 @@ package gmi.boardgame.server;
 import gmi.boardgame.chat.ChatServer;
 import gmi.utils.IntRange;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -14,13 +16,13 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
@@ -28,6 +30,7 @@ import javax.swing.SwingUtilities;
 
 @SuppressWarnings("serial")
 public final class ServerFrame extends JFrame {
+  private static final Charset CHARSET = Charset.forName("UTF-16BE");
   /**
    * convertNumberStringIntoPortNumber()で引数チェックに利用する正規表現。
    */
@@ -89,9 +92,11 @@ public final class ServerFrame extends JFrame {
           protected void initChannel(SocketChannel ch) throws Exception {
             final ChannelPipeline pipeline = ch.pipeline();
 
-            pipeline.addLast("framer", new DelimiterBasedFrameDecoder(2048, Delimiters.lineDelimiter()));
-            pipeline.addLast("decoder", new StringDecoder());
-            pipeline.addLast("encoder", new StringEncoder());
+            pipeline.addLast("framer",
+                new DelimiterBasedFrameDecoder(2048, new ByteBuf[] { Unpooled.wrappedBuffer("\r\n".getBytes(CHARSET)),
+                    Unpooled.wrappedBuffer("\n".getBytes(CHARSET)) }));
+            pipeline.addLast("decoder", new StringDecoder(CHARSET));
+            pipeline.addLast("encoder", new StringEncoder(CHARSET));
 
             pipeline.addLast("handler", new ChannelInboundHandlerAdapter() {
 
