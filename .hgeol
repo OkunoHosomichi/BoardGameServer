@@ -1,3 +1,4 @@
 [patterns]
 **.java = NATIVE
 **.xml = NATIVE
+**.markdown = NATIVE
