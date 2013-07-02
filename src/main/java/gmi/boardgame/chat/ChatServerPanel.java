@@ -58,7 +58,7 @@ final class ChatServerPanel extends JPanel implements ChatView {
    * モデルからの更新通知を元にビューを更新します。
    * 何が更新されたのかをargに指定された文字列で判断し、対象をイベントディスパッチスレッドから更新します。
    * これは良いやり方ではない気もしますがどうすれば良いのかわかりません。 現時点で更新通知で届く文字列は以下の通りです。<br>
-   * message - サーバ情報が更新されたことを示します。<br>
+   * info - サーバ情報が更新されたことを示します。<br>
    * このメソッドはイベントディスパッチスレッド以外のスレッドから呼び出されることを想定してassert文によるチェックを行っています。
    * 
    * @param o
@@ -80,7 +80,7 @@ final class ChatServerPanel extends JPanel implements ChatView {
 
     // INFO: モデルの通知情報が変更された場合にきちんと修正する。
     switch ((String) arg) {
-    case "message":
+    case "info":
       SwingUtilities.invokeLater(new Runnable() {
 
         @Override

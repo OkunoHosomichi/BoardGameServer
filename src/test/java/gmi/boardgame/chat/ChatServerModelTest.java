@@ -23,58 +23,58 @@ public class ChatServerModelTest {
   }
 
   @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
-  public void messageの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
+  public void updateInformationの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
     final ChatServerModel model = new ChatServerModel();
-    model.message(null);
+    model.updateInformation(null);
   }
 
   @Test(groups = { "AllEnv" })
-  public void messageの引数に空文字列が指定されても何もしないよ() {
+  public void updateInformationの引数に空文字列が指定されても何もしないよ() {
     final ChatServerModel model = new ChatServerModel();
     model.addObserver(fChatPanel);
 
     new Expectations() {
       {
-        fChatPanel.update(model, "message");
+        fChatPanel.update(model, "info");
         times = 0;
       }
     };
 
-    model.message("");
+    model.updateInformation("");
 
     assertTrue(model.getMessage().isEmpty());
   }
 
   @Test(groups = { "AllEnv" })
-  public void messageを呼び出されたら通知文を更新してビューに通知するよ() {
+  public void updateInformationを呼び出されたら通知文を更新してビューに通知するよ() {
     final ChatServerModel model = new ChatServerModel();
     model.addObserver(fChatPanel);
 
     new Expectations() {
       {
-        fChatPanel.update(model, "message");
+        fChatPanel.update(model, "info");
         times = 3;
       }
     };
 
-    model.message("test01");
-    model.message("test02");
-    model.message("test03");
+    model.updateInformation("test01");
+    model.updateInformation("test02");
+    model.updateInformation("test03");
 
     assertEquals(model.getMessage(), "test01" + LINE_SEPARATOR + "test02" + LINE_SEPARATOR + "test03" + LINE_SEPARATOR);
   }
 
   @Test(groups = { "AllEnv" })
-  public void appendMessageの引数に空文字列が指定されたら何もしないよ() throws NoSuchMethodException, SecurityException,
+  public void appendInformationの引数に空文字列が指定されたら何もしないよ() throws NoSuchMethodException, SecurityException,
       IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     final ChatServerModel model = new ChatServerModel();
     model.addObserver(fChatPanel);
-    final Method appendMessage = ChatServerModel.class.getDeclaredMethod("appendMessage", String.class);
+    final Method appendMessage = ChatServerModel.class.getDeclaredMethod("appendInformation", String.class);
     appendMessage.setAccessible(true);
 
     new Expectations() {
       {
-        fChatPanel.update(model, "message");
+        fChatPanel.update(model, "info");
         times = 0;
       }
     };
@@ -83,16 +83,16 @@ public class ChatServerModelTest {
   }
 
   @Test(groups = { "AllEnv" })
-  public void appendMessageを呼び出されたら通知文を更新してビューに通知するよ() throws NoSuchMethodException, SecurityException,
+  public void appendInformationを呼び出されたら通知文を更新してビューに通知するよ() throws NoSuchMethodException, SecurityException,
       IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     final ChatServerModel model = new ChatServerModel();
     model.addObserver(fChatPanel);
-    final Method appendMessage = ChatServerModel.class.getDeclaredMethod("appendMessage", String.class);
+    final Method appendMessage = ChatServerModel.class.getDeclaredMethod("appendInformation", String.class);
     appendMessage.setAccessible(true);
 
     new Expectations() {
       {
-        fChatPanel.update(model, "message");
+        fChatPanel.update(model, "info");
       }
     };
 

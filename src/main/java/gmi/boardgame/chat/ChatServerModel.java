@@ -31,26 +31,26 @@ final class ChatServerModel extends Observable implements ChatModel {
   }
 
   @Override
-  public void message(String message) throws NullPointerException {
-    if (message == null) throw new NullArgumentException("message");
+  public void updateInformation(String info) throws NullPointerException {
+    if (info == null) throw new NullArgumentException("message");
 
-    appendMessage(message);
+    appendInformation(info);
   }
 
   /**
    * ユーザに通知するメッセージに指定された文字列を追加し、変更をビューに通知します。messageにnullを指定した場合、
    * assertによりエラーが発生します。空文字列が指定された場合は何もしません。
    * 
-   * @param message
+   * @param info
    *          追加する文字列。nullを指定できません。
    */
-  private void appendMessage(String message) {
-    assert message != null;
-    if (message.isEmpty()) return;
+  private void appendInformation(String info) {
+    assert info != null;
+    if (info.isEmpty()) return;
 
-    fMessage.append(message).append(LINE_SEPARATOR);
+    fMessage.append(info).append(LINE_SEPARATOR);
 
     setChanged();
-    notifyObservers("message");
+    notifyObservers("info");
   }
 }

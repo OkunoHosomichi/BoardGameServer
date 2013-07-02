@@ -29,7 +29,7 @@ public final class ChatServer {
   }
 
   public void notifyServerInformation(String message) {
-    fInjector.getInstance(ChatModel.class).message(message);
+    fInjector.getInstance(ChatModel.class).updateInformation(message);
   }
 
   /**

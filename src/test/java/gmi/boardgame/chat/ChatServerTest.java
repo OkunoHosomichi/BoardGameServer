@@ -29,7 +29,7 @@ public class ChatServerTest {
 
     new Expectations() {
       {
-        fModel.message("test");
+        fModel.updateInformation("test");
       }
     };
 

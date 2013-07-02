@@ -31,5 +31,5 @@ interface ChatModel {
    * @throws NullPointerException
    *           messageがnullの場合。
    */
-  void message(String message) throws NullPointerException;
+  void updateInformation(String message) throws NullPointerException;
 }
