@@ -1,5 +1,6 @@
 package gmi.boardgame.chat;
 
+import gmi.utils.exceptions.NullArgumentException;
 import io.netty.channel.ChannelInboundHandler;
 
 import javax.swing.JPanel;
@@ -53,11 +54,16 @@ public final class ChatServer {
   /**
    * 指定された文字列でサーバ情報を更新します。空文字の場合は何もしません。
    * 
-   * @param message
+   * @param info
    *          サーバ情報。nullを指定できません。
+   * @throws NullPointerException
+   *           messageがnullの場合。
    */
-  public void notifyServerInformation(String message) {
-    fInjector.getInstance(ChatModel.class).updateInformation(message);
+  public void notifyServerInformation(String info) throws NullPointerException {
+    if (info == null) throw new NullArgumentException("info");
+    if (info.isEmpty()) return;
+
+    fInjector.getInstance(ChatModel.class).updateInformation(info);
   }
 
   /**
