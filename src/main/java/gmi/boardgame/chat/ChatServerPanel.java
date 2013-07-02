@@ -3,6 +3,7 @@ package gmi.boardgame.chat;
 import gmi.utils.exceptions.NullArgumentException;
 
 import java.util.Observable;
+import java.util.Observer;
 
 import javax.inject.Inject;
 import javax.swing.GroupLayout;
@@ -16,7 +17,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 @SuppressWarnings("serial")
-final class ChatServerPanel extends JPanel implements ChatView {
+final class ChatServerPanel extends JPanel implements Observer {
   /**
    * 接続したクライアント名を一覧表示するリスト。
    */

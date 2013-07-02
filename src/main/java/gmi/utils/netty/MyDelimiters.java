@@ -24,7 +24,6 @@ public final class MyDelimiters {
    *           charsetがnullの場合。
    * @see io.netty.handler.codec.Delimiters#lineDelimiter()
    */
-
   public static ByteBuf[] lineDelimiter(Charset charset) throws NullPointerException {
     if (charset == null) throw new NullArgumentException("charset");
 
