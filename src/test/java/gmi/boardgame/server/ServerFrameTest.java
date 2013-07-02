@@ -38,7 +38,7 @@ public class ServerFrameTest {
     frame = new ServerFrame(65535);
     assertEquals(Deencapsulation.getField(frame, "fPortNumber"), Integer.valueOf(65535));
 
-    assertNotNull(Deencapsulation.getField(frame, "fChatPanel"));
+    assertNotNull(Deencapsulation.getField(frame, "fChatServer"));
   }
 
   @Test(groups = { "AllEnv" })

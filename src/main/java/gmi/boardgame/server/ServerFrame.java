@@ -21,7 +21,6 @@ import java.awt.Container;
 import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 @SuppressWarnings("serial")
@@ -39,7 +38,7 @@ public final class ServerFrame extends JFrame {
    */
   private static final IntRange PORT_RANGE = new IntRange(49513, 65535);
   private final EventLoopGroup fBossGroup;
-  private final JPanel fChatPanel;
+  private final ChatServer fChatServer;
   private final int fPortNumber;
   private final EventLoopGroup fWorkerGroup;
 
@@ -65,7 +64,7 @@ public final class ServerFrame extends JFrame {
     fWorkerGroup = new NioEventLoopGroup();
 
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-    fChatPanel = ChatServer.getPanel();
+    fChatServer = new ChatServer();
     layoutComponents();
   }
 
@@ -75,7 +74,7 @@ public final class ServerFrame extends JFrame {
   private void layoutComponents() {
     final Container cp = getContentPane();
     cp.setLayout(new BorderLayout());
-    cp.add(fChatPanel, BorderLayout.CENTER);
+    cp.add(fChatServer.getPanel(), BorderLayout.CENTER);
   }
 
   private ChannelFuture setup() {
