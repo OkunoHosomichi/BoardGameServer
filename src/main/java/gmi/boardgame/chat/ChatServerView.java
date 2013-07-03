@@ -2,6 +2,7 @@ package gmi.boardgame.chat;
 
 import gmi.utils.exceptions.NullArgumentException;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -27,7 +28,7 @@ final class ChatServerView extends JPanel implements Observer {
   /**
    * 接続したクライアント名を一覧表示するリスト。
    */
-  private final JList<String> fClientNameList = new JList<>();
+  private final JList<String> fClientNames = new JList<>();
   /**
    * モデルクラス。
    */
@@ -65,6 +66,7 @@ final class ChatServerView extends JPanel implements Observer {
    * モデルからの更新通知を元にビューを更新します。
    * 何が更新されたのかをargに指定された文字列で判断し、対象をイベントディスパッチスレッドから更新します。
    * これは良いやり方ではない気もしますがどうすれば良いのかわかりません。 現時点で更新通知で届く文字列は以下の通りです。<br>
+   * clients - クライアント一覧が更新されたことを示します。<br>
    * info - サーバ情報が更新されたことを示します。<br>
    * このメソッドはイベントディスパッチスレッド以外のスレッドから呼び出されることを想定してassert文によるチェックを行っています。
    * 
@@ -106,7 +108,7 @@ final class ChatServerView extends JPanel implements Observer {
    * コンポーネントを初期設定します。
    */
   private void initializeComponents() {
-    fClientNameList.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+    fClientNames.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
   }
 
   /**
@@ -129,7 +131,7 @@ final class ChatServerView extends JPanel implements Observer {
         .addGroup(
             groupLayout.createSequentialGroup()
                 .addComponent(scrollpane, GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE).addGap(1)
-                .addComponent(fClientNameList, GroupLayout.PREFERRED_SIZE, 142, GroupLayout.PREFERRED_SIZE))
+                .addComponent(fClientNames, GroupLayout.PREFERRED_SIZE, 142, GroupLayout.PREFERRED_SIZE))
         .addComponent(fServerMessageField, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE));
 
     groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(
@@ -137,7 +139,7 @@ final class ChatServerView extends JPanel implements Observer {
             .createSequentialGroup()
             .addGroup(
                 groupLayout.createParallelGroup(Alignment.TRAILING)
-                    .addComponent(fClientNameList, GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+                    .addComponent(fClientNames, GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
                     .addComponent(scrollpane, GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE))
             .addGap(1)
             .addComponent(fServerMessageField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
@@ -158,5 +160,15 @@ final class ChatServerView extends JPanel implements Observer {
     assert information != null;
 
     fServerInformation.setText(information);
+  }
+
+  /**
+   * チャットに参加しているクライアント名一覧をfClientNamesに設定して表示させます。
+   * このメソッドはイベントディスパッチスレッド内で呼び出されることを想定してassert文によるチェックを行っています。
+   * 
+   * @param names
+   *          クライアント名一覧。nullを指定できません。
+   */
+  private void setClientNames(List<String> names) {
   }
 }

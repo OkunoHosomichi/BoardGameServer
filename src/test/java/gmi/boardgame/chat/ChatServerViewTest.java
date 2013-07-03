@@ -2,7 +2,10 @@ package gmi.boardgame.chat;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
+import javax.swing.JList;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
@@ -14,7 +17,7 @@ import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
 
-public class ChatServerPanelTest {
+public class ChatServerViewTest {
   private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
   @Mocked
@@ -65,5 +68,36 @@ public class ChatServerPanelTest {
     });
 
     assertEquals(area.getText(), "aaa" + LINE_SEPARATOR + "bbb" + LINE_SEPARATOR);
+  }
+
+  @Test(groups = { "LocalOnly" })
+  public void setClientNamesを呼び出されたらリストに設定するよ() throws InvocationTargetException, InterruptedException {
+    final ChatServerView panel = new ChatServerView(fModel);
+    final JList<String> list = Deencapsulation.getField(panel, "fClientNames");
+
+    SwingUtilities.invokeAndWait(new Runnable() {
+
+      @Override
+      public void run() {
+        try {
+          invokeSetClientNames(panel, Arrays.asList("aaa", "bb", "vvv", "ssss"));
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+            | SecurityException ex) {
+          throw new RuntimeException(ex);
+        }
+      }
+
+      private void invokeSetClientNames(ChatServerView obj, List<String> arg) throws NoSuchMethodException,
+          SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        final Method setClientList = ChatServerView.class.getDeclaredMethod("setClientNames", List.class);
+        setClientList.setAccessible(true);
+
+        setClientList.invoke(obj, arg);
+      }
+    });
+
+    assertEquals(list.getModel().getSize(), 4);
+    assertEquals(list.getModel().getElementAt(0), "aaa");
+    assertEquals(list.getModel().getElementAt(3), "ssss");
   }
 }
