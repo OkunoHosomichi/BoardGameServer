@@ -90,6 +90,15 @@ final class ChatServerView extends JPanel implements Observer {
 
     // INFO: モデルの通知情報が変更された場合にきちんと修正する。
     switch ((String) arg) {
+    case "clients":
+      SwingUtilities.invokeLater(new Runnable() {
+
+        @Override
+        public void run() {
+          setClientNames(fModel.getClientNames());
+        }
+      });
+      break;
     case "info":
       SwingUtilities.invokeLater(new Runnable() {
 
