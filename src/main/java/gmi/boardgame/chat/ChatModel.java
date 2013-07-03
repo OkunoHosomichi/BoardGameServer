@@ -59,6 +59,17 @@ interface ChatModel {
   void leaveClient(Channel client) throws NullPointerException;
 
   /**
+   * チャットに参加しているクライアントから受信したコマンドを処理します。現時点ではコマンドではありませんが、いずれはプロトコルなどを考える予定です。
+   * コマンドが空文字列の場合は何もしません。
+   * 
+   * @param command
+   *          コマンド文字列。nullを指定できません。
+   * @throws NullPointerException
+   *           commandがnullの場合。
+   */
+  void processClientCommand(String command) throws NullPointerException;
+
+  /**
    * サーバからのメッセージをチャットに参加している全クライアントに送信します。メッセージが空文字列の場合は何もしません。
    * 
    * @param message
