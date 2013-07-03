@@ -94,8 +94,15 @@ final class ChatServerModel extends Observable implements ChatModel {
     notifyObservers("clients");
   }
 
+  /**
+   * チャットに参加しているクライアントから受信したコマンドを処理します。コマンドが空文字列の場合は何もしません。現時点でのコマンドは以下の通りです。<br>
+   * bye - クライアントとの切断処理を行う。<br>
+   * それ以外の文字列 - メッセージとして送信する。<br>
+   */
   @Override
   public void processClientCommand(Channel client, String command) throws NullPointerException {
+    // TODO: コマンドが増えたらコメントに反映させる。
+    // TODO: 書き方がわかったらテストを書く。
     if (client == null) throw new NullArgumentException("client");
     if (command == null) throw new NullArgumentException("command");
     if (command.isEmpty()) return;
@@ -110,7 +117,6 @@ final class ChatServerModel extends Observable implements ChatModel {
       }
     }
 
-    // Close the connection if the client has sent 'bye'.
     if ("bye".equals(command.toLowerCase())) {
       leaveClient(client);
     }
