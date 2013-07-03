@@ -7,6 +7,7 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -71,6 +72,8 @@ final class ChatServerModel extends Observable implements ChatModel {
   @Override
   public void joinClient(Channel client) throws NullPointerException {
     if (client == null) throw new NullArgumentException("client");
+    client.write("Welcome to Chat!\n");
+    client.write("It is " + new Date() + " now.\n");
 
     synchronized (fClientsLock) {
       fClients.add(client);

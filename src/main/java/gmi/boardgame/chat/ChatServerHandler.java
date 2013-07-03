@@ -9,9 +9,6 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
-import java.net.InetAddress;
-import java.util.Date;
-
 import javax.inject.Inject;
 
 /**
@@ -49,9 +46,7 @@ final class ChatServerHandler extends ChannelInboundHandlerAdapter {
 
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
-    ctx.write("Welcome to " + InetAddress.getLocalHost().getHostName() + "!\r\n");
-    ctx.write("It is " + new Date() + " now.\r\n");
-    fChannels.add(ctx.channel());
+    fModel.joinClient(ctx.channel());
   }
 
   @Override
