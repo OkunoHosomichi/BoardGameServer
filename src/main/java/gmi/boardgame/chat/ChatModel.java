@@ -59,6 +59,16 @@ interface ChatModel {
   void leaveClient(Channel client) throws NullPointerException;
 
   /**
+   * サーバからのメッセージをチャットに参加している全クライアントに送信します。メッセージが空文字列の場合は何もしません。
+   * 
+   * @param message
+   *          送信するメッセージ。nullを指定できません。
+   * @throws NullPointerException
+   *           messageがnullの場合。
+   */
+  void sendServerMessage(String message) throws NullPointerException;
+
+  /**
    * サーバ情報を更新してビューに通知します。サーバ情報とは接続待ち開始の通知、クライアント接続の通知、クライアントをキックしたことの通知、
    * エラーが発生した事を示す警告など様々なものを想定しています。 想定しているだけで実際にそれらを通知するかはまだわかりません。
    * 空文字列が指定された場合は何もせず、ビューへの更新通知も行いません。
