@@ -31,7 +31,7 @@ interface ChatModel {
   String getInformation();
 
   /**
-   * チャットに参加してきたクライアントを処理します。
+   * チャットに参加してきたクライアントを処理します。テストはどう書けばいいのかわかりません。
    * 
    * @param client
    *          接続してきたクライアント。nullを指定できません。

@@ -2,6 +2,9 @@ package gmi.boardgame.chat;
 
 import gmi.utils.exceptions.NullArgumentException;
 import io.netty.channel.Channel;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.util.Observable;
 
@@ -14,6 +17,10 @@ import javax.inject.Inject;
  * @author おくのほそみち
  */
 final class ChatServerModel extends Observable implements ChatModel {
+  /**
+   * 接続したクライアントのグループ。
+   */
+  private final ChannelGroup fClients = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
   /**
    * 行の区切り文字。
    */
@@ -41,8 +48,12 @@ final class ChatServerModel extends Observable implements ChatModel {
 
   @Override
   public void joinClient(Channel client) throws NullPointerException {
-    // TODO 自動生成されたメソッド・スタブ
+    if (client == null) throw new NullArgumentException("client");
 
+    fClients.add(client);
+
+    setChanged();
+    notifyObservers("clients");
   }
 
   @Override
