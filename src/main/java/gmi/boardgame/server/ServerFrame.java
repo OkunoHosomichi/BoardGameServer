@@ -109,6 +109,7 @@ public final class ServerFrame extends JFrame {
               pipeline.addLast("decoder", new StringDecoder(CHARSET));
               pipeline.addLast("encoder", new StringEncoder(CHARSET));
 
+              // FIXME:このハンドラでexceptionCaught()を処理しているのでChatServerHandler#exceptionCaught()が呼ばれない。
               pipeline.addLast("handler", new ChannelInboundHandlerAdapter() {
 
                 @Override
