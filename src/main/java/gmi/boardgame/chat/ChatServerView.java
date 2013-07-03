@@ -131,6 +131,8 @@ final class ChatServerView extends JPanel implements Observer {
 
       @Override
       public void actionPerformed(ActionEvent e) {
+        if (fServerMessageField.getText().isEmpty()) return;
+
         fModel.sendServerMessage(fServerMessageField.getText());
         fServerMessageField.setText("");
       }

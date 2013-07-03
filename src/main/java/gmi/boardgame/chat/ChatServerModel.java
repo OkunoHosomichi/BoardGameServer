@@ -95,9 +95,25 @@ final class ChatServerModel extends Observable implements ChatModel {
   }
 
   @Override
-  public void processClientCommand(String command) throws NullPointerException {
-    // TODO 自動生成されたメソッド・スタブ
+  public void processClientCommand(Channel client, String command) throws NullPointerException {
+    if (client == null) throw new NullArgumentException("client");
+    if (command == null) throw new NullArgumentException("command");
+    if (command.isEmpty()) return;
 
+    synchronized (fClientsLock) {
+      for (final Channel c : fClients) {
+        if (c != client) {
+          c.write("[" + client.remoteAddress() + "] " + command + '\n');
+        } else {
+          c.write("[you] " + command + '\n');
+        }
+      }
+    }
+
+    // Close the connection if the client has sent 'bye'.
+    if ("bye".equals(command.toLowerCase())) {
+      leaveClient(client);
+    }
   }
 
   @Override
