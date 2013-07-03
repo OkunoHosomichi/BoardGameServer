@@ -2,6 +2,8 @@ package gmi.boardgame.chat;
 
 import gmi.utils.exceptions.NullArgumentException;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -125,6 +127,14 @@ final class ChatServerView extends JPanel implements Observer {
    * イベントリスナを設定します。
    */
   private void initializeEventListener() {
+    fServerMessageField.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        fModel.sendServerMessage(fServerMessageField.getText());
+        fServerMessageField.setText("");
+      }
+    });
   }
 
   /**
