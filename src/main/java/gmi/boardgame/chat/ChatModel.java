@@ -1,5 +1,7 @@
 package gmi.boardgame.chat;
 
+import io.netty.channel.Channel;
+
 import java.util.Observer;
 
 /**
@@ -27,6 +29,16 @@ interface ChatModel {
    * @return サーバ情報。nullではありません。
    */
   String getInformation();
+
+  /**
+   * チャットに参加してきたクライアントを処理します。
+   * 
+   * @param client
+   *          接続してきたクライアント。nullを指定できません。
+   * @throws NullPointerException
+   *           clientがnullの場合。
+   */
+  void joinClient(Channel client) throws NullPointerException;
 
   /**
    * サーバ情報を更新してビューに通知します。サーバ情報とは接続待ち開始の通知、クライアント接続の通知、クライアントをキックしたことの通知、

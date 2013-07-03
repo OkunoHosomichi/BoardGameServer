@@ -1,6 +1,7 @@
 package gmi.boardgame.chat;
 
 import gmi.utils.exceptions.NullArgumentException;
+import io.netty.channel.Channel;
 
 import java.util.Observable;
 
@@ -36,6 +37,12 @@ final class ChatServerModel extends Observable implements ChatModel {
     assert fMessage.toString() != null;
 
     return fMessage.toString();
+  }
+
+  @Override
+  public void joinClient(Channel client) throws NullPointerException {
+    // TODO 自動生成されたメソッド・スタブ
+
   }
 
   @Override

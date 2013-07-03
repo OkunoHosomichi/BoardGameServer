@@ -1,5 +1,7 @@
 package gmi.boardgame.chat;
 
+import io.netty.channel.Channel;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -14,6 +16,8 @@ public class ChatServerModelTest {
   private static final String LINE_SEPARATOR = System.getProperty("line.separator");
   @Mocked
   private ChatServerView fChatView;
+  @Mocked(methods = { "id" })
+  private Channel fChannel;
 
   @Test(groups = { "AllEnv" })
   public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {
@@ -61,7 +65,8 @@ public class ChatServerModelTest {
     model.updateInformation("test02");
     model.updateInformation("test03");
 
-    assertEquals(model.getInformation(), "test01" + LINE_SEPARATOR + "test02" + LINE_SEPARATOR + "test03" + LINE_SEPARATOR);
+    assertEquals(model.getInformation(), "test01" + LINE_SEPARATOR + "test02" + LINE_SEPARATOR + "test03"
+        + LINE_SEPARATOR);
   }
 
   @Test(groups = { "AllEnv" })
@@ -99,5 +104,11 @@ public class ChatServerModelTest {
     appendMessage.invoke(model, "aaa");
 
     assertEquals(model.getInformation(), "aaa" + LINE_SEPARATOR);
+  }
+
+  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
+  public void joinClientの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
+    final ChatServerModel model = new ChatServerModel();
+    model.joinClient(null);
   }
 }
