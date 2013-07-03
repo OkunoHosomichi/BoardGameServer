@@ -37,7 +37,7 @@ final class ChatServerModel extends Observable implements ChatModel {
    * サーバ情報を保持します。サーバ情報とは接続待ち開始の通知、クライアント接続の通知、クライアントをキックしたことの通知、
    * エラーが発生した事を示す警告など様々なものを想定しています。 想定しているだけで実際にそれらを通知するかはまだわかりません。
    */
-  private final StringBuilder fMessage;
+  private String fMessage;
 
   /**
    * インスタンスを構築します。
@@ -46,7 +46,7 @@ final class ChatServerModel extends Observable implements ChatModel {
   public ChatServerModel() {
     fClients = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     fClientsLock = new Object();
-    fMessage = new StringBuilder();
+    fMessage = "";
   }
 
   @Override
@@ -65,9 +65,9 @@ final class ChatServerModel extends Observable implements ChatModel {
 
   @Override
   public String getInformation() {
-    assert fMessage.toString() != null;
+    assert fMessage != null;
 
-    return fMessage.toString();
+    return fMessage;
   }
 
   @Override
@@ -112,7 +112,7 @@ final class ChatServerModel extends Observable implements ChatModel {
     assert info != null;
     if (info.isEmpty()) return;
 
-    fMessage.append(info).append(LINE_SEPARATOR);
+    fMessage = fMessage + info + LINE_SEPARATOR;
 
     setChanged();
     notifyObservers("info");
