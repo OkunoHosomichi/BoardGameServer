@@ -7,6 +7,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.inject.Inject;
+import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JList;
@@ -170,5 +171,15 @@ final class ChatServerView extends JPanel implements Observer {
    *          クライアント名一覧。nullを指定できません。
    */
   private void setClientNames(List<String> names) {
+    assert SwingUtilities.isEventDispatchThread();
+    assert names != null;
+
+    final DefaultListModel<String> model = new DefaultListModel<>();
+
+    for (final String client : names) {
+      model.addElement(client);
+    }
+
+    fClientNames.setModel(model);
   }
 }
