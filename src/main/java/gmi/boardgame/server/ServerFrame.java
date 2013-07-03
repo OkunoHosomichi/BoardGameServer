@@ -4,7 +4,6 @@ import gmi.boardgame.chat.ChatServer;
 import gmi.utils.IntRange;
 import gmi.utils.netty.MyDelimiters;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
@@ -20,15 +19,22 @@ import io.netty.handler.codec.string.StringEncoder;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+/**
+ * チャットサーバのウインドウです。サーバの接続待ち設定もこのクラスで行います。
+ * 
+ * @author おくのほそみち
+ */
 @SuppressWarnings("serial")
 public final class ServerFrame extends JFrame {
+  /**
+   * チャットで使う文字セット。
+   */
   private static final Charset CHARSET = Charset.forName("UTF-16BE");
   /**
    * convertNumberStringIntoPortNumber()で引数チェックに利用する正規表現。
@@ -42,10 +48,14 @@ public final class ServerFrame extends JFrame {
    * ポート番号に使える値の範囲。49513～65535までの値です。
    */
   private static final IntRange PORT_RANGE = new IntRange(49513, 65535);
-  private final EventLoopGroup fBossGroup;
+  /**
+   * チャットサーバ。
+   */
   private final ChatServer fChatServer;
+  /**
+   * 接続待ちするポート番号。
+   */
   private final int fPortNumber;
-  private final EventLoopGroup fWorkerGroup;
 
   /**
    * デフォルトのポート番号を指定してインスタンスを構築します。デフォルト値は60935番です。
@@ -65,8 +75,6 @@ public final class ServerFrame extends JFrame {
     assert PORT_RANGE.Contains(DEFAULT_PORT_NUMBER);
 
     fPortNumber = PORT_RANGE.Contains(portNumber) ? portNumber : DEFAULT_PORT_NUMBER;
-    fBossGroup = new NioEventLoopGroup();
-    fWorkerGroup = new NioEventLoopGroup();
 
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     fChatServer = new ChatServer();
@@ -82,45 +90,55 @@ public final class ServerFrame extends JFrame {
     cp.add(fChatServer.getPanel(), BorderLayout.CENTER);
   }
 
-  private ChannelFuture setup() {
-    final ServerBootstrap bootstrap = new ServerBootstrap();
-    bootstrap.group(fBossGroup, fWorkerGroup).channel(NioServerSocketChannel.class)
-        .option(ChannelOption.SO_BACKLOG, Integer.valueOf(10)).childHandler(new ChannelInitializer<SocketChannel>() {
-
-          @Override
-          protected void initChannel(SocketChannel ch) throws Exception {
-            final ChannelPipeline pipeline = ch.pipeline();
-
-            pipeline.addLast("framer", new DelimiterBasedFrameDecoder(2048, MyDelimiters.lineDelimiter(CHARSET)));
-            pipeline.addLast("decoder", new StringDecoder(CHARSET));
-            pipeline.addLast("encoder", new StringEncoder(CHARSET));
-
-            pipeline.addLast("handler", new ChannelInboundHandlerAdapter() {
-
-              @Override
-              public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-                System.err.println("Unexpected exception from downstream.");
-                ctx.close();
-              }
-            });
-
-            pipeline.addLast("chathandler", fChatServer.createHandler());
-          }
-        });
-    return bootstrap.bind(fPortNumber);
-  }
-
-  private void start(ChannelFuture future) throws InterruptedException {
+  /**
+   * ネットワークを設定して接続待ち処理を開始します。 バックログ値を10に設定しています。
+   */
+  private void start() {
+    final EventLoopGroup bossGroup = new NioEventLoopGroup();
+    final EventLoopGroup workerGroup = new NioEventLoopGroup();
     try {
+      final ServerBootstrap bootstrap = new ServerBootstrap();
+      bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+          .option(ChannelOption.SO_BACKLOG, Integer.valueOf(10)).childHandler(new ChannelInitializer<SocketChannel>() {
 
-      future.sync().channel().closeFuture().sync();
+            @Override
+            protected void initChannel(SocketChannel ch) throws Exception {
+              final ChannelPipeline pipeline = ch.pipeline();
+
+              pipeline.addLast("framer", new DelimiterBasedFrameDecoder(2048, MyDelimiters.lineDelimiter(CHARSET)));
+              pipeline.addLast("decoder", new StringDecoder(CHARSET));
+              pipeline.addLast("encoder", new StringEncoder(CHARSET));
+
+              pipeline.addLast("handler", new ChannelInboundHandlerAdapter() {
+
+                @Override
+                public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+                  System.err.println("Unexpected exception from downstream.");
+                  ctx.close();
+                }
+              });
+
+              pipeline.addLast("chathandler", fChatServer.createHandler());
+            }
+          });
+      bootstrap.bind(fPortNumber).sync().channel().closeFuture().sync();
+    } catch (final InterruptedException ex) {
+      // ChannelFutureのsync()で処理の終了を待ってるときに割り込みをかけられた場合。特になにもせず終了させていいと思う。
     } finally {
-      fBossGroup.shutdownGracefully();
-      fWorkerGroup.shutdownGracefully();
+      bossGroup.shutdownGracefully();
+      workerGroup.shutdownGracefully();
     }
   }
 
-  public static void main(String[] args) throws InterruptedException, UnknownHostException {
+  /**
+   * メインメソッド。最初の引数にポート番号を渡すことができます。
+   * 引数が無い又は最初の引数がポート番号ではないと判断した場合にはデフォルトのポート番号を使用します。
+   * サーバのウインドウを作成して表示し、ネットワークを設定してクライアントからの接続待ち状態に入ります。
+   * 
+   * @param args
+   *          最初の引数にポート番号を渡すことができます。
+   */
+  public static void main(String[] args) {
     final int port = (args.length > 0) ? convertNumberStringIntoPortNumber(args[0]) : DEFAULT_PORT_NUMBER;
 
     final ServerFrame frame = new ServerFrame(port);
@@ -136,9 +154,8 @@ public final class ServerFrame extends JFrame {
       }
     });
 
-    final ChannelFuture f = frame.setup();
     frame.fChatServer.notifyServerInformation("ポート" + port + "で接続待ちを開始します。");
-    frame.start(f);
+    frame.start();
   }
 
   /**
