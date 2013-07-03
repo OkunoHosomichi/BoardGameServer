@@ -2,6 +2,7 @@ package gmi.boardgame.chat;
 
 import io.netty.channel.Channel;
 
+import java.util.List;
 import java.util.Observer;
 
 /**
@@ -21,6 +22,13 @@ interface ChatModel {
    *           パラメータ o が null の場合。
    */
   void addObserver(Observer o) throws NullPointerException;
+
+  /**
+   * チャットに参加しているクライアントの名前一覧を返します。一覧は変更不能になっています。
+   * 
+   * @return クライアントの名前一覧。
+   */
+  List<String> getClientNames();
 
   /**
    * サーバ情報を返します。サーバ情報とは接続待ち開始の通知、クライアント接続の通知、クライアントをキックしたことの通知、
