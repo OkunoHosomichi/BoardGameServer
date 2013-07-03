@@ -32,7 +32,7 @@ final class ChatServerModel extends Observable implements ChatModel {
   }
 
   @Override
-  public String getMessage() {
+  public String getInformation() {
     assert fMessage.toString() != null;
 
     return fMessage.toString();

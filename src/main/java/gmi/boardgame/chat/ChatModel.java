@@ -26,7 +26,7 @@ interface ChatModel {
    * 
    * @return サーバ情報。nullではありません。
    */
-  String getMessage();
+  String getInformation();
 
   /**
    * サーバ情報を更新してビューに通知します。サーバ情報とは接続待ち開始の通知、クライアント接続の通知、クライアントをキックしたことの通知、

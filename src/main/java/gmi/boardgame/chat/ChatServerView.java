@@ -92,7 +92,7 @@ final class ChatServerView extends JPanel implements Observer {
 
         @Override
         public void run() {
-          setServerInformation(fModel.getMessage());
+          setServerInformation(fModel.getInformation());
         }
       });
       break;

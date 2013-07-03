@@ -19,7 +19,7 @@ public class ChatServerModelTest {
   public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {
     final ChatServerModel model = new ChatServerModel();
 
-    assertTrue(model.getMessage().isEmpty());
+    assertTrue(model.getInformation().isEmpty());
   }
 
   @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
@@ -42,7 +42,7 @@ public class ChatServerModelTest {
 
     model.updateInformation("");
 
-    assertTrue(model.getMessage().isEmpty());
+    assertTrue(model.getInformation().isEmpty());
   }
 
   @Test(groups = { "AllEnv" })
@@ -61,7 +61,7 @@ public class ChatServerModelTest {
     model.updateInformation("test02");
     model.updateInformation("test03");
 
-    assertEquals(model.getMessage(), "test01" + LINE_SEPARATOR + "test02" + LINE_SEPARATOR + "test03" + LINE_SEPARATOR);
+    assertEquals(model.getInformation(), "test01" + LINE_SEPARATOR + "test02" + LINE_SEPARATOR + "test03" + LINE_SEPARATOR);
   }
 
   @Test(groups = { "AllEnv" })
@@ -98,6 +98,6 @@ public class ChatServerModelTest {
 
     appendMessage.invoke(model, "aaa");
 
-    assertEquals(model.getMessage(), "aaa" + LINE_SEPARATOR);
+    assertEquals(model.getInformation(), "aaa" + LINE_SEPARATOR);
   }
 }
