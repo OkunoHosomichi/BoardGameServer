@@ -24,7 +24,7 @@ interface ChatModel {
   void addObserver(Observer o) throws NullPointerException;
 
   /**
-   * チャットに参加しているクライアントの名前一覧を返します。一覧は変更不能になっています。
+   * チャットに参加しているクライアントの名前一覧を返します。一覧は変更不能になっています。テストはどう書けばいいのかわかりません。
    * 
    * @return クライアントの名前一覧。
    */
@@ -39,7 +39,7 @@ interface ChatModel {
   String getInformation();
 
   /**
-   * チャットに参加してきたクライアントを処理します。テストはどう書けばいいのかわかりません。
+   * チャットに参加してきたクライアントを処理し、ビューに変更を通知します。テストはどう書けばいいのかわかりません。
    * 
    * @param client
    *          接続してきたクライアント。nullを指定できません。
@@ -47,6 +47,16 @@ interface ChatModel {
    *           clientがnullの場合。
    */
   void joinClient(Channel client) throws NullPointerException;
+
+  /**
+   * クライアントが切断した場合の処理を行い、ビューに変更を通知します。テストはどう書けばいいのかわかりません。
+   * 
+   * @param client
+   *          切断したクライアント。nullを指定できません。
+   * @throws NullPointerException
+   *           clientがnullの場合。
+   */
+  void leaveClient(Channel client) throws NullPointerException;
 
   /**
    * サーバ情報を更新してビューに通知します。サーバ情報とは接続待ち開始の通知、クライアント接続の通知、クライアントをキックしたことの通知、

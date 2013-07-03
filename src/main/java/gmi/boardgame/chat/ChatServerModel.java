@@ -51,6 +51,7 @@ final class ChatServerModel extends Observable implements ChatModel {
 
   @Override
   public List<String> getClientNames() {
+    // TODO: 書き方がわかったらテストを書く。
     final List<String> result = new LinkedList<>();
 
     synchronized (fClientsLock) {
@@ -71,6 +72,7 @@ final class ChatServerModel extends Observable implements ChatModel {
 
   @Override
   public void joinClient(Channel client) throws NullPointerException {
+    // TODO: 書き方がわかったらテストを書く。
     if (client == null) throw new NullArgumentException("client");
     client.write("Welcome to Chat!\n");
     client.write("It is " + new Date() + " now.\n");
@@ -78,6 +80,15 @@ final class ChatServerModel extends Observable implements ChatModel {
     synchronized (fClientsLock) {
       fClients.add(client);
     }
+
+    setChanged();
+    notifyObservers("clients");
+  }
+
+  @Override
+  public void leaveClient(Channel client) throws NullPointerException {
+    // TODO: 書き方がわかったらテストを書く。
+    client.close();
 
     setChanged();
     notifyObservers("clients");
