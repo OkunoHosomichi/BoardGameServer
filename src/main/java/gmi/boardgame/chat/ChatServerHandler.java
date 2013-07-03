@@ -24,6 +24,7 @@ final class ChatServerHandler extends ChannelInboundHandlerAdapter {
    * 接続したクライアントのグループ。モデルに移すことになると思います。
    */
   private static final ChannelGroup fChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+
   /**
    * 処理を任せていく予定のモデル。現時点では全く使っていません。
    */
@@ -50,6 +51,11 @@ final class ChatServerHandler extends ChannelInboundHandlerAdapter {
   }
 
   @Override
+  public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    fModel.leaveClient(ctx.channel());
+  }
+
+  @Override
   public void messageReceived(ChannelHandlerContext ctx, MessageList<Object> requests) throws Exception {
     final MessageList<String> msgs = requests.cast();
     for (int i = 0; i < msgs.size(); i++) {
@@ -65,7 +71,7 @@ final class ChatServerHandler extends ChannelInboundHandlerAdapter {
 
       // Close the connection if the client has sent 'bye'.
       if ("bye".equals(msg.toLowerCase())) {
-        ctx.close();
+        fModel.leaveClient(ctx.channel());
       }
     }
     msgs.releaseAllAndRecycle();
