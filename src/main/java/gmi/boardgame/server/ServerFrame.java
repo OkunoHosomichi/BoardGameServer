@@ -109,17 +109,17 @@ public final class ServerFrame extends JFrame {
               pipeline.addLast("decoder", new StringDecoder(CHARSET));
               pipeline.addLast("encoder", new StringEncoder(CHARSET));
 
-              // FIXME:このハンドラでexceptionCaught()を処理しているのでChatServerHandler#exceptionCaught()が呼ばれない。
+              pipeline.addLast("chathandler", fChatServer.createHandler());
+
               pipeline.addLast("handler", new ChannelInboundHandlerAdapter() {
 
                 @Override
                 public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
                   System.err.println("Unexpected exception from downstream.");
-                  ctx.close();
+                  ctx.channel().close();
                 }
               });
 
-              pipeline.addLast("chathandler", fChatServer.createHandler());
             }
           });
       bootstrap.bind(fPortNumber).sync().channel().closeFuture().sync();

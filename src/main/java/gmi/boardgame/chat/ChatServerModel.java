@@ -2,6 +2,8 @@ package gmi.boardgame.chat;
 
 import gmi.utils.exceptions.NullArgumentException;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
@@ -80,15 +82,13 @@ final class ChatServerModel extends Observable implements ChatModel {
       fClients.add(client);
     }
 
-    setChanged();
-    notifyObservers("clients");
-  }
+    client.closeFuture().addListener(new ChannelFutureListener() {
 
-  @Override
-  public void leaveClient(Channel client) throws NullPointerException {
-    if (client == null) throw new NullArgumentException("client");
-
-    client.close();
+      @Override
+      public void operationComplete(ChannelFuture future) throws Exception {
+        leaveClient();
+      }
+    });
 
     setChanged();
     notifyObservers("clients");
@@ -118,7 +118,7 @@ final class ChatServerModel extends Observable implements ChatModel {
     }
 
     if ("bye".equals(command.toLowerCase())) {
-      leaveClient(client);
+      client.close();
     }
   }
 
@@ -157,5 +157,13 @@ final class ChatServerModel extends Observable implements ChatModel {
 
     setChanged();
     notifyObservers("info");
+  }
+
+  /**
+   * クライアントが切断した場合の処理を行い、ビューに変更を通知します。
+   */
+  private void leaveClient() {
+    setChanged();
+    notifyObservers("clients");
   }
 }

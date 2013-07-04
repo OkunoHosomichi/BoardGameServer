@@ -1,6 +1,7 @@
 package gmi.boardgame.chat;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.group.ChannelGroup;
 
 import java.lang.reflect.InvocationTargetException;
@@ -126,10 +127,14 @@ public class ChatServerModelTest {
     model.addObserver(fChatView);
 
     new Expectations() {
+      @Mocked
+      ChannelFuture fFuture;
       {
         fChannel.write(anyString);
         minTimes = 1;
         fGroup.add(fChannel);
+        fChannel.closeFuture();
+        result = fFuture;
         fChatView.update(model, "clients");
       }
     };
@@ -197,25 +202,22 @@ public class ChatServerModelTest {
     model.getClientNames().remove(0);
   }
 
-  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
-  public void leaveClientの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
-    final ChatServerModel model = new ChatServerModel();
-    model.leaveClient(null);
-  }
-
   @Test(groups = { "AllEnv" })
-  public void leaveClientを呼ばれたらクライアント一覧を更新してビューに通知するよ() {
+  public void leaveClientを呼ばれたらクライアント一覧を更新してビューに通知するよ() throws NoSuchMethodException, SecurityException,
+      IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    final Method leaveClient = ChatServerModel.class.getDeclaredMethod("leaveClient", new Class[] {});
+    leaveClient.setAccessible(true);
+
     final ChatServerModel model = new ChatServerModel();
     model.addObserver(fChatView);
 
     new Expectations() {
       {
-        fChannel.close();
         fChatView.update(model, "clients");
       }
     };
 
-    model.leaveClient(fChannel);
+    leaveClient.invoke(model, new Object[] {});
   }
 
   @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })

@@ -42,11 +42,6 @@ final class ChatServerHandler extends ChannelInboundHandlerAdapter {
   }
 
   @Override
-  public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-    fModel.leaveClient(ctx.channel());
-  }
-
-  @Override
   public void messageReceived(ChannelHandlerContext ctx, MessageList<Object> requests) throws Exception {
     final MessageList<String> msgs = requests.cast();
     for (int i = 0; i < msgs.size(); i++) {

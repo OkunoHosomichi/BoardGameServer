@@ -39,7 +39,7 @@ interface ChatModel {
   String getInformation();
 
   /**
-   * チャットに参加してきたクライアントを処理し、ビューに変更を通知します。
+   * チャットに参加してきたクライアントを処理し、ビューに変更を通知します。クライアントが切断したときの処理も登録しておきます。
    * 
    * @param client
    *          接続してきたクライアント。nullを指定できません。
@@ -47,16 +47,6 @@ interface ChatModel {
    *           clientがnullの場合。
    */
   void joinClient(Channel client) throws NullPointerException;
-
-  /**
-   * クライアントが切断した場合の処理を行い、ビューに変更を通知します。
-   * 
-   * @param client
-   *          切断したクライアント。nullを指定できません。
-   * @throws NullPointerException
-   *           clientがnullの場合。
-   */
-  void leaveClient(Channel client) throws NullPointerException;
 
   /**
    * チャットに参加しているクライアントから受信したコマンドを処理します。コマンドが空文字列の場合は何もしません。
