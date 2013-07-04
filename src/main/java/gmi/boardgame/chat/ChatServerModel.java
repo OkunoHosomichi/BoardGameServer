@@ -124,7 +124,6 @@ final class ChatServerModel extends Observable implements ChatModel {
 
   @Override
   public void sendServerMessage(String message) throws NullPointerException {
-    // TODO: 書き方がわかったらテストを書く。
     if (message == null) throw new NullArgumentException("message");
     if (message.isEmpty()) return;
 

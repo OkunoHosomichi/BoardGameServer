@@ -217,4 +217,52 @@ public class ChatServerModelTest {
 
     model.leaveClient(fChannel);
   }
+
+  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
+  public void sendServerMessageの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
+    final ChatServerModel model = new ChatServerModel();
+    model.sendServerMessage(null);
+  }
+
+  @Test(groups = { "AllEnv" })
+  public void sendServerMessageの引数に空文字列が指定されたら何もしないよ() {
+    final ChatServerModel model = new ChatServerModel();
+    Deencapsulation.setField(model, "fClients", fGroup);
+
+    new Expectations() {
+      Channel fChannel1;
+      Channel fChannel2;
+      {
+        fGroup.iterator();
+        times = 0;
+        result = Arrays.asList(fChannel1, fChannel2).iterator();
+        fChannel1.write("<Server> \n");
+        times = 0;
+        fChannel2.write("<Server> \n");
+        times = 0;
+      }
+    };
+
+    model.sendServerMessage("");
+  }
+
+  @Test(groups = { "AllEnv" })
+  public void sendServerMessageを呼び出されたら各クライアントにサーバからのメッセージを送信するよ() {
+    final ChatServerModel model = new ChatServerModel();
+    Deencapsulation.setField(model, "fClients", fGroup);
+
+    new Expectations() {
+      Channel fChannel1;
+      Channel fChannel2;
+      {
+        fGroup.iterator();
+        result = Arrays.asList(fChannel1, fChannel2).iterator();
+
+        fChannel1.write("<Server> これはテストです\n");
+        fChannel2.write("<Server> これはテストです\n");
+      }
+    };
+
+    model.sendServerMessage("これはテストです");
+  }
 }
