@@ -5,6 +5,9 @@ import io.netty.channel.group.ChannelGroup;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.SocketAddress;
+import java.util.Arrays;
+import java.util.List;
 
 import mockit.Deencapsulation;
 import mockit.Expectations;
@@ -132,5 +135,65 @@ public class ChatServerModelTest {
     };
 
     model.joinClient(fChannel);
+  }
+
+  @Test(groups = { "AllEnv" })
+  public void getClientNamesを呼ばれたら変更不能のクライアント名一覧を返すよ(final SocketAddress address1, final SocketAddress address5) {
+    final ChatServerModel model = new ChatServerModel();
+    Deencapsulation.setField(model, "fClients", fGroup);
+
+    new Expectations() {
+      SocketAddress fAddress2;
+      SocketAddress fAddress3;
+      SocketAddress fAddress4;
+      {
+        fGroup.iterator();
+        times = 1;
+        result = Arrays.asList(fChannel, fChannel, fChannel, fChannel, fChannel).iterator();
+        fChannel.remoteAddress();
+        returns(address1, fAddress2, fAddress3, fAddress4, address5);
+      }
+    };
+
+    final List<String> result = model.getClientNames();
+    assertEquals(result.size(), 5);
+    assertEquals(result.get(0), address1.toString());
+    assertEquals(result.get(4), address5.toString());
+  }
+
+  @Test(groups = { "AllEnv" }, expectedExceptions = { UnsupportedOperationException.class })
+  public void getClientNamesが返すクライアント名一覧は追加不能だよ() {
+    final ChatServerModel model = new ChatServerModel();
+    Deencapsulation.setField(model, "fClients", fGroup);
+
+    new Expectations() {
+      SocketAddress fAddress;
+      {
+        fGroup.iterator();
+        result = Arrays.asList(fChannel).iterator();
+        fChannel.remoteAddress();
+        result = fAddress;
+      }
+    };
+
+    model.getClientNames().add("asdfg");
+  }
+
+  @Test(groups = { "AllEnv" }, expectedExceptions = { UnsupportedOperationException.class })
+  public void getClientNamesが返すクライアント名一覧は削除不能だよ() {
+    final ChatServerModel model = new ChatServerModel();
+    Deencapsulation.setField(model, "fClients", fGroup);
+
+    new Expectations() {
+      SocketAddress fAddress;
+      {
+        fGroup.iterator();
+        result = Arrays.asList(fChannel).iterator();
+        fChannel.remoteAddress();
+        result = fAddress;
+      }
+    };
+
+    model.getClientNames().remove(0);
   }
 }

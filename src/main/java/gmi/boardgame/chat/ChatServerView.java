@@ -90,7 +90,7 @@ final class ChatServerView extends JPanel implements Observer {
     if (arg == null) throw new NullArgumentException("arg");
     if (!(arg instanceof String)) throw new IllegalArgumentException("argに文字列を渡すようにしてください。");
 
-    // INFO: モデルの通知情報が変更された場合にきちんと修正する。
+    // INFO: モデルの通知情報が変更された場合にコメント等きちんと修正する。
     switch ((String) arg) {
     case "clients":
       SwingUtilities.invokeLater(new Runnable() {
