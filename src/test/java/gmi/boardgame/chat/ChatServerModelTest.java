@@ -1,10 +1,12 @@
 package gmi.boardgame.chat;
 
 import io.netty.channel.Channel;
+import io.netty.channel.group.ChannelGroup;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import mockit.Deencapsulation;
 import mockit.Expectations;
 import mockit.Mocked;
 
@@ -16,7 +18,9 @@ public class ChatServerModelTest {
   private static final String LINE_SEPARATOR = System.getProperty("line.separator");
   @Mocked
   private ChatServerView fChatView;
-  @Mocked(methods = { "id" })
+  @Mocked
+  private ChannelGroup fGroup;
+  @Mocked
   private Channel fChannel;
 
   @Test(groups = { "AllEnv" })
@@ -110,5 +114,23 @@ public class ChatServerModelTest {
   public void joinClientの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
     final ChatServerModel model = new ChatServerModel();
     model.joinClient(null);
+  }
+
+  @Test(groups = { "AllEnv" })
+  public void joinClientを呼ばれたらクライアント一覧を更新するよ() {
+    final ChatServerModel model = new ChatServerModel();
+    Deencapsulation.setField(model, "fClients", fGroup);
+    model.addObserver(fChatView);
+
+    new Expectations() {
+      {
+        fChannel.write(anyString);
+        minTimes = 1;
+        fGroup.add(fChannel);
+        fChatView.update(model, "clients");
+      }
+    };
+
+    model.joinClient(fChannel);
   }
 }
