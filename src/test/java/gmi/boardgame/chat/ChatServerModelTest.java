@@ -120,7 +120,7 @@ public class ChatServerModelTest {
   }
 
   @Test(groups = { "AllEnv" })
-  public void joinClientを呼ばれたらクライアント一覧を更新するよ() {
+  public void joinClientを呼ばれたらクライアント一覧を更新してビューに通知するよ() {
     final ChatServerModel model = new ChatServerModel();
     Deencapsulation.setField(model, "fClients", fGroup);
     model.addObserver(fChatView);
@@ -195,5 +195,26 @@ public class ChatServerModelTest {
     };
 
     model.getClientNames().remove(0);
+  }
+
+  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
+  public void leaveClientの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
+    final ChatServerModel model = new ChatServerModel();
+    model.leaveClient(null);
+  }
+
+  @Test(groups = { "AllEnv" })
+  public void leaveClientを呼ばれたらクライアント一覧を更新してビューに通知するよ() {
+    final ChatServerModel model = new ChatServerModel();
+    model.addObserver(fChatView);
+
+    new Expectations() {
+      {
+        fChannel.close();
+        fChatView.update(model, "clients");
+      }
+    };
+
+    model.leaveClient(fChannel);
   }
 }
