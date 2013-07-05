@@ -267,4 +267,66 @@ public class ChatServerModelTest {
 
     model.sendServerMessage("これはテストです");
   }
+
+  @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
+  public void processMessageCommandの引数clientにnullが指定されたらIllegalArgumentExceptionを投げるよ() {
+    final ChatServerModel model = new ChatServerModel();
+    model.processMessageCommand(null, "aaa");
+  }
+
+  @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
+  public void processMessageCommandの引数messageにnullが指定されたらIllegalArgumentExceptionを投げるよ(Channel client) {
+    final ChatServerModel model = new ChatServerModel();
+    model.processMessageCommand(client, null);
+  }
+
+  @Test(groups = { "AllEnv" })
+  public void processMessageCommandの引数messageに空文字列が指定されたら何もしないよ(final Channel client) {
+    final ChatServerModel model = new ChatServerModel();
+    Deencapsulation.setField(model, "fClients", fGroup);
+
+    new Expectations() {
+      Channel fChannel1;
+      Channel fChannel2;
+      {
+        fGroup.iterator();
+        times = 0;
+        result = Arrays.asList(client, fChannel1, fChannel2).iterator();
+        client.write(anyString);
+        times = 0;
+        fChannel1.write(anyString);
+        times = 0;
+        fChannel2.write(anyString);
+        times = 0;
+      }
+    };
+
+    model.processMessageCommand(client, "");
+  }
+
+  @Test(groups = { "AllEnv" })
+  public void processMessageCommandを呼び出されたらコマンドを送信してきたクライアント以外にメッセージを送るよ(final Channel client) {
+    final ChatServerModel model = new ChatServerModel();
+    Deencapsulation.setField(model, "fClients", fGroup);
+
+    new Expectations() {
+      Channel fChannel1;
+      Channel fChannel2;
+      SocketAddress fAddress;
+      {
+        fGroup.iterator();
+        result = Arrays.asList(fChannel1, client, fChannel2).iterator();
+        client.remoteAddress();
+        result = fAddress;
+        fChannel1.write("[" + fAddress.toString() + "] test Message\n");
+        client.write(anyString);
+        times = 0;
+        client.remoteAddress();
+        result = fAddress;
+        fChannel2.write("[" + fAddress.toString() + "] test Message\n");
+      }
+    };
+
+    model.processMessageCommand(client, "test Message");
+  }
 }
