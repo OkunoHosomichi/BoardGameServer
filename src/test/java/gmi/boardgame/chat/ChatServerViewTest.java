@@ -23,8 +23,8 @@ public class ChatServerViewTest {
   @Mocked
   ChatServerModel fModel;
 
-  @Test(groups = { "LocalOnly" }, expectedExceptions = { NullPointerException.class })
-  public void コンストラクタの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
+  @Test(groups = { "LocalOnly" }, expectedExceptions = { IllegalArgumentException.class })
+  public void コンストラクタの引数にnullが指定されたらIllegalArgumentExceptionを投げるよ() {
     new ChatServerView(null);
   }
 

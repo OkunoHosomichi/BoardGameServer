@@ -32,7 +32,7 @@ public class NullArgumentException extends IllegalArgumentException {
    *           argがnullの場合。
    */
   private static String checkArguments(String arg) throws IllegalArgumentException {
-    if (arg == null) throw new IllegalArgumentException();
+    if (arg == null) throw new IllegalArgumentException("引数argにnullを指定できません。");
 
     return arg;
   }

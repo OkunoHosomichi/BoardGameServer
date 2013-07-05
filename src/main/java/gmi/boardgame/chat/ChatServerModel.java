@@ -72,7 +72,7 @@ final class ChatServerModel extends Observable implements ChatModel {
   }
 
   @Override
-  public void joinClient(Channel client) throws NullPointerException {
+  public void joinClient(Channel client) throws IllegalArgumentException {
     if (client == null) throw new NullArgumentException("client");
 
     client.write("Welcome to Chat!\n");
@@ -100,7 +100,7 @@ final class ChatServerModel extends Observable implements ChatModel {
    * それ以外の文字列 - メッセージとして送信する。<br>
    */
   @Override
-  public void processClientCommand(Channel client, String command) throws NullPointerException {
+  public void processClientCommand(Channel client, String command) throws IllegalArgumentException {
     // INFO: コマンドが変更された場合にコメント等きちんと修正する。
     // TODO: 書き方がわかったらテストを書く。
     if (client == null) throw new NullArgumentException("client");
@@ -123,7 +123,7 @@ final class ChatServerModel extends Observable implements ChatModel {
   }
 
   @Override
-  public void sendServerMessage(String message) throws NullPointerException {
+  public void sendServerMessage(String message) throws IllegalArgumentException {
     if (message == null) throw new NullArgumentException("message");
     if (message.isEmpty()) return;
 
@@ -136,7 +136,7 @@ final class ChatServerModel extends Observable implements ChatModel {
   }
 
   @Override
-  public void updateInformation(String info) throws NullPointerException {
+  public void updateInformation(String info) throws IllegalArgumentException {
     if (info == null) throw new NullArgumentException("message");
 
     appendInformation(info);

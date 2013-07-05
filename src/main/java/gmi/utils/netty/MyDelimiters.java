@@ -20,11 +20,11 @@ public final class MyDelimiters {
    *          対応する文字コード。nullを指定できません。
    * @return io.netty.handler.codec.DelimiterBasedFrameDecoderで利用できる区切り文字。
    *         改行コードでフレームを区切る。
-   * @throws NullPointerException
+   * @throws IllegalArgumentException
    *           charsetがnullの場合。
    * @see io.netty.handler.codec.Delimiters#lineDelimiter()
    */
-  public static ByteBuf[] lineDelimiter(Charset charset) throws NullPointerException {
+  public static ByteBuf[] lineDelimiter(Charset charset) throws IllegalArgumentException {
     if (charset == null) throw new NullArgumentException("charset");
 
     return new ByteBuf[] { Unpooled.wrappedBuffer("\r\n".getBytes(charset)),

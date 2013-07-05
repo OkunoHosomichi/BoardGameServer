@@ -50,11 +50,11 @@ final class ChatServerView extends JPanel implements Observer {
    * 
    * @param model
    *          モデル。nullを指定できません。
-   * @throws NullPointerException
+   * @throws IllegalArgumentException
    *           modelがnullの場合。
    */
   @Inject
-  public ChatServerView(ChatModel model) throws NullPointerException {
+  public ChatServerView(ChatModel model) throws IllegalArgumentException {
     if (model == null) throw new NullArgumentException("model");
 
     fModel = model;
@@ -77,13 +77,11 @@ final class ChatServerView extends JPanel implements Observer {
    *          更新通知を出したオブジェクト。nullを指定できません。
    * @param arg
    *          更新情報を知らせる文字列。nullを指定できません。
-   * @throws NullPointerException
-   *           o又はargがnullの場合。
    * @throws IllegalArgumentException
-   *           argがString型でなかった場合。又はargで渡された文字列が正しい更新情報でなかった場合。
+   *           o又はargがnullの場合。又はargがString型でなかった場合。又はargで渡された文字列が正しい更新情報でなかった場合。
    */
   @Override
-  public void update(Observable o, Object arg) throws NullPointerException, IllegalArgumentException {
+  public void update(Observable o, Object arg) throws IllegalArgumentException {
     // INFO: コメント参照。他に良いやり方を思いついたら直す。
     assert !SwingUtilities.isEventDispatchThread();
     if (o == null) throw new NullArgumentException("o");

@@ -26,11 +26,11 @@ final class ChatServerHandler extends ChannelInboundHandlerAdapter {
    * 
    * @param model
    *          処理を任せるモデル。nullを指定できません。
-   * @throws NullPointerException
+   * @throws IllegalArgumentException
    *           modelがnullの場合。
    */
   @Inject
-  ChatServerHandler(ChatModel model) throws NullPointerException {
+  ChatServerHandler(ChatModel model) throws IllegalArgumentException {
     if (model == null) throw new NullArgumentException("model");
 
     fModel = model;

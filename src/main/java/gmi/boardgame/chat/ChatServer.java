@@ -56,10 +56,10 @@ public final class ChatServer {
    * 
    * @param info
    *          サーバ情報。nullを指定できません。
-   * @throws NullPointerException
+   * @throws IllegalArgumentException
    *           messageがnullの場合。
    */
-  public void notifyServerInformation(String info) throws NullPointerException {
+  public void notifyServerInformation(String info) throws IllegalArgumentException {
     if (info == null) throw new NullArgumentException("info");
     if (info.isEmpty()) return;
 

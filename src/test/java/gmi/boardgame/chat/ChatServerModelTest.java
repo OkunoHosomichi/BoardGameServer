@@ -34,8 +34,8 @@ public class ChatServerModelTest {
     assertTrue(model.getInformation().isEmpty());
   }
 
-  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
-  public void updateInformationの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
+  @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
+  public void updateInformationの引数にnullが指定されたらIllegalArgumentExceptionを投げるよ() {
     final ChatServerModel model = new ChatServerModel();
     model.updateInformation(null);
   }
@@ -114,8 +114,8 @@ public class ChatServerModelTest {
     assertEquals(model.getInformation(), "aaa" + LINE_SEPARATOR);
   }
 
-  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
-  public void joinClientの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
+  @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
+  public void joinClientの引数にnullが指定されたらIllegalArgumentExceptionを投げるよ() {
     final ChatServerModel model = new ChatServerModel();
     model.joinClient(null);
   }
@@ -220,8 +220,8 @@ public class ChatServerModelTest {
     leaveClient.invoke(model, new Object[] {});
   }
 
-  @Test(groups = { "AllEnv" }, expectedExceptions = { NullPointerException.class })
-  public void sendServerMessageの引数にnullが指定されたらNullPointerExceptionを投げるよ() {
+  @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
+  public void sendServerMessageの引数にnullが指定されたらIllegalArgumentExceptionを投げるよ() {
     final ChatServerModel model = new ChatServerModel();
     model.sendServerMessage(null);
   }

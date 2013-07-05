@@ -18,10 +18,10 @@ interface ChatModel {
    * @see java.util.Observable#addObserver(java.util.Observer)
    * @param o
    *          追加するObserver
-   * @throws NullPointerException
+   * @throws IllegalArgumentException
    *           パラメータ o が null の場合。
    */
-  void addObserver(Observer o) throws NullPointerException;
+  void addObserver(Observer o) throws IllegalArgumentException;
 
   /**
    * チャットに参加しているクライアントの名前一覧を返します。一覧は変更不能になっています。テストはどう書けばいいのかわかりません。
@@ -43,10 +43,10 @@ interface ChatModel {
    * 
    * @param client
    *          接続してきたクライアント。nullを指定できません。
-   * @throws NullPointerException
+   * @throws IllegalArgumentException
    *           clientがnullの場合。
    */
-  void joinClient(Channel client) throws NullPointerException;
+  void joinClient(Channel client) throws IllegalArgumentException;
 
   /**
    * チャットに参加しているクライアントから受信したコマンドを処理します。コマンドが空文字列の場合は何もしません。
@@ -55,20 +55,20 @@ interface ChatModel {
    *          コマンドを送信したクライアント。nullを指定できません。
    * @param command
    *          コマンド文字列。nullを指定できません。
-   * @throws NullPointerException
+   * @throws IllegalArgumentException
    *           client又はcommandがnullの場合。
    */
-  void processClientCommand(Channel client, String command) throws NullPointerException;
+  void processClientCommand(Channel client, String command) throws IllegalArgumentException;
 
   /**
    * サーバからのメッセージをチャットに参加している全クライアントに送信します。メッセージが空文字列の場合は何もしません。
    * 
    * @param message
    *          送信するメッセージ。nullを指定できません。
-   * @throws NullPointerException
+   * @throws IllegalArgumentException
    *           messageがnullの場合。
    */
-  void sendServerMessage(String message) throws NullPointerException;
+  void sendServerMessage(String message) throws IllegalArgumentException;
 
   /**
    * サーバ情報を更新してビューに通知します。サーバ情報とは接続待ち開始の通知、クライアント接続の通知、クライアントをキックしたことの通知、
@@ -77,8 +77,8 @@ interface ChatModel {
    * 
    * @param message
    *          通知するメッセージ。nullを指定できません。
-   * @throws NullPointerException
+   * @throws IllegalArgumentException
    *           messageがnullの場合。
    */
-  void updateInformation(String message) throws NullPointerException;
+  void updateInformation(String message) throws IllegalArgumentException;
 }
