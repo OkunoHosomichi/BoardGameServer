@@ -130,9 +130,9 @@ final class ChatServerModel extends Observable implements ChatModel {
 
     synchronized (fClientsLock) {
       for (final Channel c : fClients) {
-        if (c != client) {
-          c.write("[" + client.remoteAddress() + "] " + message + "\n");
-        }
+        if (c == client) continue;
+
+        c.write("[" + client.remoteAddress() + "] " + message + "\n");
       }
     }
   }
