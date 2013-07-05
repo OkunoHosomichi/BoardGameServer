@@ -4,7 +4,7 @@ import gmi.boardgame.chat.ChatModel;
 import gmi.utils.exceptions.NullArgumentException;
 
 /**
- * コマンド実行に必要なコンテキストです。
+ * コマンド実行に必要なコンテキストです。各コマンドはこのクラスを通じてモデルに処理させることになります。
  * 
  * @author おくのほそみち
  */
