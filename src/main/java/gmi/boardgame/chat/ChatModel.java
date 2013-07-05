@@ -11,7 +11,7 @@ import java.util.Observer;
  * 
  * @author おくのほそみち
  */
-interface ChatModel {
+public interface ChatModel {
   /**
    * モデルの更新を通知するビューを登録します。 モデルはビューに更新通知以外の操作をしてはならないので引数の型をObserverにしています。
    * 
