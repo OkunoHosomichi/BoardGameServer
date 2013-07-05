@@ -61,6 +61,18 @@ public interface ChatModel {
   void processClientCommand(Channel client, String command) throws IllegalArgumentException;
 
   /**
+   * チャットに参加している全クライアントにメッセージを送信します。
+   * 
+   * @param client
+   *          コマンドを送信してきたクライアント。nullを指定できません。
+   * @param message
+   *          送信するメッセージ。nullを指定できません。
+   * @throws IllegalArgumentException
+   *           client又はmessageがnullの場合。
+   */
+  void processMessageCommand(Channel client, String message) throws IllegalArgumentException;
+
+  /**
    * サーバからのメッセージをチャットに参加している全クライアントに送信します。メッセージが空文字列の場合は何もしません。
    * 
    * @param message
