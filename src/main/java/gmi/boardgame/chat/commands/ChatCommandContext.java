@@ -2,6 +2,7 @@ package gmi.boardgame.chat.commands;
 
 import gmi.boardgame.chat.ChatModel;
 import gmi.utils.exceptions.NullArgumentException;
+import io.netty.channel.Channel;
 
 /**
  * コマンド実行に必要なコンテキストです。各コマンドはこのクラスを通じてモデルに処理させることになります。
@@ -14,10 +15,13 @@ public final class ChatCommandContext {
    */
   private final String fArguments;
   /**
+   * コマンドを送信してきたクライアント。
+   */
+  private final Channel fClient;
+  /**
    * コマンド文字列。
    */
   private final String fCommand;
-
   /**
    * モデル。各コマンドはモデルに処理を任せてしまうことが殆どになる予定です。
    */
@@ -26,6 +30,8 @@ public final class ChatCommandContext {
   /**
    * 指定されたコマンド文字列を引数からインスタンスを構築します。
    * 
+   * @param client
+   *          コマンドを送信してきたクライアント。nullを指定できません。
    * @param command
    *          コマンド文字列。nullを指定できません。空文字列を指定できません。
    * @param arguments
@@ -34,14 +40,18 @@ public final class ChatCommandContext {
    * @param model
    *          モデル。各コマンドはモデルに処理を任せてしまうことが殆どになる予定です。
    * @throws IllegalArgumentException
-   *           command又はarguments又はmodelにnullが指定された場合。又はcommandに空文字列が指定された場合。
+   *           client又はcommand又はarguments又はmodelにnullが指定された場合。
+   *           又はcommandに空文字列が指定された場合。
    */
-  public ChatCommandContext(String command, String arguments, ChatModel model) throws IllegalArgumentException {
+  public ChatCommandContext(Channel client, String command, String arguments, ChatModel model)
+      throws IllegalArgumentException {
+    if (client == null) throw new NullArgumentException("client");
     if (command == null) throw new NullArgumentException("command");
     if (arguments == null) throw new NullArgumentException("arguments");
     if (model == null) throw new NullArgumentException("model");
     if (command.isEmpty()) throw new IllegalArgumentException("commandに空文字列を指定できません。");
 
+    fClient = client;
     fCommand = command;
     fArguments = arguments;
     fModel = model;
@@ -57,6 +67,17 @@ public final class ChatCommandContext {
     assert fArguments != null;
 
     return fArguments;
+  }
+
+  /**
+   * コマンドを送信してきたクライアントを返します。
+   * 
+   * @return client クライアント。nullではありません。
+   */
+  public Channel getClient() {
+    assert fClient != null;
+
+    return fClient;
   }
 
   /**
