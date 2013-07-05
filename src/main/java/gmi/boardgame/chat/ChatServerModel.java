@@ -124,8 +124,17 @@ final class ChatServerModel extends Observable implements ChatModel {
 
   @Override
   public void processMessageCommand(Channel client, String message) throws IllegalArgumentException {
-    // TODO テストを追加する。
+    if (client == null) throw new NullArgumentException("client");
+    if (message == null) throw new NullArgumentException("message");
+    if (message.isEmpty()) return;
 
+    synchronized (fClientsLock) {
+      for (final Channel c : fClients) {
+        if (c != client) {
+          c.write("[" + client.remoteAddress() + "] " + message + "\n");
+        }
+      }
+    }
   }
 
   @Override
