@@ -1,5 +1,6 @@
 package gmi.boardgame.chat.commands;
 
+import io.netty.channel.Channel;
 import mockit.Expectations;
 
 import org.testng.annotations.Test;
@@ -32,11 +33,15 @@ public class MessageCommandTest {
     final MessageCommand command = new MessageCommand();
 
     new Expectations() {
+      Channel fClient;
       {
         context.getCommand();
         result = "MSG";
+        context.getClient();
+        result = fClient;
         context.getArguments();
         result = "Test Arguments";
+        context.processMessageCommand(fClient, "Test Arguments");
       }
     };
 

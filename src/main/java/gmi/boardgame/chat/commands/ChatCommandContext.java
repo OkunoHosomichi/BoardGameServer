@@ -91,4 +91,18 @@ public final class ChatCommandContext {
 
     return fCommand;
   }
+
+  /**
+   * Messageコマンドを送信してきたクライアント以外の全クライアントにメッセージを送信します。実際にはモデルに委譲するだけです。
+   * 
+   * @param client
+   *          コマンドを送信してきたクライアント。nullを指定できません。
+   * @param message
+   *          送信するメッセージ。nullを指定できません。
+   * @throws IllegalArgumentException
+   *           client又はmessageがnullの場合。
+   */
+  void processMessageCommand(Channel client, String message) throws IllegalArgumentException {
+    fModel.processMessageCommand(client, message);
+  }
 }
