@@ -23,9 +23,7 @@ public class CommandChainTest {
     final List<String> list = Deencapsulation.getField(chain, "fCommands");
     assertEquals(list.size(), 0);
 
-    chain.addCommand(command1);
-    chain.addCommand(command2);
-    chain.addCommand(command3);
+    chain.addCommand(command1).addCommand(command2).addCommand(command3);
 
     assertEquals(list.size(), 3);
   }

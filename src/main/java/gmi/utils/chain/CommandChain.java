@@ -39,7 +39,7 @@ public final class CommandChain<T> implements Command<T> {
    * @throws IllegalArgumentException
    *           commandがnullの場合。
    */
-  public void addCommand(Command<T> command) throws IllegalArgumentException {
+  public CommandChain<T> addCommand(Command<T> command) throws IllegalArgumentException {
     if (command == null) throw new NullArgumentException("command");
 
     fCommandsWriteLock.lock();
@@ -48,6 +48,8 @@ public final class CommandChain<T> implements Command<T> {
     } finally {
       fCommandsWriteLock.unlock();
     }
+
+    return this;
   }
 
   /**
