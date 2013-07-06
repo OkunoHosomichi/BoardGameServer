@@ -94,6 +94,12 @@ final class ChatServerModel extends Observable implements ChatModel {
     notifyObservers("clients");
   }
 
+  @Override
+  public void processByeCommand(Channel client) throws IllegalArgumentException {
+    // TODO 自動生成されたメソッド・スタブ
+
+  }
+
   /**
    * チャットに参加しているクライアントから受信したコマンドを処理します。コマンドが空文字列の場合は何もしません。現時点でのコマンドは以下の通りです。<br>
    * bye - クライアントとの切断処理を行う。<br>

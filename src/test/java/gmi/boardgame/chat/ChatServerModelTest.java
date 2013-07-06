@@ -329,4 +329,23 @@ public class ChatServerModelTest {
 
     model.processMessageCommand(client, "test Message");
   }
+
+  @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
+  public void processByeCommandの引数にnullが指定されたらIllegalArgumentExceptionを投げるよ() {
+    final ChatServerModel model = new ChatServerModel();
+    model.processByeCommand(null);
+  }
+
+  @Test(groups = { "AllEnv" })
+  public void processByeCommandを呼び出されたらクライアントの切断処理を実行するよ(final Channel client) {
+    final ChatServerModel model = new ChatServerModel();
+
+    new Expectations() {
+      {
+        client.close();
+      }
+    };
+
+    model.processByeCommand(client);
+  }
 }

@@ -49,6 +49,16 @@ public interface ChatModel {
   void joinClient(Channel client) throws IllegalArgumentException;
 
   /**
+   * Byeコマンドの処理を行います。指定されたクライアントの切断処理を実行します。
+   * 
+   * @param client
+   *          コマンドを送信してきたクライアント。nullを指定できません。
+   * @throws IllegalArgumentException
+   *           clientがnullの場合。
+   */
+  void processByeCommand(Channel client) throws IllegalArgumentException;
+
+  /**
    * チャットに参加しているクライアントから受信したコマンドを処理します。コマンドが空文字列の場合は何もしません。
    * 
    * @param client
@@ -61,7 +71,7 @@ public interface ChatModel {
   void processClientCommand(Channel client, String command) throws IllegalArgumentException;
 
   /**
-   * Messageコマンドを送信してきたクライアント以外の全クライアントにメッセージを送信します。
+   * Messageコマンドを処理します。コマンドを送信してきたクライアント以外の全クライアントにメッセージを送信します。
    * 
    * @param client
    *          コマンドを送信してきたクライアント。nullを指定できません。
