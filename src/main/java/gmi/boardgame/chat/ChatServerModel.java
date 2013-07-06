@@ -96,8 +96,9 @@ final class ChatServerModel extends Observable implements ChatModel {
 
   @Override
   public void processByeCommand(Channel client) throws IllegalArgumentException {
-    // TODO 自動生成されたメソッド・スタブ
+    if (client == null) throw new NullArgumentException("client");
 
+    client.close();
   }
 
   /**
