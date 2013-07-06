@@ -1,5 +1,7 @@
 package gmi.boardgame.chat;
 
+import gmi.boardgame.chat.commands.ChatCommandChainFactory;
+import gmi.boardgame.chat.commands.ChatCommandContext;
 import gmi.utils.exceptions.NullArgumentException;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -103,8 +105,8 @@ final class ChatServerModel extends Observable implements ChatModel {
 
   /**
    * チャットに参加しているクライアントから受信したコマンドを処理します。コマンドが空文字列の場合は何もしません。現時点でのコマンドは以下の通りです。<br>
-   * bye - クライアントとの切断処理を行う。<br>
-   * それ以外の文字列 - メッセージとして送信する。<br>
+   * MSG メッセージ - 他クライアントにメッセージを送信する。<br>
+   * BYE - クライアントとの切断処理を行う。<br>
    */
   @Override
   public void processClientCommand(Channel client, String command) throws IllegalArgumentException {
@@ -113,20 +115,12 @@ final class ChatServerModel extends Observable implements ChatModel {
     if (client == null) throw new NullArgumentException("client");
     if (command == null) throw new NullArgumentException("command");
     if (command.isEmpty()) return;
+    if (command.indexOf(' ') == 0) throw new IllegalArgumentException("commandが不正です。");
 
-    synchronized (fClientsLock) {
-      for (final Channel c : fClients) {
-        if (c != client) {
-          c.write("[" + client.remoteAddress() + "] " + command + '\n');
-        } else {
-          c.write("[you] " + command + '\n');
-        }
-      }
-    }
+    final String[] parseCommand = command.split(" ", 2);
 
-    if ("bye".equals(command.toLowerCase())) {
-      client.close();
-    }
+    ChatCommandChainFactory.INSTANCE.getChain().execute(
+        new ChatCommandContext(client, parseCommand[0], parseCommand.length == 2 ? parseCommand[1] : "", this));
   }
 
   @Override
