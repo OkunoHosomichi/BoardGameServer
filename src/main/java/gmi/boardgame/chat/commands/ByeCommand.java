@@ -8,7 +8,7 @@ import gmi.utils.exceptions.NullArgumentException;
  * 
  * @author おくのほそみち
  */
-public class ByeCommand implements Command<ChatCommandContext> {
+final class ByeCommand implements Command<ChatCommandContext> {
   /**
    * コンテキストのコマンド文字列がこの文字列と等しければMessageコマンドだと判断します。
    */
