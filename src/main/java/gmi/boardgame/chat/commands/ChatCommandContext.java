@@ -93,7 +93,19 @@ public final class ChatCommandContext {
   }
 
   /**
-   * Messageコマンドを送信してきたクライアント以外の全クライアントにメッセージを送信します。実際にはモデルに委譲するだけです。
+   * Byeコマンドを処理します。実際にはモデルに委譲するだけです。
+   * 
+   * @param client
+   *          コマンドを送信してきたクライアント。nullを指定できません。
+   * @throws IllegalArgumentException
+   *           clientがnullの場合。
+   */
+  public void processByeCommand(Channel client) throws IllegalArgumentException {
+    fModel.processByeCommand(client);
+  }
+
+  /**
+   * Messagコマンドを処理します。実際にはモデルに委譲するだけです。
    * 
    * @param client
    *          コマンドを送信してきたクライアント。nullを指定できません。
