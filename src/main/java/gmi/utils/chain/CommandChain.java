@@ -54,9 +54,12 @@ public final class CommandChain<T> implements Command<T> {
 
   /**
    * コマンドの連鎖を実行します。
+   * 
+   * @throws NoSuchCommandException
+   *           コンテキストに指定されたコマンドが実行できない場合。
    */
   @Override
-  public boolean execute(T context) throws IllegalArgumentException {
+  public boolean execute(T context) throws IllegalArgumentException, NoSuchCommandException {
     if (context == null) throw new NullArgumentException("context");
 
     fCommandsReadLock.lock();
@@ -64,7 +67,7 @@ public final class CommandChain<T> implements Command<T> {
       for (final Command<T> command : fCommands) {
         if (command.execute(context)) return true;
       }
-      return false;
+      throw new NoSuchCommandException();
     } finally {
       fCommandsReadLock.unlock();
     }

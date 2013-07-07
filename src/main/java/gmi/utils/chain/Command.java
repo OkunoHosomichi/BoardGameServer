@@ -17,5 +17,5 @@ public interface Command<T> {
    * @throws IllegalArgumentException
    *           contextがnullの場合。
    */
-  public boolean execute(T context) throws IllegalArgumentException;
+  public boolean execute(T context) throws IllegalArgumentException, NoSuchCommandException;
 }

@@ -29,7 +29,8 @@ public class CommandChainTest {
   }
 
   @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
-  public void executeの引数にnullが指定されたらIllegalArgumentExceptionが投げられるよ(Command<String> command1, Command<String> command2) {
+  public void executeの引数にnullが指定されたらIllegalArgumentExceptionが投げられるよ(Command<String> command1, Command<String> command2)
+      throws IllegalArgumentException, NoSuchCommandException {
     final CommandChain<String> chain = new CommandChain<String>();
     chain.addCommand(command1);
     chain.addCommand(command2);
@@ -37,8 +38,9 @@ public class CommandChainTest {
   }
 
   @Test(groups = { "AllEnv" })
-  public void executeの引数にnullが指定されたらコマンドの連鎖を実行するよ(final Command<String> command1, final Command<String> command2,
-      final Command<String> command3, final Command<String> command4) {
+  public void executeを呼び出されたらコマンドの連鎖を実行するよ(final Command<String> command1, final Command<String> command2,
+      final Command<String> command3, final Command<String> command4) throws IllegalArgumentException,
+      NoSuchCommandException {
     final CommandChain<String> chain = new CommandChain<String>();
     chain.addCommand(command1);
     chain.addCommand(command2);
@@ -55,6 +57,32 @@ public class CommandChainTest {
         result = Boolean.TRUE;
         command4.execute("test");
         times = 0;
+      }
+    };
+
+    chain.execute("test");
+  }
+
+  @Test(groups = { "AllEnv" }, expectedExceptions = { NoSuchCommandException.class })
+  public void executeを呼び出されたけどコマンドが見つからず実行できなかったらNoSuchCommandExceptionをスローするよ(final Command<String> command1,
+      final Command<String> command2, final Command<String> command3, final Command<String> command4)
+      throws IllegalArgumentException, NoSuchCommandException {
+    final CommandChain<String> chain = new CommandChain<String>();
+    chain.addCommand(command1);
+    chain.addCommand(command2);
+    chain.addCommand(command3);
+    chain.addCommand(command4);
+
+    new Expectations() {
+      {
+        command1.execute("test");
+        result = Boolean.FALSE;
+        command2.execute("test");
+        result = Boolean.FALSE;
+        command3.execute("test");
+        result = Boolean.FALSE;
+        command4.execute("test");
+        result = Boolean.FALSE;
       }
     };
 
