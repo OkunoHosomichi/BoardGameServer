@@ -184,18 +184,17 @@ final class ChatServerModel extends Observable implements ChatModel {
    *          コマンドを送信したクライアント。nullを指定できません。
    * @param command
    *          コマンド文字列。nullを指定できません。
-   * @return 実行できたかどうか。falseならばコマンドは実行できなかった。
    * @throws NoSuchCommandException
    *           コマンドが見つからず実行できなかった場合。
    */
-  private boolean executeCommandChain(Channel client, String command) throws NoSuchCommandException {
+  private void executeCommandChain(Channel client, String command) throws NoSuchCommandException {
     assert client != null;
     assert command != null;
     assert !command.isEmpty();
-    assert command.indexOf(' ') > 0;
+    assert command.indexOf(' ') != 0;
 
     final String[] parseCommand = command.split(" ", 2);
-    return ChatCommandChainFactory.INSTANCE.getChain().execute(
+    ChatCommandChainFactory.INSTANCE.getChain().execute(
         new ChatCommandContext(client, parseCommand[0], parseCommand.length == 2 ? parseCommand[1] : "", this));
   }
 
