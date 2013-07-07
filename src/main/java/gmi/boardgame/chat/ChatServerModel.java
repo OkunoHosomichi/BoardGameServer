@@ -117,10 +117,7 @@ final class ChatServerModel extends Observable implements ChatModel {
     if (command.isEmpty()) return;
     if (command.indexOf(' ') == 0) throw new IllegalArgumentException("commandが不正です。");
 
-    final String[] parseCommand = command.split(" ", 2);
-
-    if (!ChatCommandChainFactory.INSTANCE.getChain().execute(
-        new ChatCommandContext(client, parseCommand[0], parseCommand.length == 2 ? parseCommand[1] : "", this))) {
+    if (!executeCommandChain(client, command)) {
       updateInformation("未定義のコマンド: " + client.localAddress() + "から送信(" + command + ")");
     }
   }
@@ -175,6 +172,26 @@ final class ChatServerModel extends Observable implements ChatModel {
 
     setChanged();
     notifyObservers("info");
+  }
+
+  /**
+   * コマンド連鎖を実行します。
+   * 
+   * @param client
+   *          コマンドを送信したクライアント。nullを指定できません。
+   * @param command
+   *          コマンド文字列。nullを指定できません。
+   * @return 実行できたかどうか。falseならばコマンドは実行できなかった。
+   */
+  private boolean executeCommandChain(Channel client, String command) {
+    assert client != null;
+    assert command != null;
+    assert !command.isEmpty();
+    assert command.indexOf(' ') > 0;
+
+    final String[] parseCommand = command.split(" ", 2);
+    return ChatCommandChainFactory.INSTANCE.getChain().execute(
+        new ChatCommandContext(client, parseCommand[0], parseCommand.length == 2 ? parseCommand[1] : "", this));
   }
 
   /**
