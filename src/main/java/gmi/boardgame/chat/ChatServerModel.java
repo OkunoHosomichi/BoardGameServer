@@ -2,6 +2,7 @@ package gmi.boardgame.chat;
 
 import gmi.boardgame.chat.commands.ChatCommandChainFactory;
 import gmi.boardgame.chat.commands.ChatCommandContext;
+import gmi.utils.chain.NoSuchCommandException;
 import gmi.utils.exceptions.NullArgumentException;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -117,7 +118,9 @@ final class ChatServerModel extends Observable implements ChatModel {
     if (command.isEmpty()) return;
     if (command.indexOf(' ') == 0) throw new IllegalArgumentException("commandが不正です。");
 
-    if (!executeCommandChain(client, command)) {
+    try {
+      executeCommandChain(client, command);
+    } catch (final NoSuchCommandException ex) {
       updateInformation("未定義のコマンド: " + client.localAddress() + "から送信(" + command + ")");
     }
   }
@@ -182,8 +185,10 @@ final class ChatServerModel extends Observable implements ChatModel {
    * @param command
    *          コマンド文字列。nullを指定できません。
    * @return 実行できたかどうか。falseならばコマンドは実行できなかった。
+   * @throws NoSuchCommandException
+   *           コマンドが見つからず実行できなかった場合。
    */
-  private boolean executeCommandChain(Channel client, String command) {
+  private boolean executeCommandChain(Channel client, String command) throws NoSuchCommandException {
     assert client != null;
     assert command != null;
     assert !command.isEmpty();
