@@ -119,8 +119,10 @@ final class ChatServerModel extends Observable implements ChatModel {
 
     final String[] parseCommand = command.split(" ", 2);
 
-    ChatCommandChainFactory.INSTANCE.getChain().execute(
-        new ChatCommandContext(client, parseCommand[0], parseCommand.length == 2 ? parseCommand[1] : "", this));
+    if (!ChatCommandChainFactory.INSTANCE.getChain().execute(
+        new ChatCommandContext(client, parseCommand[0], parseCommand.length == 2 ? parseCommand[1] : "", this))) {
+      updateInformation("未定義のコマンド: " + client.localAddress() + "から送信(" + command + ")");
+    }
   }
 
   @Override
