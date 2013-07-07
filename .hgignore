@@ -4,4 +4,4 @@ syntax: glob
 .settings
 target
 test-output
-
+ServerSettings.xml

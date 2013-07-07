@@ -29,7 +29,7 @@ final class ChatServerModel extends Observable implements ChatModel {
   /**
    * 行の区切り文字。
    */
-  private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+  private static final String LINE_SEPARATOR = System.lineSeparator();
   /**
    * 接続したクライアントのグループ。
    */
@@ -107,7 +107,7 @@ final class ChatServerModel extends Observable implements ChatModel {
   /**
    * チャットに参加しているクライアントから受信したコマンドを処理します。コマンドが空文字列の場合は何もしません。現時点でのコマンドは以下の通りです。<br>
    * MSG メッセージ - 他クライアントにメッセージを送信する。<br>
-   * BYE - クライアントとの切断処理を行う。<br>
+   * BYE - クライアントとの切断処理を行う。
    */
   @Override
   public void processClientCommand(Channel client, String command) throws IllegalArgumentException {

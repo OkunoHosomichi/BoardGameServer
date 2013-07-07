@@ -19,7 +19,7 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
 public class ChatServerModelTest {
-  private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+  private static final String LINE_SEPARATOR = System.lineSeparator();
   @Mocked
   private ChatServerView fChatView;
   @Mocked
