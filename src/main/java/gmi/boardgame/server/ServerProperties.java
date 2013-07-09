@@ -142,7 +142,12 @@ public enum ServerProperties {
    */
   public void load(String fileName) {
     if (fileName == null) throw new NullArgumentException("fileName");
-    if (!fileName.endsWith(PROPERTIES_FILE_EXTENTION)) throw new IllegalArgumentException("拡張子が.xmlのファイル名を指定してください。");
+    if (!fileName.endsWith(PROPERTIES_FILE_EXTENTION))
+      throw new IllegalArgumentException(fileName + "の拡張子がxmlではありません。");
+    if (Files.exists(Paths.get(fileName)) && (!Files.isReadable(Paths.get(fileName))))
+      throw new IllegalArgumentException(fileName + "は読み込めません。");
+    if (Files.exists(Paths.get(fileName)) && Files.isDirectory(Paths.get(fileName)))
+      throw new IllegalArgumentException(fileName + "はフォルダです。");
 
     if (Files.notExists(Paths.get(fileName))) {
       initializeProperties();
@@ -225,7 +230,12 @@ public enum ServerProperties {
    */
   public void store(String fileName) {
     if (fileName == null) throw new NullArgumentException("fileName");
-    if (!fileName.endsWith(PROPERTIES_FILE_EXTENTION)) throw new IllegalArgumentException();
+    if (!fileName.endsWith(PROPERTIES_FILE_EXTENTION))
+      throw new IllegalArgumentException(fileName + "の拡張子がxmlではありません。");
+    if (Files.exists(Paths.get(fileName)) && (!Files.isWritable(Paths.get(fileName))))
+      throw new IllegalArgumentException(fileName + "には書き込めません。");
+    if (Files.exists(Paths.get(fileName)) && Files.isDirectory(Paths.get(fileName)))
+      throw new IllegalArgumentException(fileName + "はフォルダです。");
 
     if (!fChange) return;
 

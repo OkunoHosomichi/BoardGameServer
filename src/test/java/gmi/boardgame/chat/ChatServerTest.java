@@ -15,14 +15,14 @@ public class ChatServerTest {
   @Mocked
   ChatModel fModel;
 
-  @Test(groups = { "LocalOnly" })
+  @Test(groups = { "GUIOnly" })
   public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {
     final ChatServer server = new ChatServer();
 
     assertNotNull(Deencapsulation.getField(server, "fInjector"));
   }
 
-  @Test(groups = { "LocalOnly" }, expectedExceptions = { IllegalArgumentException.class })
+  @Test(groups = { "GUIOnly" }, expectedExceptions = { IllegalArgumentException.class })
   public void notifyServerInformationの引数にnullを指定されたらIllegalArgumentExceptionを投げるよ() {
     final ChatServer server = new ChatServer();
     Deencapsulation.setField(server, "fInjector", Guice.createInjector(new TestModule()));
@@ -30,7 +30,7 @@ public class ChatServerTest {
     server.notifyServerInformation(null);
   }
 
-  @Test(groups = { "LocalOnly" })
+  @Test(groups = { "GUIOnly" })
   public void notifyServerInformationの引数に空文字列を指定されたら何もしないよ() {
     final ChatServer server = new ChatServer();
     Deencapsulation.setField(server, "fInjector", Guice.createInjector(new TestModule()));
@@ -45,7 +45,7 @@ public class ChatServerTest {
     server.notifyServerInformation("");
   }
 
-  @Test(groups = { "LocalOnly" })
+  @Test(groups = { "GUIOnly" })
   public void notifyServerInformationが呼び出されたらmodelに通知するよ() {
     final ChatServer server = new ChatServer();
     Deencapsulation.setField(server, "fInjector", Guice.createInjector(new TestModule()));

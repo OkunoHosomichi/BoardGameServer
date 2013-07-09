@@ -23,12 +23,12 @@ public class ChatServerViewTest {
   @Mocked
   ChatServerModel fModel;
 
-  @Test(groups = { "LocalOnly" }, expectedExceptions = { IllegalArgumentException.class })
+  @Test(groups = { "GUIOnly" }, expectedExceptions = { IllegalArgumentException.class })
   public void コンストラクタの引数にnullが指定されたらIllegalArgumentExceptionを投げるよ() {
     new ChatServerView(null);
   }
 
-  @Test(groups = { "LocalOnly" })
+  @Test(groups = { "GUIOnly" })
   public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {
     final ChatServerView panel = new ChatServerView(fModel);
 
@@ -41,7 +41,7 @@ public class ChatServerViewTest {
     assertSame(Deencapsulation.getField(panel, "fModel"), fModel);
   }
 
-  @Test(groups = { "LocalOnly" })
+  @Test(groups = { "GUIOnly" })
   public void setServerInformationを呼び出されたらテキストエリアに設定するよ() throws InvocationTargetException, InterruptedException {
     final ChatServerView panel = new ChatServerView(fModel);
     final JTextArea area = Deencapsulation.getField(panel, "fServerInformation");
@@ -70,7 +70,7 @@ public class ChatServerViewTest {
     assertEquals(area.getText(), "aaa" + LINE_SEPARATOR + "bbb" + LINE_SEPARATOR);
   }
 
-  @Test(groups = { "LocalOnly" })
+  @Test(groups = { "GUIOnly" })
   public void setClientNamesを呼び出されたらリストに設定するよ() throws InvocationTargetException, InterruptedException {
     final ChatServerView panel = new ChatServerView(fModel);
     final JList<String> list = Deencapsulation.getField(panel, "fClientNames");
