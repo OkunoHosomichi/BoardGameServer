@@ -26,17 +26,18 @@ Apache License 2.0
 * [TestNG](http://testng.org/doc/index.html)
 
 ###Mavenのプロファイルについて
-* Localプロファイル : AllEnvとLocalOnlyグループのテストを実行します。
-* Drone_ioプロファイル : AllEnvグループのテストのみ実行します。
+* LocalWindowsプロファイル : AllEnvとGUIOnlyグループのテストを実行します。
+* LocalLinuxプロファイル : AllEnvとGUIOnlyとLinuxOnlyグループのテストを実行します。
+* Drone_ioプロファイル : AllEnvとLinuxOnlyグループのテストを実行します。
 
 ##テストについて
-[Drone.io](https://drone.io/)がSwing関係のテストを実行できないようなので、Mavenのプロファイルを使ってローカルとDrone.ioで実行するテストが変わるようにしています。
-**Swing関係のテストにはLocalOnlyグループを指定**し、**Drone.ioで実行させても問題ないテストにはAllEnvグループを指定**します。
-ローカルでテストする場合には"mvn surefire:test -P Local"と指定します。  
+Mavenのプロファイルを使ってローカルとDrone.ioで実行するテストが変わるようにしています。
+**Swing関係のテストにはGUIOnlyグループを指定**し、**ファイルのパーミッションをいじるテストにはLinuxOnlyグループを指定**し、**どの環境でも動かせるならAllEnvグループを指定**します。
+ローカルでテストする場合には"mvn surefire:test -P LocalWindows"又は"mvn surefire:test -P LocalLinux"と指定します。  
 テスト名には日本語を使っています。基本的にテストを書いてから機能を実装するようにしていますが、そうでない場合もあります。単純なメソッド(ゲッタ/セッタ/委譲など)の場合はテストを書かない場合もあります。プライベートなメソッドは気分次第でテストを書いたり書かなかったりです(それを呼び出すパブリックなメソッドはテストします)。
 
 ##Drone.ioについて
-Drone.ioを利用しているのは気分です。Bitbucketのリポジトリにpushするだけで実行してくれる上に公開リポジトリは無料でテストできるのでやってみました。
+[Drone.io](https://drone.io/)を利用しているのは気分です。Bitbucketのリポジトリにpushするだけで実行してくれる上に公開リポジトリは無料でテストできるのでやってみました。Swing関係のテストを実行できませんが大した問題じゃないです。
 
 ##Hg-Gitについて
 メインはBitbucketですが、Hg-Gitを試そうとGithubにもPushしています。問題が出たらメモします。  
