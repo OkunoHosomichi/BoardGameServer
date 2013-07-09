@@ -4,6 +4,7 @@ import gmi.boardgame.chat.ChatServer;
 import gmi.utils.IntRange;
 import gmi.utils.netty.MyDelimiters;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
@@ -19,6 +20,8 @@ import io.netty.handler.codec.string.StringEncoder;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 
@@ -56,6 +59,14 @@ public final class ServerFrame extends JFrame {
    * 接続待ちするポート番号。
    */
   private final int fPortNumber;
+  /**
+   * サーバの設定。
+   */
+  private final ServerProperties fProperties;
+  /**
+   * サーバのチャンネル。切断処理に使う。
+   */
+  private Channel fServerChannel;
 
   /**
    * デフォルトのポート番号を指定してインスタンスを構築します。デフォルト値は60935番です。
@@ -76,9 +87,35 @@ public final class ServerFrame extends JFrame {
 
     fPortNumber = PORT_RANGE.Contains(portNumber) ? portNumber : DEFAULT_PORT_NUMBER;
 
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
+    fProperties = ServerProperties.INSTANCE;
+    fProperties.load();
+
     fChatServer = new ChatServer();
     layoutComponents();
+
+    setLocation(fProperties.getWindowLocation());
+    setSize(fProperties.getWindowSize());
+
+    addWindowListener(new WindowAdapter() {
+
+      /*
+       * (非 Javadoc)
+       * 
+       * @see
+       * java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)
+       */
+      @Override
+      public void windowClosing(WindowEvent e) {
+        fProperties.setWindowLocation(getLocation());
+        fProperties.setWindowSize(getSize());
+        fProperties.store();
+
+        // TODO:全クライアントにシャットダウンを伝えて切断を待つ処理を書くべき。
+        // fServerChannel.close();
+      }
+    });
+
+    setDefaultCloseOperation(EXIT_ON_CLOSE);
   }
 
   /**
@@ -122,7 +159,8 @@ public final class ServerFrame extends JFrame {
 
             }
           });
-      bootstrap.bind(fPortNumber).sync().channel().closeFuture().sync();
+      fServerChannel = bootstrap.bind(fPortNumber).sync().channel();
+      fServerChannel.closeFuture().sync();
     } catch (final InterruptedException ex) {
       // ChannelFutureのsync()で処理の終了を待ってるときに割り込みをかけられた場合。特になにもせず終了させていいと思う。
     } finally {
