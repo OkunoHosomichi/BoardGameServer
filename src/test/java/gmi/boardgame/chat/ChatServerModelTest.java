@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.net.SocketAddress;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Observer;
 
 import mockit.Deencapsulation;
 import mockit.Expectations;
@@ -21,7 +22,7 @@ import static org.testng.Assert.*;
 public class ChatServerModelTest {
   private static final String LINE_SEPARATOR = System.lineSeparator();
   @Mocked
-  private ChatServerView fChatView;
+  private Observer fObserver;
   @Mocked
   private ChannelGroup fGroup;
   @Mocked
@@ -43,11 +44,11 @@ public class ChatServerModelTest {
   @Test(groups = { "AllEnv" })
   public void updateInformationの引数に空文字列が指定されても何もしないよ() {
     final ChatServerModel model = new ChatServerModel();
-    model.addObserver(fChatView);
+    model.addObserver(fObserver);
 
     new Expectations() {
       {
-        fChatView.update(model, "info");
+        fObserver.update(model, "info");
         times = 0;
       }
     };
@@ -60,11 +61,11 @@ public class ChatServerModelTest {
   @Test(groups = { "AllEnv" })
   public void updateInformationを呼び出されたら通知文を更新してビューに通知するよ() {
     final ChatServerModel model = new ChatServerModel();
-    model.addObserver(fChatView);
+    model.addObserver(fObserver);
 
     new Expectations() {
       {
-        fChatView.update(model, "info");
+        fObserver.update(model, "info");
         times = 3;
       }
     };
@@ -81,13 +82,13 @@ public class ChatServerModelTest {
   public void appendInformationの引数に空文字列が指定されたら何もしないよ() throws NoSuchMethodException, SecurityException,
       IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     final ChatServerModel model = new ChatServerModel();
-    model.addObserver(fChatView);
+    model.addObserver(fObserver);
     final Method appendMessage = ChatServerModel.class.getDeclaredMethod("appendInformation", String.class);
     appendMessage.setAccessible(true);
 
     new Expectations() {
       {
-        fChatView.update(model, "info");
+        fObserver.update(model, "info");
         times = 0;
       }
     };
@@ -99,13 +100,13 @@ public class ChatServerModelTest {
   public void appendInformationを呼び出されたら通知文を更新してビューに通知するよ() throws NoSuchMethodException, SecurityException,
       IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     final ChatServerModel model = new ChatServerModel();
-    model.addObserver(fChatView);
+    model.addObserver(fObserver);
     final Method appendMessage = ChatServerModel.class.getDeclaredMethod("appendInformation", String.class);
     appendMessage.setAccessible(true);
 
     new Expectations() {
       {
-        fChatView.update(model, "info");
+        fObserver.update(model, "info");
       }
     };
 
@@ -124,7 +125,7 @@ public class ChatServerModelTest {
   public void joinClientを呼ばれたらクライアント一覧を更新してビューに通知するよ() {
     final ChatServerModel model = new ChatServerModel();
     Deencapsulation.setField(model, "fClients", fGroup);
-    model.addObserver(fChatView);
+    model.addObserver(fObserver);
 
     new Expectations() {
       @Mocked
@@ -135,7 +136,7 @@ public class ChatServerModelTest {
         fGroup.add(fChannel);
         fChannel.closeFuture();
         result = fFuture;
-        fChatView.update(model, "clients");
+        fObserver.update(model, "clients");
       }
     };
 
@@ -209,11 +210,11 @@ public class ChatServerModelTest {
     leaveClient.setAccessible(true);
 
     final ChatServerModel model = new ChatServerModel();
-    model.addObserver(fChatView);
+    model.addObserver(fObserver);
 
     new Expectations() {
       {
-        fChatView.update(model, "clients");
+        fObserver.update(model, "clients");
       }
     };
 

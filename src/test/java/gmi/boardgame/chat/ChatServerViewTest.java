@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Observer;
 
 import javax.swing.JList;
 import javax.swing.JTextArea;
@@ -34,7 +35,7 @@ public class ChatServerViewTest {
 
     new Verifications() {
       {
-        fModel.addObserver(panel);
+        fModel.addObserver((Observer) any);
       }
     };
 

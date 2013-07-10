@@ -27,7 +27,7 @@ import javax.swing.border.BevelBorder;
  * @author おくのほそみち
  */
 @SuppressWarnings("serial")
-final class ChatServerView extends JPanel implements Observer {
+final class ChatServerView extends JPanel {
   /**
    * 接続したクライアント名を一覧表示するリスト。
    */
@@ -58,60 +58,62 @@ final class ChatServerView extends JPanel implements Observer {
     if (model == null) throw new NullArgumentException("model");
 
     fModel = model;
-    fModel.addObserver(this);
+    fModel.addObserver(new Observer() {
+
+      /**
+       * モデルからの更新通知を元にビューを更新します。
+       * 何が更新されたのかをargに指定された文字列で判断し、対象をイベントディスパッチスレッドから更新します。
+       * これは良いやり方ではない気もしますがどうすれば良いのかわかりません。 現時点で更新通知で届く文字列は以下の通りです。<br>
+       * clients - クライアント一覧が更新されたことを示します。<br>
+       * info - サーバ情報が更新されたことを示します。<br>
+       * このメソッドはイベントディスパッチスレッド以外のスレッドから呼び出されることを想定してassert文によるチェックを行っています。
+       * 
+       * @param o
+       *          更新通知を出したオブジェクト。nullを指定できません。
+       * @param arg
+       *          更新情報を知らせる文字列。nullを指定できません。
+       * @throws IllegalArgumentException
+       *           o又はargがnullの場合。又はargがString型でなかった場合。
+       *           又はargで渡された文字列が正しい更新情報でなかった場合。
+       */
+      @Override
+      public void update(Observable o, Object arg) throws IllegalArgumentException {
+        // INFO: コメント参照。他に良いやり方を思いついたら直す。
+        assert !SwingUtilities.isEventDispatchThread();
+        if (o == null) throw new NullArgumentException("o");
+        if (arg == null) throw new NullArgumentException("arg");
+        if (!(arg instanceof String)) throw new IllegalArgumentException("argに文字列を渡すようにしてください。");
+
+        // INFO: モデルの通知情報が変更された場合にコメント等きちんと修正する。
+        switch ((String) arg) {
+        case "clients":
+          SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+              setClientNames(fModel.getClientNames());
+            }
+          });
+          break;
+        case "info":
+          SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+              setServerInformation(fModel.getInformation());
+            }
+          });
+          break;
+
+        default:
+          throw new IllegalArgumentException("argに正しい更新情報を渡すようにしてください。");
+        }
+      }
+    });
 
     initializeComponents();
     initializeEventListener();
     layoutComponents();
-  }
-
-  /**
-   * モデルからの更新通知を元にビューを更新します。
-   * 何が更新されたのかをargに指定された文字列で判断し、対象をイベントディスパッチスレッドから更新します。
-   * これは良いやり方ではない気もしますがどうすれば良いのかわかりません。 現時点で更新通知で届く文字列は以下の通りです。<br>
-   * clients - クライアント一覧が更新されたことを示します。<br>
-   * info - サーバ情報が更新されたことを示します。<br>
-   * このメソッドはイベントディスパッチスレッド以外のスレッドから呼び出されることを想定してassert文によるチェックを行っています。
-   * 
-   * @param o
-   *          更新通知を出したオブジェクト。nullを指定できません。
-   * @param arg
-   *          更新情報を知らせる文字列。nullを指定できません。
-   * @throws IllegalArgumentException
-   *           o又はargがnullの場合。又はargがString型でなかった場合。又はargで渡された文字列が正しい更新情報でなかった場合。
-   */
-  @Override
-  public void update(Observable o, Object arg) throws IllegalArgumentException {
-    // INFO: コメント参照。他に良いやり方を思いついたら直す。
-    assert !SwingUtilities.isEventDispatchThread();
-    if (o == null) throw new NullArgumentException("o");
-    if (arg == null) throw new NullArgumentException("arg");
-    if (!(arg instanceof String)) throw new IllegalArgumentException("argに文字列を渡すようにしてください。");
-
-    // INFO: モデルの通知情報が変更された場合にコメント等きちんと修正する。
-    switch ((String) arg) {
-    case "clients":
-      SwingUtilities.invokeLater(new Runnable() {
-
-        @Override
-        public void run() {
-          setClientNames(fModel.getClientNames());
-        }
-      });
-      break;
-    case "info":
-      SwingUtilities.invokeLater(new Runnable() {
-
-        @Override
-        public void run() {
-          setServerInformation(fModel.getInformation());
-        }
-      });
-      break;
-
-    default:
-      throw new IllegalArgumentException("argに正しい更新情報を渡すようにしてください。");
-    }
   }
 
   /**
