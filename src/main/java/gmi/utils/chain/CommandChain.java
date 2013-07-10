@@ -4,9 +4,6 @@ import gmi.utils.exceptions.NullArgumentException;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Chain of Responsibilityパターンでコマンドの連鎖を処理します。
@@ -17,18 +14,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public final class CommandChain<T> implements Command<T> {
   private final List<Command<T>> fCommands;
-  private final ReadWriteLock fCommandsLock;
-  private final Lock fCommandsReadLock;
-  private final Lock fCommandsWriteLock;
+  private final Object fCommandsLock;
 
   /**
    * インスタンスを構築します。
    */
   public CommandChain() {
     fCommands = new LinkedList<>();
-    fCommandsLock = new ReentrantReadWriteLock();
-    fCommandsReadLock = fCommandsLock.readLock();
-    fCommandsWriteLock = fCommandsLock.writeLock();
+    fCommandsLock = new Object();
   }
 
   /**
@@ -42,14 +35,10 @@ public final class CommandChain<T> implements Command<T> {
   public CommandChain<T> addCommand(Command<T> command) throws IllegalArgumentException {
     if (command == null) throw new NullArgumentException("command");
 
-    fCommandsWriteLock.lock();
-    try {
+    synchronized (fCommandsLock) {
       fCommands.add(command);
-    } finally {
-      fCommandsWriteLock.unlock();
+      return this;
     }
-
-    return this;
   }
 
   /**
@@ -62,14 +51,11 @@ public final class CommandChain<T> implements Command<T> {
   public boolean execute(T context) throws IllegalArgumentException, NoSuchCommandException {
     if (context == null) throw new NullArgumentException("context");
 
-    fCommandsReadLock.lock();
-    try {
+    synchronized (fCommandsLock) {
       for (final Command<T> command : fCommands) {
         if (command.execute(context)) return true;
       }
       throw new NoSuchCommandException();
-    } finally {
-      fCommandsReadLock.unlock();
     }
   }
 }
