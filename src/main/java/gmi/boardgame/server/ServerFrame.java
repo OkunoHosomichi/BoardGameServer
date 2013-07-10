@@ -78,6 +78,7 @@ public final class ServerFrame extends JFrame {
     fChatServer = new ChatServer();
     layoutComponents();
 
+    setTitle(Messages.getString("KEY_TITLE")); //$NON-NLS-1$
     setLocation(fProperties.getWindowLocation());
     setSize(fProperties.getWindowSize());
 
@@ -138,7 +139,7 @@ public final class ServerFrame extends JFrame {
 
                 @Override
                 public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-                  System.err.println("Unexpected exception from downstream.");
+                  System.err.println(Messages.getString("KEY_EXCEPTION_CAUGHT")); //$NON-NLS-1$
                   ctx.channel().close();
                 }
               });
@@ -180,7 +181,8 @@ public final class ServerFrame extends JFrame {
       }
     });
 
-    frame.fChatServer.notifyServerInformation("ポート" + port + "で接続待ちを開始します。");
+    frame.fChatServer.notifyServerInformation(String.format(
+        Messages.getString("KEY_LISTENSTART"), Integer.valueOf(port))); //$NON-NLS-1$
     frame.start();
   }
 
