@@ -1,7 +1,6 @@
 package gmi.boardgame.server;
 
 import gmi.boardgame.chat.ChatServer;
-import gmi.utils.IntRange;
 import gmi.utils.netty.MyDelimiters;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -22,7 +21,6 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
@@ -36,21 +34,9 @@ import javax.swing.SwingUtilities;
 @SuppressWarnings("serial")
 public final class ServerFrame extends JFrame {
   /**
-   * チャットで使う文字セット。
-   */
-  private static final Charset CHARSET = Charset.forName("UTF-16BE");
-  /**
    * convertNumberStringIntoPortNumber()で引数チェックに利用する正規表現。
    */
   private static final String CHECK_NUMBER_STRING_PATTERN = "^\\+?\\d+";
-  /**
-   * デフォルトのポート番号。ポート番号は49513～65535までの値を指定します。
-   */
-  private static final int DEFAULT_PORT_NUMBER = 60935;
-  /**
-   * ポート番号に使える値の範囲。49513～65535までの値です。
-   */
-  private static final IntRange PORT_RANGE = new IntRange(49513, 65535);
   /**
    * チャットサーバ。
    */
@@ -62,7 +48,7 @@ public final class ServerFrame extends JFrame {
   /**
    * サーバの設定。
    */
-  private final ServerProperties fProperties;
+  private final ServerProperties fProperties = ServerProperties.INSTANCE;
   /**
    * サーバのチャンネル。切断処理に使う。
    */
@@ -72,7 +58,7 @@ public final class ServerFrame extends JFrame {
    * デフォルトのポート番号を指定してインスタンスを構築します。デフォルト値は60935番です。
    */
   public ServerFrame() {
-    this(DEFAULT_PORT_NUMBER);
+    this(ServerProperties.DEFAULT_PORT_NUMBER);
   }
 
   /**
@@ -83,11 +69,10 @@ public final class ServerFrame extends JFrame {
    *          クライアントの接続を待つポート番号。
    */
   public ServerFrame(int portNumber) {
-    assert PORT_RANGE.Contains(DEFAULT_PORT_NUMBER);
+    assert ServerProperties.PORT_RANGE.Contains(ServerProperties.DEFAULT_PORT_NUMBER);
 
-    fPortNumber = PORT_RANGE.Contains(portNumber) ? portNumber : DEFAULT_PORT_NUMBER;
+    fPortNumber = ServerProperties.PORT_RANGE.Contains(portNumber) ? portNumber : ServerProperties.DEFAULT_PORT_NUMBER;
 
-    fProperties = ServerProperties.INSTANCE;
     fProperties.load();
 
     fChatServer = new ChatServer();
@@ -142,9 +127,10 @@ public final class ServerFrame extends JFrame {
             protected void initChannel(SocketChannel ch) throws Exception {
               final ChannelPipeline pipeline = ch.pipeline();
 
-              pipeline.addLast("framer", new DelimiterBasedFrameDecoder(2048, MyDelimiters.lineDelimiter(CHARSET)));
-              pipeline.addLast("decoder", new StringDecoder(CHARSET));
-              pipeline.addLast("encoder", new StringEncoder(CHARSET));
+              pipeline.addLast("framer",
+                  new DelimiterBasedFrameDecoder(2048, MyDelimiters.lineDelimiter(ServerProperties.CHARSET)));
+              pipeline.addLast("decoder", new StringDecoder(ServerProperties.CHARSET));
+              pipeline.addLast("encoder", new StringEncoder(ServerProperties.CHARSET));
 
               pipeline.addLast("chathandler", fChatServer.createHandler());
 
@@ -178,7 +164,8 @@ public final class ServerFrame extends JFrame {
    *          最初の引数にポート番号を渡すことができます。
    */
   public static void main(String[] args) {
-    final int port = (args.length > 0) ? convertNumberStringIntoPortNumber(args[0]) : DEFAULT_PORT_NUMBER;
+    final int port = (args.length > 0) ? convertNumberStringIntoPortNumber(args[0])
+        : ServerProperties.DEFAULT_PORT_NUMBER;
 
     final ServerFrame frame = new ServerFrame(port);
 
@@ -205,9 +192,9 @@ public final class ServerFrame extends JFrame {
    * @return ポート番号。
    */
   private static int convertNumberStringIntoPortNumber(String str) {
-    if (str == null) return DEFAULT_PORT_NUMBER;
-    if (str.isEmpty()) return DEFAULT_PORT_NUMBER;
-    if (!Pattern.matches(CHECK_NUMBER_STRING_PATTERN, str)) return DEFAULT_PORT_NUMBER;
+    if (str == null) return ServerProperties.DEFAULT_PORT_NUMBER;
+    if (str.isEmpty()) return ServerProperties.DEFAULT_PORT_NUMBER;
+    if (!Pattern.matches(CHECK_NUMBER_STRING_PATTERN, str)) return ServerProperties.DEFAULT_PORT_NUMBER;
 
     return Integer.parseInt(str);
   }

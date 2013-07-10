@@ -1,5 +1,6 @@
 package gmi.boardgame.server;
 
+import gmi.utils.IntRange;
 import gmi.utils.exceptions.NullArgumentException;
 
 import java.awt.Dimension;
@@ -28,6 +29,14 @@ public enum ServerProperties {
    * チャットで使う文字セット。
    */
   public static final Charset CHARSET = Charset.forName("UTF-16BE");
+  /**
+   * デフォルトのポート番号。ポート番号は49513～65535までの値を指定します。
+   */
+  public static final int DEFAULT_PORT_NUMBER = 60935;
+  /**
+   * ポート番号に使える値の範囲。49513～65535までの値です。
+   */
+  public static final IntRange PORT_RANGE = new IntRange(49513, 65535);
   /**
    * ボードゲームサーバのバージョンを示す文字列。いずれクライアントとのバージョンチェックに使う予定の情報。現在は何の意味もありません。
    */
