@@ -1,6 +1,7 @@
 package gmi.boardgame.server;
 
 import gmi.boardgame.chat.ChatServer;
+import gmi.utils.exceptions.NullArgumentException;
 import gmi.utils.netty.MyDelimiters;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -10,12 +11,15 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -37,6 +41,10 @@ public final class ServerFrame extends JFrame {
    * convertNumberStringIntoPortNumber()で引数チェックに利用する正規表現。
    */
   private static final String CHECK_NUMBER_STRING_PATTERN = "^\\+?\\d+";
+  /**
+   * 接続したチャンネルのグループ。
+   */
+  private final ChannelGroup fChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
   /**
    * チャットサーバ。
    */
@@ -96,12 +104,30 @@ public final class ServerFrame extends JFrame {
         fProperties.setWindowSize(getSize());
         fProperties.store();
 
-        // TODO:全クライアントにシャットダウンを伝えて切断を待つ処理を書くべき。
-        // fServerChannel.close();
+        try {
+          fChannels.close().sync();
+        } catch (final InterruptedException ex) {
+        } finally {
+          fServerChannel.close();
+        }
       }
     });
 
     setDefaultCloseOperation(EXIT_ON_CLOSE);
+  }
+
+  /**
+   * クライアントが接続してきた時の処理を実行します。
+   * 
+   * @param channel
+   *          接続してきたクライアントのチャンネル。nullを指定できません。
+   * @throws IllegalArgumentException
+   *           channelがnullの場合。
+   */
+  private void connectClient(Channel channel) throws IllegalArgumentException {
+    if (channel == null) throw new NullArgumentException("channel");
+
+    fChannels.add(channel);
   }
 
   /**
@@ -134,16 +160,7 @@ public final class ServerFrame extends JFrame {
               pipeline.addLast("encoder", new StringEncoder(ServerProperties.CHARSET));
 
               pipeline.addLast("chathandler", fChatServer.createHandler());
-
-              pipeline.addLast("handler", new ChannelInboundHandlerAdapter() {
-
-                @Override
-                public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-                  System.err.println(Messages.getString("KEY_EXCEPTION_CAUGHT")); //$NON-NLS-1$
-                  ctx.channel().close();
-                }
-              });
-
+              pipeline.addLast("handler", new ServerFrameHandler());
             }
           });
       fServerChannel = bootstrap.bind(fPortNumber).sync().channel();
@@ -199,5 +216,23 @@ public final class ServerFrame extends JFrame {
     if (!Pattern.matches(CHECK_NUMBER_STRING_PATTERN, str)) return ServerProperties.DEFAULT_PORT_NUMBER;
 
     return Integer.parseInt(str);
+  }
+
+  /**
+   * チャンネルのハンドラです。
+   * 
+   * @author おくのほそみち
+   */
+  private final class ServerFrameHandler extends ChannelInboundHandlerAdapter {
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+      connectClient(ctx.channel());
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+      System.err.println(Messages.getString("KEY_EXCEPTION_CAUGHT")); //$NON-NLS-1$
+      ctx.channel().close();
+    }
   }
 }
