@@ -1,10 +1,11 @@
 package gmi.utils.netty;
 
-import gmi.utils.exceptions.NullArgumentException;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import java.nio.charset.Charset;
+
+import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
  * Nettyのio.netty.handler.codec.DelimiterBasedFrameDecoderで利用する区切り文字を扱うクラスです。
@@ -25,7 +26,7 @@ public final class MyDelimiters {
    * @see io.netty.handler.codec.Delimiters#lineDelimiter()
    */
   public static ByteBuf[] lineDelimiter(Charset charset) throws IllegalArgumentException {
-    if (charset == null) throw new NullArgumentException("charset");
+    checkNotNullArgument(charset, "charset");
 
     return new ByteBuf[] { Unpooled.wrappedBuffer("\r\n".getBytes(charset)),
         Unpooled.wrappedBuffer("\n".getBytes(charset)), };

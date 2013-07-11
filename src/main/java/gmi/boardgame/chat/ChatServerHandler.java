@@ -1,11 +1,12 @@
 package gmi.boardgame.chat;
 
-import gmi.utils.exceptions.NullArgumentException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.MessageList;
 
 import javax.inject.Inject;
+
+import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
  * クライアントからの通信を受け取るハンドラです。あくまでチャット部分用のハンドラなのでボードゲームに必要な通信は他のハンドラを作って使うことになります。
@@ -31,7 +32,7 @@ final class ChatServerHandler extends ChannelInboundHandlerAdapter {
    */
   @Inject
   ChatServerHandler(ChatModel model) throws IllegalArgumentException {
-    if (model == null) throw new NullArgumentException("model");
+    checkNotNullArgument(model, "model");
 
     fModel = model;
   }

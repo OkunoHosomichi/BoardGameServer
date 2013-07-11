@@ -1,8 +1,8 @@
 package gmi.boardgame.chat.commands;
 
 import gmi.boardgame.chat.ChatModel;
-import gmi.utils.exceptions.NullArgumentException;
 import io.netty.channel.Channel;
+import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
  * コマンド実行に必要なコンテキストです。各コマンドはこのクラスを通じてモデルに処理させることになります。
@@ -45,10 +45,10 @@ public final class ChatCommandContext {
    */
   public ChatCommandContext(Channel client, String command, String arguments, ChatModel model)
       throws IllegalArgumentException {
-    if (client == null) throw new NullArgumentException("client");
-    if (command == null) throw new NullArgumentException("command");
-    if (arguments == null) throw new NullArgumentException("arguments");
-    if (model == null) throw new NullArgumentException("model");
+    checkNotNullArgument(client, "client");
+    checkNotNullArgument(command, "command");
+    checkNotNullArgument(arguments, "arguments");
+    checkNotNullArgument(model, "model");
     if (command.isEmpty()) throw new IllegalArgumentException("commandに空文字列を指定できません。");
 
     fClient = client;

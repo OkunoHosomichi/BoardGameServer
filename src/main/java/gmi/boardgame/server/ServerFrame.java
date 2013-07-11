@@ -1,7 +1,6 @@
 package gmi.boardgame.server;
 
 import gmi.boardgame.chat.ChatServer;
-import gmi.utils.exceptions.NullArgumentException;
 import gmi.utils.netty.MyDelimiters;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -29,6 +28,8 @@ import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+
+import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
  * チャットサーバのウインドウです。サーバの接続待ち設定もこのクラスで行います。
@@ -125,7 +126,7 @@ public final class ServerFrame extends JFrame {
    *           channelがnullの場合。
    */
   private void connectClient(Channel channel) throws IllegalArgumentException {
-    if (channel == null) throw new NullArgumentException("channel");
+    checkNotNullArgument(channel, "channel");
 
     fChannels.add(channel);
   }

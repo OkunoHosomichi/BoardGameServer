@@ -1,7 +1,5 @@
 package gmi.boardgame.server;
 
-import gmi.utils.exceptions.NullArgumentException;
-
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.IOException;
@@ -22,7 +20,9 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import static gmi.utils.Preconditions.checkNotNullArgument;
+
+import static org.testng.Assert.assertEquals;
 
 public class ServerPropertiesTest {
   private static final Path Cテスト用ルートディレクトリ = Paths.get("target/test").normalize();
@@ -207,7 +207,7 @@ public class ServerPropertiesTest {
   final static class DirectoryDeleter {
     static void delete(Path directory) {
 
-      if (directory == null) throw new NullArgumentException("directory");
+      checkNotNullArgument(directory, "directory");
       if (Files.notExists(directory)) throw new IllegalArgumentException("引数directoryには実在するパスを渡してください。");
       if (!Files.isDirectory(directory)) throw new IllegalArgumentException("引数directoryにはディレクトリを渡してください。");
 

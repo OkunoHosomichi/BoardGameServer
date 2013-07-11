@@ -1,7 +1,7 @@
 package gmi.boardgame.chat.commands;
 
 import gmi.utils.chain.Command;
-import gmi.utils.exceptions.NullArgumentException;
+import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
  * クライアントの切断処理を行うコマンドです。
@@ -16,7 +16,7 @@ final class ByeCommand implements Command<ChatCommandContext> {
 
   @Override
   public boolean execute(ChatCommandContext context) throws IllegalArgumentException {
-    if (context == null) throw new NullArgumentException("context");
+    checkNotNullArgument(context, "context");
     if (!COMMAND.equals(context.getCommand())) return false;
 
     context.processByeCommand(context.getClient());

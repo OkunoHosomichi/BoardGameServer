@@ -3,7 +3,6 @@ package gmi.boardgame.chat;
 import gmi.boardgame.chat.commands.ChatCommandChainFactory;
 import gmi.boardgame.chat.commands.ChatCommandContext;
 import gmi.utils.chain.NoSuchCommandException;
-import gmi.utils.exceptions.NullArgumentException;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -18,6 +17,8 @@ import java.util.List;
 import java.util.Observable;
 
 import javax.inject.Inject;
+
+import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
  * チャットサーバに必要な処理を行い、必要に応じてビューに更新を通知します。MVCパターンでいうところのモデル部分のつもりです。
@@ -76,7 +77,7 @@ final class ChatServerModel extends Observable implements ChatModel {
 
   @Override
   public void joinClient(Channel client) throws IllegalArgumentException {
-    if (client == null) throw new NullArgumentException("client");
+    checkNotNullArgument(client, "client");
 
     client.write("Welcome to Chat!\n");
     client.write("It is " + new Date() + " now.\n");
@@ -99,7 +100,7 @@ final class ChatServerModel extends Observable implements ChatModel {
 
   @Override
   public void processByeCommand(Channel client) throws IllegalArgumentException {
-    if (client == null) throw new NullArgumentException("client");
+    checkNotNullArgument(client, "client");
 
     client.close();
   }
@@ -113,8 +114,8 @@ final class ChatServerModel extends Observable implements ChatModel {
   public void processClientCommand(Channel client, String command) throws IllegalArgumentException {
     // INFO: コマンドが変更された場合にコメント等きちんと修正する。
     // TODO: 書き方がわかったらテストを書く。
-    if (client == null) throw new NullArgumentException("client");
-    if (command == null) throw new NullArgumentException("command");
+    checkNotNullArgument(client, "client");
+    checkNotNullArgument(command, "command");
     if (command.isEmpty()) return;
     if (command.indexOf(' ') == 0) throw new IllegalArgumentException("commandが不正です。");
 
@@ -127,8 +128,8 @@ final class ChatServerModel extends Observable implements ChatModel {
 
   @Override
   public void processMessageCommand(Channel client, String message) throws IllegalArgumentException {
-    if (client == null) throw new NullArgumentException("client");
-    if (message == null) throw new NullArgumentException("message");
+    checkNotNullArgument(client, "client");
+    checkNotNullArgument(message, "message");
     if (message.isEmpty()) return;
 
     synchronized (fClientsLock) {
@@ -142,7 +143,7 @@ final class ChatServerModel extends Observable implements ChatModel {
 
   @Override
   public void sendServerMessage(String message) throws IllegalArgumentException {
-    if (message == null) throw new NullArgumentException("message");
+    checkNotNullArgument(message, "message");
     if (message.isEmpty()) return;
 
     final String sendMsg = "<Server> " + message + "\n";
@@ -155,7 +156,7 @@ final class ChatServerModel extends Observable implements ChatModel {
 
   @Override
   public void updateInformation(String info) throws IllegalArgumentException {
-    if (info == null) throw new NullArgumentException("message");
+    checkNotNullArgument(info, "info");
 
     appendInformation(info);
   }

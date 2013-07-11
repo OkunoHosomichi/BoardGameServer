@@ -1,7 +1,6 @@
 package gmi.boardgame.server;
 
 import gmi.utils.IntRange;
-import gmi.utils.exceptions.NullArgumentException;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -17,6 +16,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
+
+import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
  * サーバの設定をまとめて保持するクラスです。enumを利用してSingletonパターンにしています。
@@ -150,7 +151,7 @@ public enum ServerProperties {
    *           設定ファイルの読み込み時にIOExceptionがスローされた場合にラップしてスローします。
    */
   public void load(String fileName) {
-    if (fileName == null) throw new NullArgumentException("fileName");
+    checkNotNullArgument(fileName, "fileName");
     if (!fileName.endsWith(PROPERTIES_FILE_EXTENTION))
       throw new IllegalArgumentException(fileName + "の拡張子がxmlではありません。");
     if (Files.exists(Paths.get(fileName)) && (!Files.isReadable(Paths.get(fileName))))
@@ -187,7 +188,7 @@ public enum ServerProperties {
    *           locationがnullの場合。
    */
   public void setWindowLocation(Point location) throws IllegalArgumentException {
-    if (location == null) throw new NullArgumentException("location");
+    checkNotNullArgument(location, "location");
 
     final Point copy = new Point(location.x, location.y);
 
@@ -205,7 +206,7 @@ public enum ServerProperties {
    *           sizeがnullの場合。
    */
   public void setWindowSize(Dimension size) throws IllegalArgumentException {
-    if (size == null) throw new NullArgumentException("location");
+    checkNotNullArgument(size, "size");
 
     final Dimension copy = new Dimension(size.width, size.height);
 
@@ -238,7 +239,7 @@ public enum ServerProperties {
    *           設定ファイルへの保存時にIOExceptionがスローされた場合にラップしてスローします。
    */
   public void store(String fileName) {
-    if (fileName == null) throw new NullArgumentException("fileName");
+    checkNotNullArgument(fileName, "fileName");
     if (!fileName.endsWith(PROPERTIES_FILE_EXTENTION))
       throw new IllegalArgumentException(fileName + "の拡張子がxmlではありません。");
     if (Files.exists(Paths.get(fileName)) && (!Files.isWritable(Paths.get(fileName))))

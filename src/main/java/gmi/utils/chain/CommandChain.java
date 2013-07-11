@@ -1,9 +1,9 @@
 package gmi.utils.chain;
 
-import gmi.utils.exceptions.NullArgumentException;
-
 import java.util.LinkedList;
 import java.util.List;
+
+import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
  * Chain of Responsibilityパターンでコマンドの連鎖を処理します。
@@ -33,7 +33,7 @@ public final class CommandChain<T> implements Command<T> {
    *           commandがnullの場合。
    */
   public CommandChain<T> addCommand(Command<T> command) throws IllegalArgumentException {
-    if (command == null) throw new NullArgumentException("command");
+    checkNotNullArgument(command, "command");
 
     synchronized (fCommandsLock) {
       fCommands.add(command);
@@ -49,7 +49,7 @@ public final class CommandChain<T> implements Command<T> {
    */
   @Override
   public boolean execute(T context) throws IllegalArgumentException, NoSuchCommandException {
-    if (context == null) throw new NullArgumentException("context");
+    checkNotNullArgument(context, "context");
 
     synchronized (fCommandsLock) {
       for (final Command<T> command : fCommands) {

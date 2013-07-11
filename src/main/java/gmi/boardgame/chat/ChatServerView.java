@@ -1,7 +1,5 @@
 package gmi.boardgame.chat;
 
-import gmi.utils.exceptions.NullArgumentException;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -19,6 +17,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
+
+import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
  * チャットサーバに必要なデータを表示し、ユーザからの入力をモデルに処理させます。MVCパターンでいうところのビューとコントローラ部分のつもりです。
@@ -55,7 +55,7 @@ final class ChatServerView extends JPanel {
    */
   @Inject
   public ChatServerView(ChatModel model) throws IllegalArgumentException {
-    if (model == null) throw new NullArgumentException("model");
+    checkNotNullArgument(model, "model");
 
     fModel = model;
     fModel.addObserver(new Observer() {
@@ -80,8 +80,8 @@ final class ChatServerView extends JPanel {
       public void update(Observable o, Object arg) throws IllegalArgumentException {
         // INFO: コメント参照。他に良いやり方を思いついたら直す。
         assert !SwingUtilities.isEventDispatchThread();
-        if (o == null) throw new NullArgumentException("o");
-        if (arg == null) throw new NullArgumentException("arg");
+        checkNotNullArgument(o, "o");
+        checkNotNullArgument(arg, "arg");
         if (!(arg instanceof String)) throw new IllegalArgumentException("argに文字列を渡すようにしてください。");
 
         // INFO: モデルの通知情報が変更された場合にコメント等きちんと修正する。

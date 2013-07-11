@@ -1,7 +1,7 @@
 package gmi.boardgame.chat.commands;
 
 import gmi.utils.chain.Command;
-import gmi.utils.exceptions.NullArgumentException;
+import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
  * チャットに参加している全クライアントにメッセージを送信するコマンドです。
@@ -16,7 +16,7 @@ final class MessageCommand implements Command<ChatCommandContext> {
 
   @Override
   public boolean execute(ChatCommandContext context) throws IllegalArgumentException {
-    if (context == null) throw new NullArgumentException("context");
+    checkNotNullArgument(context, "context");
     if (!COMMAND.equals(context.getCommand())) return false;
 
     context.processMessageCommand(context.getClient(), context.getArguments());

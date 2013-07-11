@@ -1,6 +1,5 @@
 package gmi.boardgame.chat;
 
-import gmi.utils.exceptions.NullArgumentException;
 import io.netty.channel.ChannelInboundHandler;
 
 import javax.swing.JPanel;
@@ -8,6 +7,8 @@ import javax.swing.JPanel;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+
+import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
  * ビューやモデルを生成するクラスです。他パッケージのクラスはChatServerを通じてチャットのパネルやハンドラを取得することが出来ます。
@@ -60,7 +61,7 @@ public final class ChatServer {
    *           messageがnullの場合。
    */
   public void notifyServerInformation(String info) throws IllegalArgumentException {
-    if (info == null) throw new NullArgumentException("info");
+    checkNotNullArgument(info, "info");
     if (info.isEmpty()) return;
 
     fInjector.getInstance(ChatModel.class).updateInformation(info);
