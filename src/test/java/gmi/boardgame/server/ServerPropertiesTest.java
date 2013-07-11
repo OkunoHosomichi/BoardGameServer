@@ -23,6 +23,8 @@ import org.testng.annotations.Test;
 import static gmi.utils.Preconditions.checkNotNullArgument;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 public class ServerPropertiesTest {
   private static final Path Cテスト用ルートディレクトリ = Paths.get("target/test").normalize();
@@ -202,6 +204,16 @@ public class ServerPropertiesTest {
   public void storeが呼び出されたけど設定ファイルが書き込み不能な時はIllegalArgumentExceptionをスローするよ() throws IOException {
     ServerProperties.INSTANCE.setWindowLocation(new Point(1, 1));
     ServerProperties.INSTANCE.store(C設定ファイルが書き込み不能だった.toString());
+  }
+
+  @Test(groups = "AllEnv")
+  public void checkPortNumberが呼び出されたらポート番号が範囲内かどうか調べるよ() {
+    assertFalse(ServerProperties.checkPortNumber(Integer.MIN_VALUE), "一番小さい数のパターン");
+    assertFalse(ServerProperties.checkPortNumber(49512), "下限値を1下回るパターン");
+    assertTrue(ServerProperties.checkPortNumber(49513), "下限値のパターン");
+    assertTrue(ServerProperties.checkPortNumber(65535), "上限値のパターン");
+    assertFalse(ServerProperties.checkPortNumber(65536), "上限を1上回るパターン");
+    assertFalse(ServerProperties.checkPortNumber(Integer.MAX_VALUE), "一番大きい数のパターン");
   }
 
   final static class DirectoryDeleter {

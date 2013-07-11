@@ -78,9 +78,9 @@ public final class ServerFrame extends JFrame {
    *          クライアントの接続を待つポート番号。
    */
   public ServerFrame(int portNumber) {
-    assert ServerProperties.PORT_RANGE.Contains(ServerProperties.DEFAULT_PORT_NUMBER);
+    assert ServerProperties.checkPortNumber(ServerProperties.DEFAULT_PORT_NUMBER);
 
-    fPortNumber = ServerProperties.PORT_RANGE.Contains(portNumber) ? portNumber : ServerProperties.DEFAULT_PORT_NUMBER;
+    fPortNumber = ServerProperties.checkPortNumber(portNumber) ? portNumber : ServerProperties.DEFAULT_PORT_NUMBER;
 
     fProperties.load();
 

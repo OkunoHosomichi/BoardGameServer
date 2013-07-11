@@ -1,7 +1,5 @@
 package gmi.boardgame.server;
 
-import gmi.utils.IntRange;
-
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.BufferedInputStream;
@@ -16,6 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
+
+import com.google.common.collect.Range;
 
 import static gmi.utils.Preconditions.checkNotNullArgument;
 
@@ -34,10 +34,6 @@ public enum ServerProperties {
    * デフォルトのポート番号。ポート番号は49513～65535までの値を指定します。
    */
   public static final int DEFAULT_PORT_NUMBER = 60935;
-  /**
-   * ポート番号に使える値の範囲。49513～65535までの値です。
-   */
-  public static final IntRange PORT_RANGE = new IntRange(49513, 65535);
   /**
    * ボードゲームサーバのバージョンを示す文字列。いずれクライアントとのバージョンチェックに使う予定の情報。現在は何の意味もありません。
    */
@@ -68,6 +64,10 @@ public enum ServerProperties {
    * ウインドウ左上隅のY座標を取得/設定するためのキー文字列。
    */
   private static final String KEY_WINDOW_Y = "WINDOW_Y";
+  /**
+   * ポート番号に使える値の範囲。49513～65535までの値です。
+   */
+  private static final Range<Integer> PORT_RANGE = Range.closed(Integer.valueOf(49513), Integer.valueOf(65535));
   /**
    * 設定ファイルの文字セット。
    */
@@ -266,5 +266,16 @@ public enum ServerProperties {
     setWindowLocation(INITIAL_WINDOW_LOCATION);
     setWindowSize(INITIAL_WINDOW_SIZE);
     fChange = true;
+  }
+
+  /**
+   * 指定されたポート番号が範囲内かどうか調べます。
+   * 
+   * @param port
+   *          調べるポート番号。
+   * @return 範囲内ならtrue,範囲外ならfalse。
+   */
+  public static boolean checkPortNumber(int port) {
+    return PORT_RANGE.contains(Integer.valueOf(port));
   }
 }
