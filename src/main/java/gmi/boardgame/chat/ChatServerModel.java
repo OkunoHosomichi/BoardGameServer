@@ -3,6 +3,7 @@ package gmi.boardgame.chat;
 import gmi.boardgame.chat.commands.ChatCommandChainFactory;
 import gmi.boardgame.chat.commands.ChatCommandContext;
 import gmi.utils.chain.NoSuchCommandException;
+import gmi.utils.netty.channel.ChannelUtilities;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -10,14 +11,15 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
 import javax.inject.Inject;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
@@ -57,14 +59,15 @@ final class ChatServerModel extends Observable implements ChatModel {
 
   @Override
   public List<String> getClientNames() {
-    final List<String> result = new LinkedList<>();
+    final List<String> result = new ArrayList<>();
 
     synchronized (fClientsLock) {
       for (final Channel channel : fClients) {
-        result.add(channel.remoteAddress().toString());
+        result.add(ChannelUtilities.getNickName(channel));
       }
     }
 
+    Collections.sort(result);
     return Collections.unmodifiableList(result);
   }
 
@@ -73,29 +76,6 @@ final class ChatServerModel extends Observable implements ChatModel {
     assert fMessage != null;
 
     return fMessage;
-  }
-
-  @Override
-  public void joinClient(Channel client) throws IllegalArgumentException {
-    checkNotNullArgument(client, "client");
-
-    client.write("Welcome to Chat!\n");
-    client.write("It is " + new Date() + " now.\n");
-
-    synchronized (fClientsLock) {
-      fClients.add(client);
-    }
-
-    client.closeFuture().addListener(new ChannelFutureListener() {
-
-      @Override
-      public void operationComplete(ChannelFuture future) throws Exception {
-        leaveClient();
-      }
-    });
-
-    setChanged();
-    notifyObservers("clients");
   }
 
   @Override
@@ -143,8 +123,81 @@ final class ChatServerModel extends Observable implements ChatModel {
 
   @Override
   public void processNameCommand(Channel client, String nickName) throws IllegalArgumentException {
-    // TODO 自動生成されたメソッド・スタブ
+    checkNotNullArgument(client, "client");
+    checkNotNullArgument(nickName, "nickName");
+    checkArgument(!nickName.isEmpty(), "nickNameに空文字列を指定できません。");
 
+    if (!checkValidName(nickName)) {
+      client.write("RENAME");
+      return;
+    }
+
+    ChannelUtilities.setNickName(client, nickName);
+
+    synchronized (fClientsLock) {
+      final String result = getAllClientName();
+
+      fClients.add(client);
+      client.closeFuture().addListener(new ChannelFutureListener() {
+
+        @Override
+        public void operationComplete(ChannelFuture future) throws Exception {
+          leaveClient();
+        }
+      });
+
+      for (final Channel channel : fClients) {
+        if (client == channel) {
+          channel.write("Welcome to Chat!\n");
+          channel.write("It is " + new Date() + " now.\n");
+          channel.write("WELCOME " + result);
+        } else {
+          channel.write("ENTER " + nickName);
+        }
+      }
+
+      setChanged();
+      notifyObservers("clients");
+    }
+  }
+
+  /**
+   * @return
+   */
+  public String getAllClientName() {
+    synchronized (fClientsLock) {
+      if (fClients.size() == 0) return "";
+
+      final List<String> list = getClientNames();
+      final StringBuilder result = new StringBuilder();
+      for (final String nickName : list) {
+        result.append(",").append(nickName);
+      }
+      return result.substring(1);
+    }
+  }
+
+  /**
+   * 指定されたニックネームが不正なものでないか調べます。不正な名前の条件は以下の通りです。<br>
+   * ･名前にServerという文字列が含まれている<br>
+   * ･半角記号のカンマ、スペース、アットマークなどが含まれている<br>
+   * 
+   * @param nickName
+   *          調べるニックネーム。nullや空文字を指定できません。
+   * @return 不正な名前でなければtrue、不正ならばfalse。
+   */
+  private boolean checkValidName(String nickName) {
+    assert nickName != null;
+    assert !nickName.isEmpty();
+
+    synchronized (fClientsLock) {
+      for (final Channel client : fClients) {
+        if (ChannelUtilities.getNickName(client).equals(nickName)) return false;
+      }
+    }
+
+    return !(nickName.indexOf("Server") != -1 || nickName.indexOf(",") != -1 || nickName.indexOf(" ") != -1 || nickName
+        .indexOf("@") != -1);
   }
 
   @Override

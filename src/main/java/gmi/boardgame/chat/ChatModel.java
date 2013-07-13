@@ -39,16 +39,6 @@ public interface ChatModel {
   String getInformation();
 
   /**
-   * チャットに参加してきたクライアントを処理し、ビューに変更を通知します。クライアントが切断したときの処理も登録しておきます。
-   * 
-   * @param client
-   *          接続してきたクライアント。nullを指定できません。
-   * @throws IllegalArgumentException
-   *           clientがnullの場合。
-   */
-  void joinClient(Channel client) throws IllegalArgumentException;
-
-  /**
    * Byeコマンドの処理を行います。指定されたクライアントの切断処理を実行します。
    * 
    * @param client
