@@ -2,6 +2,9 @@ package gmi.boardgame.client;
 
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
+
+import com.google.common.base.Strings;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static gmi.utils.Preconditions.checkNotNullArgument;
 
@@ -44,6 +47,8 @@ public final class ChannelUtility {
    *           channelがnullの場合。
    */
   public static final String getNickName(Channel channel) {
-    return null;
+    checkNotNullArgument(channel, "channel");
+
+    return Strings.nullToEmpty(channel.attr(KEY_NICKNAME).get());
   }
 }
