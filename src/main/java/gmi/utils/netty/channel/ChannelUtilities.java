@@ -1,4 +1,4 @@
-package gmi.boardgame.client;
+package gmi.utils.netty.channel;
 
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
@@ -13,7 +13,7 @@ import static gmi.utils.Preconditions.checkNotNullArgument;
  * 
  * @author おくのほそみち
  */
-public final class ChannelUtility {
+public final class ChannelUtilities {
   /**
    * ニックネーム取得/設定用のキー。
    */
