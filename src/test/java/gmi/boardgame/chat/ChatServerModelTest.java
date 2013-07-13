@@ -1,8 +1,13 @@
 package gmi.boardgame.chat;
 
+import gmi.utils.netty.channel.ChannelUtilities;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelOutboundHandlerAdapter;
+import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,7 +22,8 @@ import mockit.Mocked;
 
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class ChatServerModelTest {
   private static final String LINE_SEPARATOR = System.lineSeparator();
@@ -115,72 +121,37 @@ public class ChatServerModelTest {
     assertEquals(model.getInformation(), "aaa" + LINE_SEPARATOR);
   }
 
-  @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
-  public void joinClientの引数にnullが指定されたらIllegalArgumentExceptionを投げるよ() {
-    final ChatServerModel model = new ChatServerModel();
-    model.joinClient(null);
-  }
-
   @Test(groups = { "AllEnv" })
-  public void joinClientを呼ばれたらクライアント一覧を更新してビューに通知するよ() {
+  public void getClientNamesを呼ばれたら変更不能のクライアント名一覧を返すよ() {
     final ChatServerModel model = new ChatServerModel();
-    Deencapsulation.setField(model, "fClients", fGroup);
-    model.addObserver(fObserver);
+    final ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    Deencapsulation.setField(model, "fClients", group);
 
-    new Expectations() {
-      @Mocked
-      ChannelFuture fFuture;
-      {
-        fChannel.write(anyString);
-        minTimes = 1;
-        fGroup.add(fChannel);
-        fChannel.closeFuture();
-        result = fFuture;
-        fObserver.update(model, "clients");
-      }
-    };
-
-    model.joinClient(fChannel);
-  }
-
-  @Test(groups = { "AllEnv" })
-  public void getClientNamesを呼ばれたら変更不能のクライアント名一覧を返すよ(final SocketAddress address1, final SocketAddress address5) {
-    final ChatServerModel model = new ChatServerModel();
-    Deencapsulation.setField(model, "fClients", fGroup);
-
-    new Expectations() {
-      SocketAddress fAddress2;
-      SocketAddress fAddress3;
-      SocketAddress fAddress4;
-      {
-        fGroup.iterator();
-        times = 1;
-        result = Arrays.asList(fChannel, fChannel, fChannel, fChannel, fChannel).iterator();
-        fChannel.remoteAddress();
-        returns(address1, fAddress2, fAddress3, fAddress4, address5);
-      }
-    };
+    final Channel channel1 = new EmbeddedChannel(new ChannelOutboundHandlerAdapter());
+    final Channel channel2 = new EmbeddedChannel(new ChannelOutboundHandlerAdapter());
+    final Channel channel3 = new EmbeddedChannel(new ChannelOutboundHandlerAdapter());
+    ChannelUtilities.setNickName(channel1, "aaa");
+    ChannelUtilities.setNickName(channel2, "ccc");
+    ChannelUtilities.setNickName(channel3, "eee");
+    group.add(channel1);
+    group.add(channel2);
+    group.add(channel3);
 
     final List<String> result = model.getClientNames();
-    assertEquals(result.size(), 5);
-    assertEquals(result.get(0), address1.toString());
-    assertEquals(result.get(4), address5.toString());
+    assertEquals(result.size(), 3);
+    assertEquals(result.get(0), "aaa");
+    assertEquals(result.get(2), "eee");
   }
 
   @Test(groups = { "AllEnv" }, expectedExceptions = { UnsupportedOperationException.class })
   public void getClientNamesが返すクライアント名一覧は追加不能だよ() {
     final ChatServerModel model = new ChatServerModel();
-    Deencapsulation.setField(model, "fClients", fGroup);
+    final ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    Deencapsulation.setField(model, "fClients", group);
 
-    new Expectations() {
-      SocketAddress fAddress;
-      {
-        fGroup.iterator();
-        result = Arrays.asList(fChannel).iterator();
-        fChannel.remoteAddress();
-        result = fAddress;
-      }
-    };
+    final Channel channel1 = new EmbeddedChannel(new ChannelOutboundHandlerAdapter());
+    ChannelUtilities.setNickName(channel1, "aaa");
+    group.add(channel1);
 
     model.getClientNames().add("asdfg");
   }
@@ -188,17 +159,15 @@ public class ChatServerModelTest {
   @Test(groups = { "AllEnv" }, expectedExceptions = { UnsupportedOperationException.class })
   public void getClientNamesが返すクライアント名一覧は削除不能だよ() {
     final ChatServerModel model = new ChatServerModel();
-    Deencapsulation.setField(model, "fClients", fGroup);
+    final ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    Deencapsulation.setField(model, "fClients", group);
 
-    new Expectations() {
-      SocketAddress fAddress;
-      {
-        fGroup.iterator();
-        result = Arrays.asList(fChannel).iterator();
-        fChannel.remoteAddress();
-        result = fAddress;
-      }
-    };
+    final Channel channel1 = new EmbeddedChannel(new ChannelOutboundHandlerAdapter());
+    final Channel channel2 = new EmbeddedChannel(new ChannelOutboundHandlerAdapter());
+    ChannelUtilities.setNickName(channel1, "aaa");
+    ChannelUtilities.setNickName(channel2, "bbb");
+    group.add(channel1);
+    group.add(channel2);
 
     model.getClientNames().remove(0);
   }
@@ -348,5 +317,105 @@ public class ChatServerModelTest {
     };
 
     model.processByeCommand(client);
+  }
+
+  @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
+  public void processNameCommandの引数clientにnullが指定されたらIllegalArgumentExceptionを投げるよ() {
+    final ChatServerModel model = new ChatServerModel();
+    model.processNameCommand(null, "aaa");
+  }
+
+  @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
+  public void processNameCommandの引数nickNameにnullが指定されたらIllegalArgumentExceptionを投げるよ(Channel client) {
+    final ChatServerModel model = new ChatServerModel();
+    model.processNameCommand(client, null);
+  }
+
+  @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
+  public void processNameCommandの引数nickNameに空文字列が指定されたらIllegalArgumentExceptionを投げるよ(Channel client) {
+    final ChatServerModel model = new ChatServerModel();
+    model.processNameCommand(client, "");
+  }
+
+  @Test(groups = { "AllEnv" })
+  public void processNameCommandを呼び出されたらチャットに参加しているクライアント一覧に登録して他のクライアントに通知するよ() {
+    final ChatServerModel model = new ChatServerModel();
+    final ChannelGroup group = Deencapsulation.getField(model, "fClients");
+    final Channel channel = new EmbeddedChannel(new ChannelOutboundHandlerAdapter());
+
+    model.processNameCommand(new EmbeddedChannel(new ChannelOutboundHandlerAdapter()), "test1");
+    model.processNameCommand(new EmbeddedChannel(new ChannelOutboundHandlerAdapter()), "test2");
+    model.processNameCommand(new EmbeddedChannel(new ChannelOutboundHandlerAdapter()), "test3");
+
+    new Expectations(channel) {
+      {
+        channel.write("WELCOME test1,test2,test3");
+      }
+    };
+
+    assertEquals(group.size(), 3);
+    model.processNameCommand(channel, "test");
+    assertEquals(group.size(), 4);
+  }
+
+  @Test(groups = { "AllEnv" })
+  public void processNameCommandを呼び出されたけど他のクライアントと名前が被ってたらRENAMEコマンドを送信するよ() {
+    final ChatServerModel model = new ChatServerModel();
+    final ChannelGroup group = Deencapsulation.getField(model, "fClients");
+    model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test1");
+    model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test2");
+    model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test3");
+
+    new Expectations() {
+      {
+        fChannel.write("RENAME");
+      }
+    };
+
+    assertEquals(group.size(), 3);
+    model.processNameCommand(fChannel, "test2");
+    assertEquals(group.size(), 3);
+  }
+
+  @Test(groups = { "AllEnv" })
+  public void processNameCommandを呼び出されたけどニックネームにServerを指定してたらRENAMEコマンドを送信するよ() {
+    final ChatServerModel model = new ChatServerModel();
+    final ChannelGroup group = Deencapsulation.getField(model, "fClients");
+    model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test");
+
+    new Expectations() {
+      {
+        fChannel.write("RENAME");
+      }
+    };
+
+    assertEquals(group.size(), 1);
+    model.processNameCommand(fChannel, "Server");
+    assertEquals(group.size(), 1);
+  }
+
+  @Test(groups = { "AllEnv" })
+  public void processNameCommandを呼び出されたけどニックネームに半角記号のカンマやスペースやアットマークなどが入っていたらRENAMEコマンドを送信するよ(final Channel client1,
+      final Channel client2, final Channel client3) {
+    final ChatServerModel model = new ChatServerModel();
+    final ChannelGroup group = Deencapsulation.getField(model, "fClients");
+    model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test");
+    model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test2");
+
+    new Expectations() {
+      {
+        client1.write("RENAME");
+        client2.write("RENAME");
+        client3.write("RENAME");
+      }
+    };
+
+    assertEquals(group.size(), 2);
+    model.processNameCommand(client1, "test Name1");
+    assertEquals(group.size(), 2);
+    model.processNameCommand(client2, "testN@ame2");
+    assertEquals(group.size(), 2);
+    model.processNameCommand(client3, "test,3");
+    assertEquals(group.size(), 2);
   }
 }

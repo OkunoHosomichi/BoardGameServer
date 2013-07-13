@@ -83,6 +83,19 @@ public interface ChatModel {
   void processMessageCommand(Channel client, String message) throws IllegalArgumentException;
 
   /**
+   * Nameコマンドを処理します。チャットに参加しているクライアントの一覧に登録し、
+   * コマンドを送信してきたクライアント以外の全クライアントに参加したことを通知します。
+   * 
+   * @param client
+   *          コマンドを送信してきたクライアント。nullを指定できません。
+   * @param nickName
+   *          ニックネーム。nullや空文字列を指定できません。
+   * @throws IllegalArgumentException
+   *           client又はnickNameがnullの場合。又はnickNameが空文字列の場合。
+   */
+  void processNameCommand(Channel client, String nickName) throws IllegalArgumentException;
+
+  /**
    * サーバからのメッセージをチャットに参加している全クライアントに送信します。メッセージが空文字列の場合は何もしません。
    * 
    * @param message

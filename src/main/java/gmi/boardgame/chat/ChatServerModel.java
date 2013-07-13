@@ -142,6 +142,12 @@ final class ChatServerModel extends Observable implements ChatModel {
   }
 
   @Override
+  public void processNameCommand(Channel client, String nickName) throws IllegalArgumentException {
+    // TODO 自動生成されたメソッド・スタブ
+
+  }
+
+  @Override
   public void sendServerMessage(String message) throws IllegalArgumentException {
     checkNotNullArgument(message, "message");
     if (message.isEmpty()) return;
