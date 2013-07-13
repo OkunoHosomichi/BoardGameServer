@@ -33,4 +33,17 @@ public final class ChannelUtility {
 
     channel.attr(KEY_NICKNAME).set(nickName);
   }
+
+  /**
+   * 指定されたチャンネルに設定されているニックネームを返します。ニックネームが設定されていなかった場合は空文字列が返ります。
+   * 
+   * @param channel
+   *          ニックネームを設定するチャンネル。nullを指定できません。
+   * @return channelに設定されているニックネーム。ニックネームが設定されていない場合は空文字列が返ります。
+   * @throws IllegalArgumentException
+   *           channelがnullの場合。
+   */
+  public static final String getNickName(Channel channel) {
+    return null;
+  }
 }

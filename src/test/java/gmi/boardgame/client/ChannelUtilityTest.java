@@ -43,4 +43,24 @@ public class ChannelUtilityTest {
     ChannelUtility.setNickName(channel, "test2");
     assertEquals(channel.attr(ChannelUtility.KEY_NICKNAME).get(), "test2");
   }
+
+  @Test(groups = "AllEnv", expectedExceptions = IllegalArgumentException.class)
+  public void getNickNameの引数にnullが指定されたらIllegalArgumentExceptionを投げるよ() {
+    ChannelUtility.getNickName(null);
+  }
+
+  @Test(groups = "AllEnv")
+  public void setNickNameを呼び出されたけどチャンネルにニックネームが設定されていなかったら空文字列を返すよ() {
+    final NioSocketChannel channel = new NioSocketChannel();
+
+    assertEquals(ChannelUtility.getNickName(channel), "");
+  }
+
+  @Test(groups = "AllEnv")
+  public void setNickNameを呼び出されたらチャンネルに設定されたニックネームを返すよ() {
+    final NioSocketChannel channel = new NioSocketChannel();
+
+    channel.attr(ChannelUtility.KEY_NICKNAME).set("testdesu");
+    assertEquals(ChannelUtility.getNickName(channel), "testdesu");
+  }
 }
