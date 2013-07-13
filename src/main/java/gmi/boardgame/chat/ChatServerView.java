@@ -171,20 +171,6 @@ final class ChatServerView extends JPanel {
   }
 
   /**
-   * サーバ情報をfServerInformationに設定して表示させます。
-   * このメソッドはイベントディスパッチスレッド内で呼び出されることを想定してassert文によるチェックを行っています。
-   * 
-   * @param information
-   *          サーバの情報。nullを指定できません。
-   */
-  private void setServerInformation(String information) {
-    assert SwingUtilities.isEventDispatchThread();
-    assert information != null;
-
-    fServerInformation.setText(information);
-  }
-
-  /**
    * チャットに参加しているクライアント名一覧をfClientNamesに設定して表示させます。
    * このメソッドはイベントディスパッチスレッド内で呼び出されることを想定してassert文によるチェックを行っています。
    * 
@@ -202,5 +188,19 @@ final class ChatServerView extends JPanel {
     }
 
     fClientNames.setModel(model);
+  }
+
+  /**
+   * サーバ情報をfServerInformationに設定して表示させます。
+   * このメソッドはイベントディスパッチスレッド内で呼び出されることを想定してassert文によるチェックを行っています。
+   * 
+   * @param information
+   *          サーバの情報。nullを指定できません。
+   */
+  private void setServerInformation(String information) {
+    assert SwingUtilities.isEventDispatchThread();
+    assert information != null;
+
+    fServerInformation.setText(information);
   }
 }

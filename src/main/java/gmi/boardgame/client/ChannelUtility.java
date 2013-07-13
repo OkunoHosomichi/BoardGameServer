@@ -2,6 +2,8 @@ package gmi.boardgame.client;
 
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
+import static com.google.common.base.Preconditions.checkArgument;
+import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
  * チャンネルへの操作を行いやすくするためのユーティリティクラスです。
@@ -25,5 +27,10 @@ public final class ChannelUtility {
    *           channel又はnickNameがnullの場合。又はnickNameが空文字列の場合。
    */
   public static final void setNickName(Channel channel, String nickName) {
+    checkNotNullArgument(channel, "channel");
+    checkNotNullArgument(nickName, "nickName");
+    checkArgument(!nickName.isEmpty(), "nickNameに空文字列を指定できません。");
+
+    channel.attr(KEY_NICKNAME).set(nickName);
   }
 }
