@@ -18,7 +18,10 @@ import java.util.Observer;
 
 import mockit.Deencapsulation;
 import mockit.Expectations;
+import mockit.FullVerifications;
+import mockit.FullVerificationsInOrder;
 import mockit.Mocked;
+import mockit.NonStrictExpectations;
 
 import org.testng.annotations.Test;
 
@@ -338,84 +341,103 @@ public class ChatServerModelTest {
   }
 
   @Test(groups = { "AllEnv" })
-  public void processNameCommandを呼び出されたらチャットに参加しているクライアント一覧に登録して他のクライアントに通知するよ() {
+  public void processNameCommandを呼び出されたらチャットに参加しているクライアント一覧に登録して他のクライアントに通知するよ(
+      @Mocked("write") final EmbeddedChannel channel) throws Exception {
     final ChatServerModel model = new ChatServerModel();
-    final ChannelGroup group = Deencapsulation.getField(model, "fClients");
-    final Channel channel = new EmbeddedChannel(new ChannelOutboundHandlerAdapter());
+    final ChannelGroup g = Deencapsulation.getField(model, "fClients");
 
     model.processNameCommand(new EmbeddedChannel(new ChannelOutboundHandlerAdapter()), "test1");
     model.processNameCommand(new EmbeddedChannel(new ChannelOutboundHandlerAdapter()), "test2");
     model.processNameCommand(new EmbeddedChannel(new ChannelOutboundHandlerAdapter()), "test3");
 
-    new Expectations(channel) {
-      {
-        channel.write("WELCOME test1,test2,test3");
-      }
+    new NonStrictExpectations() {
     };
 
-    assertEquals(group.size(), 3);
-    model.processNameCommand(channel, "test");
-    assertEquals(group.size(), 4);
+    assertEquals(g.size(), 3);
+    model.processNameCommand(new EmbeddedChannel(new ChannelOutboundHandlerAdapter()), "test");
+    assertEquals(g.size(), 4);
+
+    new FullVerifications() {
+      {
+        channel.write("ENTER test\n");
+        times = 3;
+        channel.write("Welcome to Chat!\n");
+        channel.write(withPrefix("It is "));
+        channel.write("WELCOME test1,test2,test3\n");
+      }
+    };
   }
 
   @Test(groups = { "AllEnv" })
-  public void processNameCommandを呼び出されたけど他のクライアントと名前が被ってたらRENAMEコマンドを送信するよ() {
+  public void processNameCommandを呼び出されたけど他のクライアントと名前が被ってたらRENAMEコマンドを送信するよ(
+      @Mocked("write") final EmbeddedChannel channel) {
     final ChatServerModel model = new ChatServerModel();
     final ChannelGroup group = Deencapsulation.getField(model, "fClients");
     model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test1");
     model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test2");
     model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test3");
 
-    new Expectations() {
-      {
-        fChannel.write("RENAME");
-      }
+    new NonStrictExpectations() {
     };
 
     assertEquals(group.size(), 3);
-    model.processNameCommand(fChannel, "test2");
+    model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test2");
     assertEquals(group.size(), 3);
+
+    new FullVerificationsInOrder() {
+      {
+        channel.write("RENAME\n");
+        times = 1;
+      }
+    };
   }
 
   @Test(groups = { "AllEnv" })
-  public void processNameCommandを呼び出されたけどニックネームにServerを指定してたらRENAMEコマンドを送信するよ() {
+  public void processNameCommandを呼び出されたけどニックネームにServerを指定してたらRENAMEコマンドを送信するよ(
+      @Mocked("write") final EmbeddedChannel channel) {
     final ChatServerModel model = new ChatServerModel();
     final ChannelGroup group = Deencapsulation.getField(model, "fClients");
     model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test");
 
-    new Expectations() {
-      {
-        fChannel.write("RENAME");
-      }
+    new NonStrictExpectations() {
     };
 
     assertEquals(group.size(), 1);
-    model.processNameCommand(fChannel, "Server");
+    model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "Server");
     assertEquals(group.size(), 1);
+
+    new FullVerificationsInOrder() {
+      {
+        channel.write("RENAME\n");
+        times = 1;
+      }
+    };
   }
 
   @Test(groups = { "AllEnv" })
-  public void processNameCommandを呼び出されたけどニックネームに半角記号のカンマやスペースやアットマークなどが入っていたらRENAMEコマンドを送信するよ(final Channel client1,
-      final Channel client2, final Channel client3) {
+  public void processNameCommandを呼び出されたけどニックネームに半角記号のカンマやスペースやアットマークなどが入っていたらRENAMEコマンドを送信するよ(
+      @Mocked("write") final EmbeddedChannel channel) {
     final ChatServerModel model = new ChatServerModel();
     final ChannelGroup group = Deencapsulation.getField(model, "fClients");
     model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test");
     model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test2");
 
     new Expectations() {
-      {
-        client1.write("RENAME");
-        client2.write("RENAME");
-        client3.write("RENAME");
-      }
     };
 
     assertEquals(group.size(), 2);
-    model.processNameCommand(client1, "test Name1");
+    model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test Name1");
     assertEquals(group.size(), 2);
-    model.processNameCommand(client2, "testN@ame2");
+    model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "testN@ame2");
     assertEquals(group.size(), 2);
-    model.processNameCommand(client3, "test,3");
+    model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test,3");
     assertEquals(group.size(), 2);
+
+    new FullVerificationsInOrder() {
+      {
+        channel.write("RENAME\n");
+        times = 3;
+      }
+    };
   }
 }

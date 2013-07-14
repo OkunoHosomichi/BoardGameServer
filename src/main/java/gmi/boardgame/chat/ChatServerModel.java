@@ -128,7 +128,7 @@ final class ChatServerModel extends Observable implements ChatModel {
     checkArgument(!nickName.isEmpty(), "nickNameに空文字列を指定できません。");
 
     if (!checkValidName(nickName)) {
-      client.write("RENAME");
+      client.write("RENAME\n");
       return;
     }
 
@@ -150,9 +150,9 @@ final class ChatServerModel extends Observable implements ChatModel {
         if (client == channel) {
           channel.write("Welcome to Chat!\n");
           channel.write("It is " + new Date() + " now.\n");
-          channel.write("WELCOME " + result);
+          channel.write("WELCOME " + result + "\n");
         } else {
-          channel.write("ENTER " + nickName);
+          channel.write("ENTER " + nickName + "\n");
         }
       }
 
