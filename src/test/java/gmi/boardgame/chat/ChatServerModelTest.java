@@ -16,7 +16,6 @@ import java.util.Observer;
 import mockit.Deencapsulation;
 import mockit.Expectations;
 import mockit.FullVerifications;
-import mockit.FullVerificationsInOrder;
 import mockit.Mocked;
 import mockit.NonStrictExpectations;
 
@@ -291,6 +290,7 @@ public class ChatServerModelTest {
     new Expectations() {
       {
         channel.close();
+        times = 1;
       }
     };
 
@@ -368,19 +368,16 @@ public class ChatServerModelTest {
     model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test2");
     model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test3");
 
-    new NonStrictExpectations() {
-    };
-
-    assertEquals(group.size(), 3);
-    model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test2");
-    assertEquals(group.size(), 3);
-
-    new FullVerificationsInOrder() {
+    new Expectations() {
       {
         channel.write("RENAME test2\n");
         times = 1;
       }
     };
+
+    assertEquals(group.size(), 3);
+    model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test2");
+    assertEquals(group.size(), 3);
   }
 
   @Test(groups = { "AllEnv" })
@@ -390,19 +387,16 @@ public class ChatServerModelTest {
     final ChannelGroup group = Deencapsulation.getField(model, "fClients");
     model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test");
 
-    new NonStrictExpectations() {
-    };
-
-    assertEquals(group.size(), 1);
-    model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "Server");
-    assertEquals(group.size(), 1);
-
-    new FullVerificationsInOrder() {
+    new Expectations() {
       {
         channel.write("RENAME Server\n");
         times = 1;
       }
     };
+
+    assertEquals(group.size(), 1);
+    model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "Server");
+    assertEquals(group.size(), 1);
   }
 
   @Test(groups = { "AllEnv" })
@@ -413,7 +407,15 @@ public class ChatServerModelTest {
     model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test");
     model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test2");
 
-    new NonStrictExpectations() {
+    new Expectations() {
+      {
+        channel.write("RENAME test Name1\n");
+        times = 1;
+        channel.write("RENAME testN@ame2\n");
+        times = 1;
+        channel.write("RENAME test,3\n");
+        times = 1;
+      }
     };
 
     assertEquals(group.size(), 2);
@@ -423,13 +425,5 @@ public class ChatServerModelTest {
     assertEquals(group.size(), 2);
     model.processNameCommand(new EmbeddedChannel(new ChannelInboundHandlerAdapter()), "test,3");
     assertEquals(group.size(), 2);
-
-    new FullVerificationsInOrder() {
-      {
-        channel.write("RENAME test Name1\n");
-        channel.write("RENAME testN@ame2\n");
-        channel.write("RENAME test,3\n");
-      }
-    };
   }
 }
