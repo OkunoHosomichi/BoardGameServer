@@ -105,7 +105,7 @@ public final class ChatCommandContext {
   }
 
   /**
-   * Messagコマンドを処理します。実際にはモデルに委譲するだけです。
+   * Messageコマンドを処理します。実際にはモデルに委譲するだけです。
    * 
    * @param client
    *          コマンドを送信してきたクライアント。nullを指定できません。
@@ -116,5 +116,19 @@ public final class ChatCommandContext {
    */
   void processMessageCommand(Channel client, String message) throws IllegalArgumentException {
     fModel.processMessageCommand(client, message);
+  }
+
+  /**
+   * Nameコマンドを処理します。実際にはモデルに委譲するだけです。
+   * 
+   * @param client
+   *          コマンドを送信してきたクライアント。nullを指定できません。
+   * @param nickName
+   *          クライアントのニックネーム。nullや空文字列を指定できません。
+   * @throws IllegalArgumentException
+   *           client又はnickNameにnullが指定された場合。又はnickNameに空文字列が指定された場合。
+   */
+  void processNameCommand(Channel client, String nickName) throws IllegalArgumentException {
+    fModel.processNameCommand(client, nickName);
   }
 }

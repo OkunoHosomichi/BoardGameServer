@@ -23,7 +23,8 @@ public enum ChatCommandChainFactory implements ChainFactory<ChatCommandContext> 
    * コマンドの連鎖を作成してインスタンスを構築します。
    */
   ChatCommandChainFactory() {
-    fChain = new CommandChain<ChatCommandContext>().addCommand(new MessageCommand()).addCommand(new ByeCommand());
+    fChain = new CommandChain<ChatCommandContext>().addCommand(new MessageCommand()).addCommand(new ByeCommand())
+        .addCommand(new NameCommand());
   }
 
   @Override
