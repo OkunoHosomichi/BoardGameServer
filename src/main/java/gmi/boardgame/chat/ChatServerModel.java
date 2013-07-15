@@ -162,9 +162,11 @@ final class ChatServerModel extends Observable implements ChatModel {
   }
 
   /**
-   * @return
+   * 接続しているクライアント名全てをカンマで連結した文字列を返します。接続しているクライアントがなければ空文字列が返ります。
+   * 
+   * @return クライアント名をカンマで連結した文字列。
    */
-  public String getAllClientName() {
+  private String getAllClientName() {
     synchronized (fClientsLock) {
       if (fClients.size() == 0) return "";
 
