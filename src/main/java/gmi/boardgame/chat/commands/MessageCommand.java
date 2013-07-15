@@ -17,7 +17,7 @@ final class MessageCommand implements Command<ChatCommandContext> {
   @Override
   public boolean execute(ChatCommandContext context) throws IllegalArgumentException {
     checkNotNullArgument(context, "context");
-    if (!COMMAND.equals(context.getCommand())) return false;
+    if (!context.getCommand().equals(COMMAND)) return false;
 
     context.processMessageCommand(context.getClient(), context.getArguments());
 

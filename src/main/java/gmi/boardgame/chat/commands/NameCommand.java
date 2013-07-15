@@ -1,6 +1,7 @@
 package gmi.boardgame.chat.commands;
 
 import gmi.utils.chain.Command;
+import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
  * Nameコマンドを処理します。
@@ -15,7 +16,11 @@ public class NameCommand implements Command<ChatCommandContext> {
 
   @Override
   public boolean execute(ChatCommandContext context) throws IllegalArgumentException {
-    // TODO 自動生成されたメソッド・スタブ
-    return false;
+    checkNotNullArgument(context, "context");
+    if (!context.getCommand().equals(COMMAND)) return false;
+
+    context.processNameCommand(context.getClient(), context.getArguments());
+
+    return true;
   }
 }
