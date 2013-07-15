@@ -8,7 +8,7 @@ import static gmi.utils.Preconditions.checkNotNullArgument;
  * 
  * @author おくのほそみち
  */
-public class NameCommand implements Command<ChatCommandContext> {
+final class NameCommand implements Command<ChatCommandContext> {
   /**
    * コンテキストのコマンド文字列がこの文字列と等しければNameコマンドだと判断します。
    */

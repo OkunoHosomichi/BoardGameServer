@@ -88,7 +88,8 @@ final class ChatServerModel extends Observable implements ChatModel {
   /**
    * チャットに参加しているクライアントから受信したコマンドを処理します。コマンドが空文字列の場合は何もしません。現時点でのコマンドは以下の通りです。<br>
    * MSG メッセージ - 他クライアントにメッセージを送信する。<br>
-   * BYE - クライアントとの切断処理を行う。
+   * BYE - クライアントとの切断処理を行う。<br>
+   * NAME ニックネーム - ニックネームを決める。このコマンドを処理するとチャットに参加したことになる。
    */
   @Override
   public void processClientCommand(Channel client, String command) throws IllegalArgumentException {
