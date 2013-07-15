@@ -113,10 +113,10 @@ final class ChatServerModel extends Observable implements ChatModel {
     if (message.isEmpty()) return;
 
     synchronized (fClientsLock) {
-      for (final Channel c : fClients) {
-        if (c == client) continue;
+      for (final Channel channel : fClients) {
+        if (channel == client) continue;
 
-        c.write("[" + client.remoteAddress() + "] " + message + "\n");
+        channel.write("[" + ChannelUtilities.getNickName(client) + "] " + message + "\n");
       }
     }
   }
@@ -128,7 +128,7 @@ final class ChatServerModel extends Observable implements ChatModel {
     checkArgument(!nickName.isEmpty(), "nickNameに空文字列を指定できません。");
 
     if (!checkValidName(nickName)) {
-      client.write("RENAME\n");
+      client.write("RENAME " + nickName + "\n");
       return;
     }
 
