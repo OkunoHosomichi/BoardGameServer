@@ -3,6 +3,8 @@ package gmi.utils.chain;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
@@ -13,16 +15,14 @@ import static gmi.utils.Preconditions.checkNotNullArgument;
  *          コンテキストの型
  */
 public final class CommandChain<T> implements Command<T> {
-  private final List<Command<T>> fCommands;
-  private final Object fCommandsLock;
-
   /**
-   * インスタンスを構築します。
+   * コマンドの連鎖。
    */
-  public CommandChain() {
-    fCommands = new LinkedList<>();
-    fCommandsLock = new Object();
-  }
+  private final List<Command<T>> fCommands = new LinkedList<>();
+  /**
+   * fCommandsのロックオブジェクト。
+   */
+  private final Object fCommandsLock = new Object();
 
   /**
    * 連鎖に指定されたコマンドを追加します。
@@ -32,7 +32,7 @@ public final class CommandChain<T> implements Command<T> {
    * @throws IllegalArgumentException
    *           commandがnullの場合。
    */
-  public CommandChain<T> addCommand(Command<T> command) throws IllegalArgumentException {
+  public CommandChain<T> addCommand(@Nonnull Command<T> command) {
     checkNotNullArgument(command, "command");
 
     synchronized (fCommandsLock) {
@@ -44,18 +44,21 @@ public final class CommandChain<T> implements Command<T> {
   /**
    * コマンドの連鎖を実行します。
    * 
-   * @throws NoSuchCommandException
-   *           コンテキストに指定されたコマンドが実行できない場合。
+   * @param context
+   *          実行に必要なコンテキスト。
+   * @return 実行したかどうか。実行したならtrue、実行していないならFalseを返します。
+   * @throws IllegalArgumentException
+   *           contextがnullの場合。
    */
   @Override
-  public boolean execute(T context) throws IllegalArgumentException, NoSuchCommandException {
+  public boolean execute(@Nonnull T context) {
     checkNotNullArgument(context, "context");
 
     synchronized (fCommandsLock) {
       for (final Command<T> command : fCommands) {
         if (command.execute(context)) return true;
       }
-      throw new NoSuchCommandException();
+      return false;
     }
   }
 }

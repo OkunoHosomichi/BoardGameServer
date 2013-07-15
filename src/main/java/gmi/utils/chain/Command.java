@@ -12,10 +12,8 @@ public interface Command<T> {
    * コマンドを実行します。
    * 
    * @param context
-   *          実行に必要なコンテキスト。nullを指定できません。
+   *          実行に必要なコンテキスト。
    * @return 実行したかどうか。実行したならtrue、実行していないならFalseを返します。
-   * @throws IllegalArgumentException
-   *           contextがnullの場合。
    */
-  public boolean execute(T context) throws IllegalArgumentException, NoSuchCommandException;
+  public boolean execute(T context);
 }

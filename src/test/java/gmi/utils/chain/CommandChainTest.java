@@ -7,9 +7,12 @@ import mockit.Expectations;
 
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 public class CommandChainTest {
+
   @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
   public void addCommandの引数にnullが指定されたらIllegalArgumentExceptionが投げられるよ() {
     new CommandChain<String>().addCommand(null);
@@ -19,33 +22,25 @@ public class CommandChainTest {
   public void addCommandを呼び出されたらコマンドの連鎖に追加するよ(Command<String> command1, Command<String> command2,
       Command<String> command3) {
     final CommandChain<String> chain = new CommandChain<String>();
-
     final List<String> list = Deencapsulation.getField(chain, "fCommands");
+
     assertEquals(list.size(), 0);
-
     chain.addCommand(command1).addCommand(command2).addCommand(command3);
-
     assertEquals(list.size(), 3);
   }
 
   @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
-  public void executeの引数にnullが指定されたらIllegalArgumentExceptionが投げられるよ(Command<String> command1, Command<String> command2)
-      throws IllegalArgumentException, NoSuchCommandException {
-    final CommandChain<String> chain = new CommandChain<String>();
-    chain.addCommand(command1);
-    chain.addCommand(command2);
+  public void executeの引数にnullが指定されたらIllegalArgumentExceptionが投げられるよ(Command<String> command1, Command<String> command2) {
+    final CommandChain<String> chain = new CommandChain<String>().addCommand(command1).addCommand(command2);
+
     chain.execute(null);
   }
 
   @Test(groups = { "AllEnv" })
   public void executeを呼び出されたらコマンドの連鎖を実行するよ(final Command<String> command1, final Command<String> command2,
-      final Command<String> command3, final Command<String> command4) throws IllegalArgumentException,
-      NoSuchCommandException {
-    final CommandChain<String> chain = new CommandChain<String>();
-    chain.addCommand(command1);
-    chain.addCommand(command2);
-    chain.addCommand(command3);
-    chain.addCommand(command4);
+      final Command<String> command3, final Command<String> command4) {
+    final CommandChain<String> chain = new CommandChain<String>().addCommand(command1).addCommand(command2)
+        .addCommand(command3).addCommand(command4);
 
     new Expectations() {
       {
@@ -60,13 +55,12 @@ public class CommandChainTest {
       }
     };
 
-    chain.execute("test");
+    assertTrue(chain.execute("test"));
   }
 
-  @Test(groups = { "AllEnv" }, expectedExceptions = { NoSuchCommandException.class })
-  public void executeを呼び出されたけどコマンドが見つからず実行できなかったらNoSuchCommandExceptionをスローするよ(final Command<String> command1,
-      final Command<String> command2, final Command<String> command3, final Command<String> command4)
-      throws IllegalArgumentException, NoSuchCommandException {
+  @Test(groups = { "AllEnv" })
+  public void executeを呼び出されたけどコマンドが見つからず実行できなかったらfalseを返すよ(final Command<String> command1,
+      final Command<String> command2, final Command<String> command3, final Command<String> command4) {
     final CommandChain<String> chain = new CommandChain<String>();
     chain.addCommand(command1);
     chain.addCommand(command2);
@@ -86,6 +80,6 @@ public class CommandChainTest {
       }
     };
 
-    chain.execute("test");
+    assertFalse(chain.execute("test"));
   }
 }
