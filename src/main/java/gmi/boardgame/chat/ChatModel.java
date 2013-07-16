@@ -24,7 +24,7 @@ public interface ChatModel {
   void addObserver(Observer o) throws IllegalArgumentException;
 
   /**
-   * チャットに参加しているクライアントの名前一覧を返します。一覧は変更不能になっています。テストはどう書けばいいのかわかりません。
+   * チャットに参加しているクライアントの名前一覧を返します。
    * 
    * @return クライアントの名前一覧。
    */

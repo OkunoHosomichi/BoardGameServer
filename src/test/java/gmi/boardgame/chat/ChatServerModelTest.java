@@ -28,6 +28,9 @@ import static org.testng.Assert.assertTrue;
 public class ChatServerModelTest {
   private static final String LINE_SEPARATOR = System.lineSeparator();
 
+  /*
+   * コンストラクタ
+   */
   @Test(groups = { "AllEnv" })
   public void コンストラクタの引数が正しく指定されたらちゃんとインスタンスを作るよ() {
     final ChatServerModel model = new ChatServerModel();
@@ -36,6 +39,9 @@ public class ChatServerModelTest {
     assertNotNull(Deencapsulation.getField(model, "fClients"));
   }
 
+  /*
+   * updateInformation
+   */
   @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
   public void updateInformationの引数にnullが指定されたらIllegalArgumentExceptionを投げるよ() {
     new ChatServerModel().updateInformation(null);
@@ -78,6 +84,9 @@ public class ChatServerModelTest {
         + LINE_SEPARATOR);
   }
 
+  /*
+   * appendInformation
+   */
   @Test(groups = { "AllEnv" })
   public void appendInformationの引数に空文字列が指定されたら何もしないよ(final Observer observer) {
     final ChatServerModel model = new ChatServerModel();
@@ -111,6 +120,9 @@ public class ChatServerModelTest {
     assertEquals(model.getInformation(), "Test" + LINE_SEPARATOR + "Information" + LINE_SEPARATOR);
   }
 
+  /*
+   * getClientNames
+   */
   @Test(groups = { "AllEnv" })
   public void getClientNamesを呼ばれたら変更不能のクライアント名一覧を返すよ() {
     final ChatServerModel model = new ChatServerModel();
@@ -160,6 +172,9 @@ public class ChatServerModelTest {
     model.getClientNames().remove(0);
   }
 
+  /*
+   * leaveClient
+   */
   @Test(groups = { "AllEnv" })
   public void leaveClientを呼ばれたらクライアント一覧を更新してビューに通知するよ(final Observer observer) {
     final ChatServerModel model = new ChatServerModel();
@@ -175,6 +190,9 @@ public class ChatServerModelTest {
     Deencapsulation.invoke(model, "leaveClient");
   }
 
+  /*
+   * sendServerMessage
+   */
   @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
   public void sendServerMessageの引数にnullが指定されたらIllegalArgumentExceptionを投げるよ() {
     new ChatServerModel().sendServerMessage(null);
@@ -215,6 +233,9 @@ public class ChatServerModelTest {
     model.sendServerMessage("これはテストです。");
   }
 
+  /*
+   * processMessageCommand
+   */
   @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
   public void processMessageCommandの引数clientにnullが指定されたらIllegalArgumentExceptionを投げるよ() {
     new ChatServerModel().processMessageCommand(null, "aaa");
@@ -278,6 +299,9 @@ public class ChatServerModelTest {
     };
   }
 
+  /*
+   * processByeCommand
+   */
   @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
   public void processByeCommandの引数にnullが指定されたらIllegalArgumentExceptionを投げるよ() {
     new ChatServerModel().processByeCommand(null);
@@ -297,6 +321,9 @@ public class ChatServerModelTest {
     model.processByeCommand(channel);
   }
 
+  /*
+   * processNameCommand
+   */
   @Test(groups = { "AllEnv" }, expectedExceptions = { IllegalArgumentException.class })
   public void processNameCommandの引数clientにnullが指定されたらIllegalArgumentExceptionを投げるよ() {
     new ChatServerModel().processNameCommand(null, "aaa");

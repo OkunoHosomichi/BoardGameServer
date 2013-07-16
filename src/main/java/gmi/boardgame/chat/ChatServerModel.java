@@ -57,15 +57,25 @@ final class ChatServerModel extends Observable implements ChatModel {
     fMessage = "";
   }
 
+  /**
+   * チャットに参加しているクライアントの名前一覧を返します。一覧はソートされていて変更不能のビューになっています。
+   * 
+   * @return クライアントの名前一覧。
+   */
   @Override
   public List<String> getClientNames() {
-    final List<String> result = new ArrayList<>();
+
+    List<String> result = null;
 
     synchronized (fClientsLock) {
+      result = new ArrayList<>(fClients.size());
+
       for (final Channel channel : fClients) {
         result.add(ChannelUtilities.getNickName(channel));
       }
     }
+
+    assert result != null;
 
     Collections.sort(result);
     return Collections.unmodifiableList(result);
