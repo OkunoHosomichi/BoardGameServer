@@ -373,11 +373,9 @@ public class ChatServerModelTest {
         times = 1;
         onInstance(client3).write("ENTER test4\n");
         times = 1;
-        onInstance(client4).write("Welcome to Chat!\n");
-        times = 1;
-        onInstance(client4).write(withMatch("^It is .* now.\\n$"));
-        times = 1;
-        onInstance(client4).write("WELCOME test1,test2,test3\n");
+        onInstance(client4).write(
+            withMatch("^WELCOME test1,test2,test3,test4\\n" + "MSG <Server> Welcome to Chat!\\n"
+                + "MSG <Server> It is .* now\\.\\n$"));
         times = 1;
         observer.update(model, "clients");
         times = 1;

@@ -11,12 +11,15 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 
 import javax.annotation.Nonnull;
+
+import org.apache.commons.lang3.StringUtils;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static gmi.utils.Preconditions.checkNotEmptyArgument;
@@ -28,6 +31,7 @@ import static gmi.utils.Preconditions.checkNotNullArgument;
  * 
  * @author おくのほそみち
  */
+// FIXME:クラスが大きいので分割するべきだと思う。
 final class ChatServerModel extends Observable implements ChatModel {
   /**
    * 行の区切り文字。
@@ -160,37 +164,23 @@ final class ChatServerModel extends Observable implements ChatModel {
    */
   @Override
   public void processNameCommand(@Nonnull Channel client, @Nonnull String nickName) {
-    // FIXME:メソッドが長すぎるから分割する。
     checkNotNullArgument(client, "client");
     checkNotNullArgument(nickName, "nickName");
     checkNotEmptyArgument(nickName, "nickName");
 
     if (!checkValidName(nickName)) {
-      client.write("RENAME " + nickName + "\n");
+      client.write(createRenameCommandMessage(nickName));
       return;
     }
 
-    ChannelUtilities.setNickName(client, nickName);
-
     synchronized (fClientsLock) {
-      final String result = getAllClientName();
-
-      fClients.add(client);
-      client.closeFuture().addListener(new ChannelFutureListener() {
-
-        @Override
-        public void operationComplete(ChannelFuture future) throws Exception {
-          leaveClient();
-        }
-      });
+      registerClient(client, nickName);
 
       for (final Channel channel : fClients) {
         if (client == channel) {
-          channel.write("Welcome to Chat!\n");
-          channel.write("It is " + new Date() + " now.\n");
-          channel.write("WELCOME " + result + "\n");
+          channel.write(createWelcomeCommandMessage(getClientNames()));
         } else {
-          channel.write("ENTER " + nickName + "\n");
+          channel.write(createEnterCommandMessage(nickName));
         }
       }
       setChanged();
@@ -281,6 +271,157 @@ final class ChatServerModel extends Observable implements ChatModel {
   }
 
   /**
+   * 指定されたニックネーム一覧に空文字列が含まれているかどうかを返します。
+   * 
+   * @param nickNames
+   *          ニックネームの一覧。nullを指定できません。
+   * @return 要素に空文字列が含まれていればtrue、含まれていなければfalse。
+   */
+  private boolean containsEmptyName(@Nonnull List<String> nickNames) {
+    assert nickNames != null;
+
+    for (final String nickName : nickNames) {
+      if (nickName.isEmpty()) return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * 指定されたニックネーム一覧にnullが含まれているかどうかを返します。
+   * 
+   * @param nickNames
+   *          ニックネームの一覧。nullを指定できません。
+   * @return 要素にnullが含まれていればtrue、含まれていなければfalse。
+   */
+  private boolean containsNullName(@Nonnull List<String> nickNames) {
+    assert nickNames != null;
+
+    for (final String nickName : nickNames) {
+      if (nickName == null || nickName.isEmpty()) return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * 指定されたコマンド文字列と引数文字列のリストからコマンド送信用の文字列を作って返します。
+   * コマンド文字列に"コマンド"、引数文字列のリストに["引数1",null,"引数2"]を指定した場合、「コマンド 引数1,,引数2\n」が返ります。
+   * 引数文字列リスト内にnullがある場合、空文字列として扱われます。
+   * 
+   * @param command
+   *          コマンド文字列。null又は空文字列を指定できません。
+   * @param arguments
+   *          引数文字列のリスト。nullを指定できません。
+   * @return コマンド送信用の文字列。nullではありません。
+   */
+  private String createCommandMessage(@Nonnull String command, @Nonnull List<String> arguments) {
+    assert command != null;
+    assert arguments != null;
+    assert !command.isEmpty();
+
+    return command + " " + StringUtils.join(arguments, ",") + '\n';
+  }
+
+  /**
+   * 指定されたコマンド文字列と引数文字列の配列からコマンド送信用の文字列を作って返します。
+   * コマンド文字列に"コマンド"、引数文字列の配列に["引数1",null,"引数2"]を指定した場合、「コマンド 引数1,,引数2\n」が返ります。
+   * 引数文字列配列内にnullがある場合、空文字列として扱われます。
+   * 
+   * @param command
+   *          コマンド文字列。null又は空文字列を指定できません。
+   * @param arguments
+   *          引数文字列の配列。可変長引数として使えます。nullを指定できません。
+   * @return コマンド送信用の文字列。nullではありません。
+   */
+  private String createCommandMessage(@Nonnull String command, @Nonnull String... arguments) {
+    assert command != null;
+    assert arguments != null;
+    assert !command.isEmpty();
+
+    return createCommandMessage(command, Arrays.asList(arguments));
+  }
+
+  /**
+   * 指定されたニックネームからEnterコマンド送信用の文字列を作って返します。
+   * 
+   * @param nickName
+   *          ニックネーム。null又は空文字列を指定できません。
+   * @return Enterコマンド送信用の文字列。nullではありません。
+   */
+  private String createEnterCommandMessage(@Nonnull String nickName) {
+    assert nickName != null;
+    assert !nickName.isEmpty();
+
+    return createCommandMessage("ENTER", nickName);
+  }
+
+  /**
+   * 指定されたニックネームと文字列からMessageコマンド送信用の文字列を作って返します。
+   * 
+   * @param nickName
+   *          ニックネーム。null又は空文字列を指定できません。
+   * @param message
+   *          送信するメッセージ。null又は空文字列を指定できません。
+   * @return Messageコマンド送信用の文字列。nullではありません。
+   */
+  private String createMessageCommandMessage(String nickName, String message) {
+    assert nickName != null;
+    assert message != null;
+    assert !nickName.isEmpty();
+    assert !message.isEmpty();
+
+    return createCommandMessage("MSG", "<" + nickName + "> " + message);
+  }
+
+  /**
+   * 指定されたニックネームからRenameコマンド送信用の文字列を作って返します。
+   * 
+   * @param nickName
+   *          ニックネーム。null又は空文字列を指定できません。
+   * @return Renameコマンド送信用の文字列。nullではありません。
+   */
+  private String createRenameCommandMessage(@Nonnull String nickName) {
+    assert nickName != null;
+    assert !nickName.isEmpty();
+
+    return createCommandMessage("RENAME", nickName);
+  }
+
+  /**
+   * 指定された文字列からサーバからのメッセージ送信用の文字列を作って返します。
+   * 実際にはServerというニックネームでMessageコマンドの文字列を作成します。
+   * 
+   * @param message
+   *          送信するメッセージ。null又は空文字列を指定できません。
+   * @return サーバからのメッセージ送信用の文字列。nullではありません。
+   */
+  private String createServerMessageCommandMessage(@Nonnull String message) {
+    assert message != null;
+    assert !message.isEmpty();
+
+    return createMessageCommandMessage("Server", message);
+  }
+
+  /**
+   * 指定されたニックネームのリストからWelcomeコマンド送信用の文字列を作って返します。
+   * ニックネームのリスト内にnullや空文字列が含まれていてはいけません。
+   * 
+   * @param nickNames
+   *          チャットに参加しているクライアントのニックネーム一覧。NAMEコマンドを送信してきたクライアント自身のニックネームも含みます。
+   *          null又を指定できません。
+   * @return Welcomeコマンド送信用の文字列。nullではありません。
+   */
+  private String createWelcomeCommandMessage(@Nonnull List<String> nickNames) {
+    assert nickNames != null;
+    assert !containsNullName(nickNames);
+    assert !containsEmptyName(nickNames);
+
+    return createCommandMessage("WELCOME", nickNames) + createServerMessageCommandMessage("Welcome to Chat!")
+        + createServerMessageCommandMessage("It is " + new Date().toString() + " now.");
+  }
+
+  /**
    * コマンド連鎖を実行します。
    * 
    * @param client
@@ -302,30 +443,38 @@ final class ChatServerModel extends Observable implements ChatModel {
   }
 
   /**
-   * 接続しているクライアント名全てをカンマで連結した文字列を返します。接続しているクライアントがなければ空文字列が返ります。
-   * 
-   * @return クライアント名をカンマで連結した文字列。nullではありません。
-   */
-  private String getAllClientName() {
-    synchronized (fClientsLock) {
-      assert fClients != null;
-
-      if (fClients.size() == 0) return "";
-
-      final List<String> list = getClientNames();
-      final StringBuilder result = new StringBuilder();
-      for (final String nickName : list) {
-        result.append(",").append(nickName);
-      }
-      return result.substring(1);
-    }
-  }
-
-  /**
    * クライアントが切断した場合の処理を行い、ビューに変更を通知します。
    */
   private void leaveClient() {
     setChanged();
     notifyObservers("clients");
+  }
+
+  /**
+   * 参加しているクライアント一覧に指定されたチャンネルを追加し、チャンネルが閉じられたときの処理を追加します。
+   * 
+   * @param client
+   *          登録するクライアント。nullを指定できません。
+   * @param nickName
+   *          ニックネーム。null又は空文字列を指定できません。
+   */
+  private void registerClient(@Nonnull Channel client, @Nonnull String nickName) {
+    assert client != null;
+    assert nickName != null;
+    assert !nickName.isEmpty();
+
+    ChannelUtilities.setNickName(client, nickName);
+
+    synchronized (fClientsLock) {
+      assert fClients != null;
+
+      fClients.add(client);
+      client.closeFuture().addListener(new ChannelFutureListener() {
+        @Override
+        public void operationComplete(ChannelFuture future) throws Exception {
+          leaveClient();
+        }
+      });
+    }
   }
 }
