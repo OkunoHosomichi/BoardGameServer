@@ -113,7 +113,6 @@ final class ChatServerModel extends Observable implements ChatModel {
   @Override
   public boolean processClientCommand(@Nonnull Channel client, @Nonnull String command) {
     // INFO: コマンドが変更された場合にコメント等きちんと修正する。
-    // TODO: 書き方がわかったらテストを書く。
     checkNotNullArgument(client, "client");
     checkNotNullArgument(command, "command");
     checkNotEmptyArgument(command, "command");
@@ -161,6 +160,7 @@ final class ChatServerModel extends Observable implements ChatModel {
    */
   @Override
   public void processNameCommand(@Nonnull Channel client, @Nonnull String nickName) {
+    // FIXME:メソッドが長すぎるから分割する。
     checkNotNullArgument(client, "client");
     checkNotNullArgument(nickName, "nickName");
     checkNotEmptyArgument(nickName, "nickName");
