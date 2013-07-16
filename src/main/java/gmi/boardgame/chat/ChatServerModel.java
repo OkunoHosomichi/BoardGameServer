@@ -2,7 +2,6 @@ package gmi.boardgame.chat;
 
 import gmi.boardgame.chat.commands.ChatCommandChainFactory;
 import gmi.boardgame.chat.commands.ChatCommandContext;
-import gmi.utils.chain.NoSuchCommandException;
 import gmi.utils.netty.channel.ChannelUtilities;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -17,9 +16,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static gmi.utils.Preconditions.checkNotEmptyArgument;
 import static gmi.utils.Preconditions.checkNotNullArgument;
 
 /**
@@ -96,25 +97,29 @@ final class ChatServerModel extends Observable implements ChatModel {
   }
 
   /**
-   * チャットに参加しているクライアントから受信したコマンドを処理します。コマンドが空文字列の場合は何もしません。現時点でのコマンドは以下の通りです。<br>
+   * チャットに参加しているクライアントから受信したコマンドを処理します。現時点でのコマンドは以下の通りです。<br>
    * MSG メッセージ - 他クライアントにメッセージを送信する。<br>
    * BYE - クライアントとの切断処理を行う。<br>
    * NAME ニックネーム - ニックネームを決める。このコマンドを処理するとチャットに参加したことになる。
+   * 
+   * @param client
+   *          コマンドを送信したクライアント。nullを指定できません。
+   * @param command
+   *          コマンド文字列。null又は空文字列を指定できません。
+   * @throws IllegalArgumentException
+   *           client又はcommandがnullの場合。又はcommandが空文字列の場合。
+   * @return コマンドを処理したならtrue、処理しなかったならfalse。
    */
   @Override
-  public void processClientCommand(Channel client, String command) throws IllegalArgumentException {
+  public boolean processClientCommand(@Nonnull Channel client, @Nonnull String command) {
     // INFO: コマンドが変更された場合にコメント等きちんと修正する。
     // TODO: 書き方がわかったらテストを書く。
     checkNotNullArgument(client, "client");
     checkNotNullArgument(command, "command");
-    if (command.isEmpty()) return;
-    if (command.indexOf(' ') == 0) throw new IllegalArgumentException("commandが不正です。");
+    checkNotEmptyArgument(command, "command");
+    checkArgument(command.indexOf(' ') != 0, "引数commandが不正です。");
 
-    try {
-      executeCommandChain(client, command);
-    } catch (final NoSuchCommandException ex) {
-      updateInformation("未定義のコマンド: " + client.localAddress() + "から送信(" + command + ")");
-    }
+    return executeCommandChain(client, command);
   }
 
   @Override
@@ -172,47 +177,6 @@ final class ChatServerModel extends Observable implements ChatModel {
     }
   }
 
-  /**
-   * 接続しているクライアント名全てをカンマで連結した文字列を返します。接続しているクライアントがなければ空文字列が返ります。
-   * 
-   * @return クライアント名をカンマで連結した文字列。
-   */
-  private String getAllClientName() {
-    synchronized (fClientsLock) {
-      if (fClients.size() == 0) return "";
-
-      final List<String> list = getClientNames();
-      final StringBuilder result = new StringBuilder();
-      for (final String nickName : list) {
-        result.append(",").append(nickName);
-      }
-      return result.substring(1);
-    }
-  }
-
-  /**
-   * 指定されたニックネームが不正なものでないか調べます。不正な名前の条件は以下の通りです。<br>
-   * ･名前にServerという文字列が含まれている<br>
-   * ･半角記号のカンマ、スペース、アットマークなどが含まれている<br>
-   * 
-   * @param nickName
-   *          調べるニックネーム。nullや空文字を指定できません。
-   * @return 不正な名前でなければtrue、不正ならばfalse。
-   */
-  private boolean checkValidName(String nickName) {
-    assert nickName != null;
-    assert !nickName.isEmpty();
-
-    synchronized (fClientsLock) {
-      for (final Channel client : fClients) {
-        if (ChannelUtilities.getNickName(client).equals(nickName)) return false;
-      }
-    }
-
-    return !(nickName.indexOf("Server") != -1 || nickName.indexOf(",") != -1 || nickName.indexOf(" ") != -1 || nickName
-        .indexOf("@") != -1);
-  }
-
   @Override
   public void sendServerMessage(String message) throws IllegalArgumentException {
     checkNotNullArgument(message, "message");
@@ -251,24 +215,65 @@ final class ChatServerModel extends Observable implements ChatModel {
   }
 
   /**
+   * 指定されたニックネームが不正なものでないか調べます。不正な名前の条件は以下の通りです。<br>
+   * ･名前にServerという文字列が含まれている<br>
+   * ･半角記号のカンマ、スペース、アットマークなどが含まれている<br>
+   * 
+   * @param nickName
+   *          調べるニックネーム。nullや空文字を指定できません。
+   * @return 不正な名前でなければtrue、不正ならばfalse。
+   */
+  private boolean checkValidName(String nickName) {
+    assert nickName != null;
+    assert !nickName.isEmpty();
+
+    synchronized (fClientsLock) {
+      for (final Channel client : fClients) {
+        if (ChannelUtilities.getNickName(client).equals(nickName)) return false;
+      }
+    }
+
+    return !(nickName.indexOf("Server") != -1 || nickName.indexOf(",") != -1 || nickName.indexOf(" ") != -1 || nickName
+        .indexOf("@") != -1);
+  }
+
+  /**
    * コマンド連鎖を実行します。
    * 
    * @param client
    *          コマンドを送信したクライアント。nullを指定できません。
    * @param command
-   *          コマンド文字列。nullを指定できません。
-   * @throws NoSuchCommandException
-   *           コマンドが見つからず実行できなかった場合。
+   *          コマンド文字列。null又は空文字列を指定できません。
+   * @return コマンドを処理したならtrue、処理しなかったならfalse。
    */
-  private void executeCommandChain(Channel client, String command) throws NoSuchCommandException {
+  private boolean executeCommandChain(Channel client, String command) {
     assert client != null;
     assert command != null;
     assert !command.isEmpty();
     assert command.indexOf(' ') != 0;
 
     final String[] parseCommand = command.split(" ", 2);
-    ChatCommandChainFactory.INSTANCE.getChain().execute(
+
+    return ChatCommandChainFactory.INSTANCE.getChain().execute(
         new ChatCommandContext(client, parseCommand[0], parseCommand.length == 2 ? parseCommand[1] : "", this));
+  }
+
+  /**
+   * 接続しているクライアント名全てをカンマで連結した文字列を返します。接続しているクライアントがなければ空文字列が返ります。
+   * 
+   * @return クライアント名をカンマで連結した文字列。
+   */
+  private String getAllClientName() {
+    synchronized (fClientsLock) {
+      if (fClients.size() == 0) return "";
+
+      final List<String> list = getClientNames();
+      final StringBuilder result = new StringBuilder();
+      for (final String nickName : list) {
+        result.append(",").append(nickName);
+      }
+      return result.substring(1);
+    }
   }
 
   /**

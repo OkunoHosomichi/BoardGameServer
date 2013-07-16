@@ -49,16 +49,15 @@ public interface ChatModel {
   void processByeCommand(Channel client) throws IllegalArgumentException;
 
   /**
-   * チャットに参加しているクライアントから受信したコマンドを処理します。コマンドが空文字列の場合は何もしません。
+   * チャットに参加しているクライアントから受信したコマンドを処理します。
    * 
    * @param client
-   *          コマンドを送信したクライアント。nullを指定できません。
+   *          コマンドを送信したクライアント。
    * @param command
-   *          コマンド文字列。nullを指定できません。
-   * @throws IllegalArgumentException
-   *           client又はcommandがnullの場合。
+   *          コマンド文字列。
+   * @return コマンドを処理したならtrue、処理しなかったならfalse。
    */
-  void processClientCommand(Channel client, String command) throws IllegalArgumentException;
+  boolean processClientCommand(Channel client, String command);
 
   /**
    * Messageコマンドを処理します。コマンドを送信してきたクライアント以外の全クライアントにメッセージを送信します。
