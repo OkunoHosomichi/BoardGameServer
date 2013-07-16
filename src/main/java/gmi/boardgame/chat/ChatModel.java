@@ -17,11 +17,9 @@ public interface ChatModel {
    * 
    * @see java.util.Observable#addObserver(java.util.Observer)
    * @param o
-   *          追加するObserver
-   * @throws IllegalArgumentException
-   *           パラメータ o が null の場合。
+   *          追加するObserver。
    */
-  void addObserver(Observer o) throws IllegalArgumentException;
+  void addObserver(Observer o);
 
   /**
    * チャットに参加しているクライアントの名前一覧を返します。
@@ -42,11 +40,9 @@ public interface ChatModel {
    * Byeコマンドの処理を行います。指定されたクライアントの切断処理を実行します。
    * 
    * @param client
-   *          コマンドを送信してきたクライアント。nullを指定できません。
-   * @throws IllegalArgumentException
-   *           clientがnullの場合。
+   *          コマンドを送信してきたクライアント。
    */
-  void processByeCommand(Channel client) throws IllegalArgumentException;
+  void processByeCommand(Channel client);
 
   /**
    * チャットに参加しているクライアントから受信したコマンドを処理します。
@@ -63,46 +59,37 @@ public interface ChatModel {
    * Messageコマンドを処理します。コマンドを送信してきたクライアント以外の全クライアントにメッセージを送信します。
    * 
    * @param client
-   *          コマンドを送信してきたクライアント。nullを指定できません。
+   *          コマンドを送信してきたクライアント。
    * @param message
-   *          送信するメッセージ。nullを指定できません。
-   * @throws IllegalArgumentException
-   *           client又はmessageがnullの場合。
+   *          送信するメッセージ。
    */
-  void processMessageCommand(Channel client, String message) throws IllegalArgumentException;
+  void processMessageCommand(Channel client, String message);
 
   /**
    * Nameコマンドを処理します。チャットに参加しているクライアントの一覧に登録し、
    * コマンドを送信してきたクライアント以外の全クライアントに参加したことを通知します。その後、ビューにクライアントの一覧が変更されたことを通知します。
    * 
    * @param client
-   *          コマンドを送信してきたクライアント。nullを指定できません。
+   *          コマンドを送信してきたクライアント。
    * @param nickName
-   *          ニックネーム。nullや空文字列を指定できません。
-   * @throws IllegalArgumentException
-   *           client又はnickNameがnullの場合。又はnickNameが空文字列の場合。
+   *          ニックネーム。
    */
-  void processNameCommand(Channel client, String nickName) throws IllegalArgumentException;
+  void processNameCommand(Channel client, String nickName);
 
   /**
-   * サーバからのメッセージをチャットに参加している全クライアントに送信します。メッセージが空文字列の場合は何もしません。
+   * サーバからのメッセージをチャットに参加している全クライアントに送信します。
    * 
    * @param message
-   *          送信するメッセージ。nullを指定できません。
-   * @throws IllegalArgumentException
-   *           messageがnullの場合。
+   *          送信するメッセージ。
    */
-  void sendServerMessage(String message) throws IllegalArgumentException;
+  void sendServerMessage(String message);
 
   /**
    * サーバ情報を更新してビューに通知します。サーバ情報とは接続待ち開始の通知、クライアント接続の通知、クライアントをキックしたことの通知、
    * エラーが発生した事を示す警告など様々なものを想定しています。 想定しているだけで実際にそれらを通知するかはまだわかりません。
-   * 空文字列が指定された場合は何もせず、ビューへの更新通知も行いません。
    * 
    * @param message
-   *          通知するメッセージ。nullを指定できません。
-   * @throws IllegalArgumentException
-   *           messageがnullの場合。
+   *          通知するメッセージ。
    */
-  void updateInformation(String message) throws IllegalArgumentException;
+  void updateInformation(String message);
 }
