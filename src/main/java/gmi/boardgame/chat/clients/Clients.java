@@ -1,4 +1,4 @@
-package gmi.boardgame.chat.client;
+package gmi.boardgame.chat.clients;
 
 /**
  * @author おくのほそみち
