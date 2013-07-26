@@ -146,7 +146,7 @@ final class ChatServerModel extends Observable implements ChatModel {
       for (final Channel channel : fClients) {
         if (channel == client) continue;
 
-        channel.write("[" + ChannelUtilities.getNickName(client) + "] " + message + "\n");
+        channel.write(createMessageCommandMessage(ChannelUtilities.getNickName(client), message));
       }
     }
   }
@@ -201,10 +201,9 @@ final class ChatServerModel extends Observable implements ChatModel {
     checkNotNullArgument(message, "message");
     if (message.isEmpty()) return;
 
-    final String sendMsg = "<Server> " + message + "\n";
     synchronized (fClientsLock) {
       for (final Channel c : fClients) {
-        c.write(sendMsg);
+        c.write(createServerMessageCommandMessage(message));
       }
     }
   }
@@ -371,7 +370,7 @@ final class ChatServerModel extends Observable implements ChatModel {
     assert !nickName.isEmpty();
     assert !message.isEmpty();
 
-    return createCommandMessage("MSG", "<" + nickName + "> " + message);
+    return createCommandMessage("MSG", "[" + nickName + "] " + message);
   }
 
   /**

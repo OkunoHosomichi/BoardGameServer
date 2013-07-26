@@ -244,9 +244,9 @@ public class ChatServerModelTest {
 
     new FullVerifications() {
       {
-        onInstance(client1).write("[client2] test Message\n");
+        onInstance(client1).write("MSG [client2] test Message\n");
         times = 1;
-        onInstance(client3).write("[client2] test Message\n");
+        onInstance(client3).write("MSG [client2] test Message\n");
         times = 1;
       }
     };
@@ -374,8 +374,8 @@ public class ChatServerModelTest {
         onInstance(client3).write("ENTER test4\n");
         times = 1;
         onInstance(client4).write(
-            withMatch("^WELCOME test1,test2,test3,test4\\n" + "MSG <Server> Welcome to Chat!\\n"
-                + "MSG <Server> It is .* now\\.\\n$"));
+            withMatch("^WELCOME test1,test2,test3,test4\\n" + "MSG \\[Server\\] Welcome to Chat!\\n"
+                + "MSG \\[Server\\] It is .* now\\.\\n$"));
         times = 1;
         observer.update(model, "clients");
         times = 1;
@@ -418,7 +418,7 @@ public class ChatServerModelTest {
 
     new Expectations() {
       {
-        channel.write("<Server> これはテストです。\n");
+        channel.write("MSG [Server] これはテストです。\n");
         times = 3;
       }
     };

@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.MessageList;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import static gmi.utils.Preconditions.checkNotNullArgument;
@@ -31,14 +32,17 @@ final class ChatServerHandler extends ChannelInboundHandlerAdapter {
    *           modelがnullの場合。
    */
   @Inject
-  ChatServerHandler(ChatModel model) throws IllegalArgumentException {
+  ChatServerHandler(@Nonnull ChatModel model) {
     checkNotNullArgument(model, "model");
 
     fModel = model;
   }
 
   @Override
-  public void messageReceived(ChannelHandlerContext ctx, MessageList<Object> requests) throws Exception {
+  public void messageReceived(@Nonnull ChannelHandlerContext ctx, @Nonnull MessageList<Object> requests) {
+    checkNotNullArgument(ctx, "ctx");
+    checkNotNullArgument(requests, "requests");
+
     final MessageList<String> msgs = requests.cast();
     for (int i = 0; i < msgs.size(); i++) {
       fModel.processClientCommand(ctx.channel(), msgs.get(i));
